@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://broskii.co/sitemap.xml
