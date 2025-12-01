@@ -43,7 +43,7 @@ const HomePage = () => {
 
   const heroImages = [
     '/1000090386.webp',
-    '/1000090387.webp',
+    '/broskii-social-preview.webp',
     '/1000090389.webp',
     '/1000090390.webp',
     '/1000090385.webp'
