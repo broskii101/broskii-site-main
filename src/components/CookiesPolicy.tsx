@@ -116,7 +116,7 @@ const CookiesPolicy = () => {
 
       <Section title="Contact Us">
         <p>If you have questions about our cookies policy, please contact:</p>
-        <p><strong>📧 salaam@broskii.co</strong></p>
+        <p><strong>📧 salaam@broskii.com</strong></p>
       </Section>
     </div>
   );

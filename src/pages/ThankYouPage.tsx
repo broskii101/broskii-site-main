@@ -85,11 +85,11 @@ const ThankYouPage = () => {
                 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
                   <a
-                    href="mailto:salaam@broskii.co"
+                    href="mailto:salaam@broskii.com"
                     className="group flex items-center justify-center space-x-3 bg-blue-50 hover:bg-blue-100 text-blue-700 hover:text-blue-800 p-4 rounded-xl transition-all duration-300 transform hover:scale-105 shadow-md hover:shadow-lg"
                   >
                     <Mail className="h-6 w-6" />
-                    <span className="font-semibold">salaam@broskii.co</span>
+                    <span className="font-semibold">salaam@broskii.com</span>
                   </a>
                   
                   <a

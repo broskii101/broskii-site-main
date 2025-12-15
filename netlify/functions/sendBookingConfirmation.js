@@ -49,7 +49,7 @@ exports.handler = async (event) => {
     } = formData;
 
 await resend.emails.send({ 
-  from: 'Broskii Alerts <info@broskii.co>',
+  from: 'Broskii Alerts <info@broskii.com>',
   to: [email],
   subject: 'Broskii Trip Booking Confirmation',
   html: `
@@ -117,8 +117,8 @@ await resend.emails.send({
 
               <!-- Contact details stacked below -->
               <p style="margin:0 0 5px; line-height:1.5;">
-                <a href="https://www.broskii.co" style="color:#263c43; text-decoration:none; display:block;">www.broskii.co</a>
-                <a href="mailto:salaam@broskii.co" style="color:#263c43; text-decoration:none; display:block; margin-top:4px;">salaam@broskii.co</a>
+                <a href="https://www.broskii.com" style="color:#263c43; text-decoration:none; display:block;">www.broskii.com</a>
+                <a href="mailto:salaam@broskii.com" style="color:#263c43; text-decoration:none; display:block; margin-top:4px;">salaam@broskii.com</a>
                 <a href="https://wa.me/447749939192" style="color:#263c43; text-decoration:none; display:block; margin-top:4px;">WhatsApp or call us</a>
               </p>
 
@@ -141,8 +141,8 @@ await resend.emails.send({
 
     // Send notification email to admin
     await resend.emails.send({
-      from: 'Broskii Alerts <info@broskii.co>',
-      to: ['salaam@broskii.co'],
+      from: 'Broskii Alerts <info@broskii.com>',
+      to: ['salaam@broskii.com'],
       subject: `📥 New Booking from ${fullName}`,
       html: `
         <h2>New Ski Trip Booking</h2>

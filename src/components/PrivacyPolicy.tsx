@@ -72,7 +72,7 @@ const PrivacyPolicy = () => {
           <li>Contact emergency services or your emergency contact if needed</li>
           <li>Share photos/videos for promotional use — <strong>only with your consent</strong></li>
         </ul>
-        <p>You can withdraw consent for photo/video use at any time by emailing <strong>salaam@broskii.co</strong>.</p>
+        <p>You can withdraw consent for photo/video use at any time by emailing <strong>salaam@broskii.com</strong>.</p>
       </Section>
 
       <Section title="4. Payment Information">
@@ -95,7 +95,7 @@ const PrivacyPolicy = () => {
 
       <Section title="7. Your Rights">
         <p>You have the right to access, correct, or delete your data, and withdraw any consent given.</p>
-        <p>To make a request, contact us at <strong>salaam@broskii.co</strong>.</p>
+        <p>To make a request, contact us at <strong>salaam@broskii.com</strong>.</p>
       </Section>
 
       <Section title="8. Data Security">
@@ -107,7 +107,7 @@ const PrivacyPolicy = () => {
       </Section>
 
       <Section title="10. Contact Us">
-        <p>If you have any questions about this policy or your data, email: <strong>salaam@broskii.co</strong></p>
+        <p>If you have any questions about this policy or your data, email: <strong>salaam@broskii.com</strong></p>
       </Section>
     </div>
   );

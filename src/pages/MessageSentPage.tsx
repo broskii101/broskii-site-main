@@ -65,10 +65,10 @@ const MessageSentPage = () => {
                   
                   <div>
                     <a
-                      href="mailto:salaam@broskii.co"
+                      href="mailto:salaam@broskii.com"
                       className="text-lg font-semibold text-primary-600 hover:text-primary-700 underline"
                     >
-                      salaam@broskii.co
+                      salaam@broskii.com
                     </a>
                   </div>
                 </div>

@@ -46,8 +46,8 @@ exports.handler = async (event) => {
     `;
 
     await resend.emails.send({
-      from: 'Broskii Website <info@broskii.co>',
-      to: ['salaam@broskii.co'],
+      from: 'Broskii Website <info@broskii.com>',
+      to: ['salaam@broskii.com'],
       subject: `New Contact Message: ${subject}`,
       html,
     });

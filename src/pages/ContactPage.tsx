@@ -27,9 +27,9 @@ const ContactPage = () => {
     {
       icon: Mail,
       title: 'Email',
-      details: 'salaam@broskii.co',
+      details: 'salaam@broskii.com',
       description: 'Send us a message anytime',
-      link: 'mailto:salaam@broskii.co',
+      link: 'mailto:salaam@broskii.com',
       color: 'from-blue-500 to-cyan-600'
     },
     {

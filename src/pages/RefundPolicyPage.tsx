@@ -274,7 +274,7 @@ const RefundPolicyPage = () => {
     </Link>
 
     <a
-      href="mailto:salaam@broskii.co"
+      href="mailto:salaam@broskii.com"
       className="bg-white/10 hover:bg-white/20 backdrop-blur-sm rounded-lg p-4 transition-all duration-300 text-white group text-center"
     >
       <Mail className="h-6 w-6 mx-auto mb-2 text-primary-200 group-hover:text-white transition-colors" />
