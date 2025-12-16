@@ -1,11 +1,9 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { Link } from 'react-router-dom';
-import { motion, AnimatePresence } from 'framer-motion';
+import { motion } from 'framer-motion';
 import { 
   ChevronDown, 
   ChevronUp, 
-  HelpCircle, 
-  Phone, 
   Mail,
   MessageCircle,
   Search,
@@ -14,14 +12,13 @@ import {
   Hotel,
   Users,
   Heart,
-  DollarSign,
   Instagram,
   CreditCard,
   Send
 } from 'lucide-react';
 
 const FAQPage = () => {
-  const [openFAQ, setOpenFAQ] = useState<number | null>(null);
+  const [openFAQ, setOpenFAQ] = useState<string | null>(null);
   const [searchTerm, setSearchTerm] = useState('');
 
   const faqCategories = [
