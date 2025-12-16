@@ -163,7 +163,8 @@ If you prefer to eat out, there are plenty of local restaurants nearby.`
           answer: "Yes — travel insurance with winter sports cover is mandatory for all Broskii trips."
         },
         {
-          question: "Yes — you'll need a valid passport. For most European destinations, UK passport holders currently don't need a visa. However, many countries require that your passport is valid for at least 6 months from your departure date, so please double-check this based on your destination. We also recommend reviewing any travel updates or entry requirements closer to the time of travel."
+          question: "Do I need a passport or visa?",
+          answer: "Yes — you'll need a valid passport. For most European destinations, UK passport holders currently don't need a visa. However, many countries require that your passport is valid for at least 6 months from your departure date, so please double-check this based on your destination. We also recommend reviewing any travel updates or entry requirements closer to the time of travel."
         },
         {
           question: "Is there a recommended packing list for the trip?",
@@ -466,20 +467,22 @@ For full contact info, check out our <a href='/contact' class='text-primary-600 
                       <ChevronDown className="h-5 w-5 text-gray-500" />
                     )}
                   </button>
-                  <AnimatePresence>
-                    {openFAQ === faq.id && (
-                      <motion.div
-                        initial={{ height: 0, opacity: 0 }}
-                        animate={{ height: 'auto', opacity: 1 }}
-                        exit={{ height: 0, opacity: 0 }}
-                        transition={{ duration: 0.3 }}
-                        className="overflow-hidden"
-                      >
-                        <div className="px-6 pb-4 text-gray-600 leading-relaxed whitespace-pre-line" dangerouslySetInnerHTML={{ __html: faq.answer }}>
-                        </div>
-                      </motion.div>
-                    )}
-                  </AnimatePresence>
+                  <motion.div
+  initial={false}
+  animate={{
+    height: openFAQ === faq.id ? 'auto' : 0,
+    opacity: openFAQ === faq.id ? 1 : 0
+  }}
+  transition={{ duration: 0.3 }}
+  className="overflow-hidden"
+  aria-hidden={openFAQ !== faq.id}
+>
+  <div
+    className="px-6 pb-4 text-gray-600 leading-relaxed whitespace-pre-line"
+    dangerouslySetInnerHTML={{ __html: faq.answer }}
+  />
+</motion.div>
+
                 </motion.div>
               ))}
             </div>
@@ -527,20 +530,22 @@ For full contact info, check out our <a href='/contact' class='text-primary-600 
                               <ChevronDown className="h-6 w-6 text-gray-500 flex-shrink-0" />
                             )}
                           </button>
-                          <AnimatePresence>
-                            {openFAQ === faqId && (
-                              <motion.div
-                                initial={{ height: 0, opacity: 0 }}
-                                animate={{ height: 'auto', opacity: 1 }}
-                                exit={{ height: 0, opacity: 0 }}
-                                transition={{ duration: 0.3 }}
-                                className="overflow-hidden"
-                              >
-                                <div className="px-8 pb-6 text-gray-600 leading-relaxed text-lg whitespace-pre-line" dangerouslySetInnerHTML={{ __html: faq.answer }}>
-                                </div>
-                              </motion.div>
-                            )}
-                          </AnimatePresence>
+                          <motion.div
+  initial={false}
+  animate={{
+    height: openFAQ === faqId ? 'auto' : 0,
+    opacity: openFAQ === faqId ? 1 : 0
+  }}
+  transition={{ duration: 0.3 }}
+  className="overflow-hidden"
+  aria-hidden={openFAQ !== faqId}
+>
+  <div
+    className="px-8 pb-6 text-gray-600 leading-relaxed text-lg whitespace-pre-line"
+    dangerouslySetInnerHTML={{ __html: faq.answer }}
+  />
+</motion.div>
+
                         </div>
                       );
                     })}
@@ -582,24 +587,27 @@ For full contact info, check out our <a href='/contact' class='text-primary-600 
                             <ChevronDown className="h-6 w-6 text-gray-500 flex-shrink-0" />
                           )}
                         </button>
-                        <AnimatePresence>
-                          {openFAQ === faqId && (
-                            <motion.div
-                              initial={{ height: 0, opacity: 0 }}
-                              animate={{ height: 'auto', opacity: 1 }}
-                              exit={{ height: 0, opacity: 0 }}
-                              transition={{ duration: 0.3 }}
-                              className="overflow-hidden"
-                            >
-                              <div className="px-8 pb-6 text-gray-600 leading-relaxed text-lg">
-                                {faq.question === "How do I cancel or transfer my booking?" ? (
-                                  <div>
-                                    <div className="whitespace-pre-line mb-6">{faq.answer}</div>
-                                    <div className="space-y-4">
-                                      <div className="text-gray-700 font-semibold mb-4">You can reach us via:</div>
+                        <motion.div
+  initial={false}
+  animate={{
+    height: openFAQ === faqId ? 'auto' : 0,
+    opacity: openFAQ === faqId ? 1 : 0
+  }}
+  transition={{ duration: 0.3 }}
+  className="overflow-hidden"
+  aria-hidden={openFAQ !== faqId}
+>
+  <div className="px-8 pb-6 text-gray-600 leading-relaxed text-lg">
+    {faq.question === "How do I cancel or transfer my booking?" ? (
+      <div>
+        <div className="whitespace-pre-line mb-6">{faq.answer}</div>
+        <div className="space-y-4">
+          <div className="text-gray-700 font-semibold mb-4">
+            You can reach us via:
+          </div>
                                       <div className="grid grid-cols-1 gap-4">
                                         <a
-                                          href="mailto:salaam@broskii.com"
+                                          href="mailto:salaam@broskii.co"
                                           className="group block p-6 rounded-xl shadow-md hover:shadow-lg transition-all duration-300 bg-white border border-gray-200 hover:border-primary-300"
                                         >
                                           <div className="flex items-center space-x-4">
@@ -608,7 +616,7 @@ For full contact info, check out our <a href='/contact' class='text-primary-600 
                                             </div>
                                             <div>
                                               <div className="font-semibold text-gray-900 group-hover:text-primary-700 transition-colors">Email</div>
-                                              <div className="text-sm text-gray-600">salaam@broskii.com</div>
+                                              <div className="text-sm text-gray-600">salaam@broskii.co</div>
                                             </div>
                                           </div>
                                         </a>
@@ -645,15 +653,16 @@ For full contact info, check out our <a href='/contact' class='text-primary-600 
                                           </div>
                                         </a>
                                       </div>
-                                    </div>
-                                  </div>
-                                ) : (
-                                  <div className="whitespace-pre-line" dangerouslySetInnerHTML={{ __html: faq.answer }}></div>
-                                )}
-                              </div>
-                            </motion.div>
-                          )}
-                        </AnimatePresence>
+                                      </div>
+      </div>
+    ) : (
+      <div
+        className="whitespace-pre-line"
+        dangerouslySetInnerHTML={{ __html: faq.answer }}
+      />
+    )}
+  </div>
+</motion.div>
                       </div>
                     );
                   })}
@@ -693,12 +702,12 @@ For full contact info, check out our <a href='/contact' class='text-primary-600 
         </Link>
 
         <a
-          href="mailto:salaam@broskii.com"
+          href="mailto:salaam@broskii.co"
           className="group bg-[#00a6fb]/10 hover:bg-[#00a6fb]/20 rounded-md p-4 transition"
         >
           <Mail className="h-6 w-6 mx-auto mb-2 text-[#00a6fb] group-hover:text-white" />
           <div className="text-sm font-semibold text-black">Email</div>
-          <div className="text-xs text-black hidden">salaam@broskii.com</div>
+          <div className="text-xs text-black hidden">salaam@broskii.co</div>
         </a>
 
         <a
