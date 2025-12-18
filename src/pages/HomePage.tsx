@@ -4,6 +4,8 @@ import { useScroll, useTransform } from 'framer-motion';
 import { Link } from 'react-router-dom';
 import UpcomingTripCard from '../components/UpcomingTripCard';
 import { supabase } from '../lib/supabaseClient';
+import { Helmet } from 'react-helmet-async';
+
 import { 
   Calendar, 
   Star, 
@@ -229,6 +231,21 @@ const HomePage = () => {
 
   return (
     <div className="overflow-hidden">
+
+<Helmet>
+  <title>
+    Muslim Ski Holidays | Muslim Ski Trips Worldwide – Broskii
+  </title>
+
+  <meta
+    name="description"
+    content="Premium ski trips for Muslims — a different kind of ski experience rooted in faith, brotherhood and shared adventure across the mountains of the world."
+  />
+
+  <link rel="canonical" href="https://broskii.com/" />
+</Helmet>
+
+
       {/* Hero Section with Carousel */}
       <section className="relative h-screen flex items-center justify-center overflow-hidden">
         {/* Image Carousel */}

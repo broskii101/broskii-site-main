@@ -604,7 +604,7 @@ For full contact info, check out our <a href='/contact' class='text-primary-600 
           </div>
                                       <div className="grid grid-cols-1 gap-4">
                                         <a
-                                          href="mailto:salaam@broskii.co"
+                                          href="mailto:salaam@broskii.com"
                                           className="group block p-6 rounded-xl shadow-md hover:shadow-lg transition-all duration-300 bg-white border border-gray-200 hover:border-primary-300"
                                         >
                                           <div className="flex items-center space-x-4">
@@ -613,7 +613,7 @@ For full contact info, check out our <a href='/contact' class='text-primary-600 
                                             </div>
                                             <div>
                                               <div className="font-semibold text-gray-900 group-hover:text-primary-700 transition-colors">Email</div>
-                                              <div className="text-sm text-gray-600">salaam@broskii.co</div>
+                                              <div className="text-sm text-gray-600">salaam@broskii.com</div>
                                             </div>
                                           </div>
                                         </a>
@@ -704,7 +704,7 @@ For full contact info, check out our <a href='/contact' class='text-primary-600 
         >
           <Mail className="h-6 w-6 mx-auto mb-2 text-[#00a6fb] group-hover:text-white" />
           <div className="text-sm font-semibold text-black">Email</div>
-          <div className="text-xs text-black hidden">salaam@broskii.co</div>
+          <div className="text-xs text-black hidden">salaam@broskii.com</div>
         </a>
 
         <a
