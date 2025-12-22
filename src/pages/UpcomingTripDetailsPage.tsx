@@ -2,23 +2,22 @@ import React from 'react';
 import { motion } from 'framer-motion';
 import { Link } from 'react-router-dom';
 import UpcomingTripCard from '../components/UpcomingTripCard';
-import { 
-  Calendar, 
-  MapPin, 
-  Mountain, 
+import {
+  Calendar,
+  MapPin,
+  Mountain,
   ArrowLeft,
   CheckCircle,
   X,
-  Users, // Added for waitlist icon
-  Mail, // Added for waitlist icon
-  Phone, // Added for waitlist icon
-  Send // Added for waitlist icon
+  Users,
+  Mail,
+  Phone,
+  Send,
 } from 'lucide-react';
-import { useForm } from 'react-hook-form'; // Import useForm for the waitlist modal
-import { supabase } from '../lib/supabaseClient'; // Import supabase client
-import toast from 'react-hot-toast'; // Import toast for notifications
+import { useForm } from 'react-hook-form';
+import { supabase } from '../lib/supabaseClient';
+import toast from 'react-hot-toast';
 
-// Define interface for waitlist form data
 interface WaitlistFormInputs {
   fullName: string;
   email: string;
@@ -27,14 +26,14 @@ interface WaitlistFormInputs {
 
 const UpcomingTripDetailsPage = () => {
   const [fullScreenImage, setFullScreenImage] = React.useState<string | null>(null);
-  const [showWaitlistModal, setShowWaitlistModal] = React.useState(false); // State to control modal visibility
+  const [showWaitlistModal, setShowWaitlistModal] = React.useState(false);
 
-  // Hardcoded trip capacity and booked count for testing
-  const tripCapacity = 52; // Set the total capacity to 52
-  const bookedCount = 52; // Set to 0 as no one has booked yet
-  const isSoldOut = bookedCount >= tripCapacity; // Derived state for sold out logic
+  const tripCapacity = 52;
+  const bookedCount = 52;
+  const isSoldOut = bookedCount >= tripCapacity;
 
-  const { register, handleSubmit, reset, formState: { errors } } = useForm<WaitlistFormInputs>(); // Initialize react-hook-form for waitlist
+  const { register, handleSubmit, reset, formState: { errors } } =
+    useForm<WaitlistFormInputs>();
 
   const openFullScreenImage = (imageUrl: string) => {
     setFullScreenImage(imageUrl);
@@ -44,55 +43,62 @@ const UpcomingTripDetailsPage = () => {
     setFullScreenImage(null);
   };
 
+  /**
+   * IMPORTANT:
+   * This object now fully satisfies the Trip interface
+   * required by UpcomingTripCard.
+   *
+   * No UI or logic is affected because:
+   * - isHomepage={true}
+   * - most fields are not rendered in that mode
+   */
   const upcomingTrip = {
-    id: '550e8400-e29b-41d4-a716-446655440000', // Valid UUID that matches the trips table
+    id: '550e8400-e29b-41d4-a716-446655440000',
     title: 'SKI 3 VALLEYS',
+    subtitle: 'Val Thorens, French Alps',
     image: '/1000088456.jpg',
+    price: '£1,999',
+    originalPrice: undefined,
     dates: '10th - 17th January 2026',
     location: 'Val Thorens, French Alps',
+    duration: '7 Days',
+    groupSize: 'Small Group',
+    description:
+      'A premium alpine ski experience in the heart of the French Alps.',
     inclusions: [
-      'Return flights with BA from LHR to GVA',
-      'Full 3 Valleys Ski pass (Worth £370)',
-      "4★ Luxury Hotel (L'Oxalys)",
-      'Private Coach Transfer',
-      'Ski in/out access',
-      'Spa Facilities',
-    ]
+      { text: 'Return flights with BA from LHR to GVA' },
+      { text: 'Full 3 Valleys Ski pass (Worth £370)' },
+      { text: "4★ Luxury Hotel (L'Oxalys)" },
+      { text: 'Private Coach Transfer' },
+      { text: 'Ski in/out access' },
+      { text: 'Spa Facilities' },
+    ],
+    highlights: [],
+    badge: undefined,
   };
 
-  // Function to handle waitlist form submission
   const onWaitlistSubmit = async (data: WaitlistFormInputs) => {
-    console.log('Submitting waitlist data:', data);
-    console.log('Trip ID:', upcomingTrip.id);
-    
     try {
-      const insertData = {
-        trip_id: upcomingTrip.id,
-        full_name: data.fullName,
-        email: data.email,
-        phone: data.phone || null,
-      };
-      
-      console.log('Insert data:', insertData);
-      
-      const { data: result, error } = await supabase.from('waitlist').insert([
-        insertData
+      const { error } = await supabase.from('waitlist').insert([
+        {
+          trip_id: upcomingTrip.id,
+          full_name: data.fullName,
+          email: data.email,
+          phone: data.phone || null,
+        },
       ]);
 
-      console.log('Supabase response:', { result, error });
-      
       if (error) {
-        console.error('Supabase waitlist insert error:', error);
         toast.error(`Failed to join waitlist: ${error.message}`);
       } else {
-        console.log('Successfully inserted waitlist entry');
-        toast.success('Successfully joined the waitlist! We will notify you if a spot opens up.');
-        reset(); // Reset form fields
-        setShowWaitlistModal(false); // Close the modal
+        toast.success(
+          'Successfully joined the waitlist! We will notify you if a spot opens up.'
+        );
+        reset();
+        setShowWaitlistModal(false);
       }
     } catch (err) {
-      console.error('Unexpected error during waitlist submission:', err);
-      toast.error(`An unexpected error occurred: ${err instanceof Error ? err.message : 'Unknown error'}`);
+      toast.error('An unexpected error occurred.');
     }
   };
 
