@@ -2,16 +2,9 @@
   command = "npm run build"
   publish = "dist"
 
-directory = "netlify/functions"
-
-# SPA redirect rule
+# SPA routing – required for React Router
 [[redirects]]
   from = "/*"
   to = "/index.html"
   status = 200
 
-# Prerender homepage only
-[[headers]]
-  for = "/"
-  [headers.values]
-    x-netlify-prerender = "true"
