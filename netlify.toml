@@ -11,5 +11,5 @@
   to = "/index.html"
   status = 200
 
-   [[plugins]]
-package = "@netlify/plugin-prerender-spa"
+ [[plugins]]
+package = "netlify-plugin-prerender-spa"
