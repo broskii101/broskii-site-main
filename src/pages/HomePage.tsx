@@ -892,7 +892,7 @@ const HomePage = () => {
               <div className="flex items-center justify-center space-x-4 lg:space-x-6 mt-4 lg:mt-6 text-primary-200 text-xs lg:text-sm">
                 <div className="flex items-center space-x-2">
                   <CheckCircle className="h-3 w-3 lg:h-4 lg:w-4" />
-                  <span>No spam</span>
+                  <span>No spam.</span>
                 </div>
                 <div className="flex items-center space-x-2">
                   <CheckCircle className="h-3 w-3 lg:h-4 lg:w-4" />
