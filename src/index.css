@@ -5,6 +5,12 @@
 @tailwind components;
 @tailwind utilities;
 
+/* Hide footer during booking page data load (prevents flash) */
+body.booking-loading footer {
+  visibility: hidden;
+}
+
+
 .broskiis-heading-effect {
   display: inline-block;
   background-image: linear-gradient(to right, theme('colors.primary.600'), theme('colors.primary.800'));

@@ -7,6 +7,10 @@ const Header = () => {
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const location = useLocation();
+  const isHome = location.pathname === '/';
+// Header is always light and independent (no transparent overlay state)
+
+
 
   useEffect(() => {
     const handleScroll = () => {
@@ -16,13 +20,38 @@ const Header = () => {
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
+  useEffect(() => {
+    const prevOverflow = document.body.style.overflow;
+    const prevPaddingRight = document.body.style.paddingRight;
+  
+    if (isMobileMenuOpen) {
+      // Prevent layout shift when scrollbar disappears (desktop browsers)
+      const scrollBarWidth = window.innerWidth - document.documentElement.clientWidth;
+      document.body.style.overflow = 'hidden';
+      if (scrollBarWidth > 0) {
+        document.body.style.paddingRight = `${scrollBarWidth}px`;
+      }
+    } else {
+      document.body.style.overflow = prevOverflow;
+      document.body.style.paddingRight = prevPaddingRight;
+    }
+  
+    return () => {
+      document.body.style.overflow = prevOverflow;
+      document.body.style.paddingRight = prevPaddingRight;
+    };
+  }, [isMobileMenuOpen]);
+  
+  
+  
+
   const navigation = [
     { name: 'Home', href: '/' },
-    { name: 'Upcoming trips', href: '/upcoming-trip' },
-    { name: 'About us', href: '/about' },
+    { name: 'Trips', href: '/upcoming-trip' },
+    { name: 'About', href: '/about' },
     { name: 'Gallery', href: '/gallery' },
     { name: 'FAQs', href: '/faq' },
-    { name: 'Contact us', href: '/contact' },
+    { name: 'Contact', href: '/contact' },
   ];
 
   // Company Logo Component with proper colors and vertical flip
@@ -156,107 +185,211 @@ const Header = () => {
   );
 
   return (
+    <>
     <motion.header
-      initial={{ y: -100 }}
-      animate={{ y: 0 }}
-      className="fixed top-0 left-0 right-0 z-50 bg-white/95 backdrop-blur-md shadow-lg transition-all duration-300"
-    >
+  initial={{ opacity: 0 }}
+  animate={{ opacity: 1 }}
+  transition={{ duration: 0.25, ease: 'easeOut' }}
+  className={`sticky top-0 z-50 bg-white border-b border-black/10 transition-shadow duration-300 ${
+    isScrolled ? 'shadow-sm' : 'shadow-none'
+  }`}
+>
+
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex justify-between items-center h-20">
+      <div className="flex justify-between items-center h-[72px] sm:h-[88px]">
+
+{/* Mobile Menu Button */}
+<button
+  onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+  className="md:hidden flex items-center justify-center h-11 w-11 rounded-full bg-black/5 hover:bg-black/10 transition-colors duration-200 text-gray-900"
+>
+  {isMobileMenuOpen ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
+</button>
+
+
+
           {/* Logo Only - Bigger Size and Vertically Flipped - Moved Left */}
-          <Link to="/" className="flex items-center group -ml-4">
-            <CompanyLogo className="h-20 w-20 transition-all duration-300 group-hover:scale-110" />
+          <Link to="/" className="flex items-center -mr-3">
+
+          <CompanyLogo className="h-[77px] w-[77px] sm:h-[80px] sm:w-[80px]" />
+
+
           </Link>
 
           {/* Desktop Navigation */}
-          <nav className="hidden md:flex items-center space-x-8">
-            {navigation.map((item) => (
-              <Link
-                key={item.name}
-                to={item.href}
-                className={`relative px-3 py-2 text-sm font-medium transition-colors duration-300 ${
-                  location.pathname === item.href
-                    ? 'text-primary-600' 
-                    : 'text-gray-700 hover:text-primary-600'
-                }`}
-              >
-                {item.name}
-                {location.pathname === item.href && (
-                  <motion.div
-                    layoutId="activeTab"
-                    className="absolute bottom-0 left-0 right-0 h-0.5 bg-primary-500"
-                  />
-                )}
-              </Link>
-            ))}
-          </nav>
+<nav className="hidden md:flex items-center space-x-2">
+  {navigation.map((item) => {
+    const isActive = location.pathname === item.href;
+
+    return (
+      <Link
+        key={item.name}
+        to={item.href}
+        className={`relative px-3 py-2 text-sm font-medium transition-opacity duration-200 ${
+          isActive ? 'text-gray-900 opacity-100' : 'text-gray-700 opacity-80 hover:opacity-100'
+        }`}
+        
+      >
+        {item.name}
+
+        {isActive && (
+          <motion.div
+            layoutId="activeTab"
+            className="absolute -bottom-[1px] left-3 right-3 h-px bg-gray-900"
+
+          />
+        )}
+      </Link>
+    );
+  })}
+</nav>
+
 
           {/* CTA Buttons */}
           <div className="hidden md:flex items-center space-x-4">
             <Link
               to="/upcoming-trip"
-              className="flex items-center space-x-2 bg-broskii-light-blue-500 hover:bg-broskii-light-blue-600 text-white px-6 py-2 rounded-full text-sm font-medium transition-all duration-300 transform hover:scale-105 shadow-lg hover:shadow-xl"
+              className="flex items-center gap-2 bg-[#0092D1] hover:bg-[#0088c4] text-white px-6 py-2.5 rounded-full text-sm font-semibold transition-all duration-200 shadow-[0_10px_30px_rgba(0,146,209,0.22)] hover:shadow-[0_14px_40px_rgba(0,146,209,0.28)] hover:scale-[1.03]"
+
             >
               <Calendar className="h-4 w-4" />
               <span>Book Now</span>
             </Link>
           </div>
 
-          {/* Mobile Menu Button */}
-          <button
-            onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-            className="md:hidden p-2 rounded-lg text-gray-700 hover:bg-gray-100 transition-colors duration-300"
-          >
-            {isMobileMenuOpen ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
-          </button>
+         
+
+
         </div>
       </div>
 
-      {/* Mobile Menu */}
-      <AnimatePresence>
-        {isMobileMenuOpen && (
-          <motion.div
-            initial={{ opacity: 0, height: 0 }}
-            animate={{ opacity: 1, height: 'auto' }}
-            exit={{ opacity: 0, height: 0 }}
-            className="md:hidden bg-white border-t border-gray-200 shadow-lg"
+      
+
+    </motion.header>
+
+{/* Mobile Menu (overlay, anchored to header, does NOT replace hero) */}
+<AnimatePresence>
+  {isMobileMenuOpen && (
+    
+<motion.div
+  key="mobileMenuOverlay"
+  onClick={() => setIsMobileMenuOpen(false)}
+  initial={{ opacity: 0 }}
+  animate={{ opacity: 1 }}
+  exit={{ opacity: 0 }}
+  transition={{ duration: 0.18, ease: 'easeOut' }}
+  className="md:hidden fixed inset-0 z-[50] pointer-events-auto"
+>
+
+
+      {/* IMPORTANT: no backdrop, no full-width white layer */}
+
+      {/* Panel (anchored under header, right aligned) */}
+      <motion.div
+        key="mobileMenuPanel"
+        onClick={(e) => e.stopPropagation()}
+
+        initial={{ x: -64, opacity: 0 }}
+animate={{ x: 0, opacity: 1 }}
+exit={{ x: -64, opacity: 0 }}
+
+        transition={{ duration: 0.45, ease: [0.22, 1, 0.36, 1] }}
+        className="fixed left-0 top-[72px] w-[48%] max-w-[220px] pointer-events-auto"
+
+
+      >
+        {/* Off-white veil surface (NOT pure white) */}
+        <div className="rounded-b-3xl bg-[#FAFAFA] shadow-[0_20px_60px_rgba(0,0,0,0.12)] max-h-[60vh] overflow-y-auto px-5 py-6">
+
+          {/* Menu label (no extra X here; header X controls close) */}
+          
+
+          {/* Links (staggered) */}
+          <motion.nav
+            initial="hidden"
+            animate="visible"
+            variants={{
+              hidden: { opacity: 0 },
+              visible: {
+                opacity: 1,
+                transition: {
+                  staggerChildren: 0.09,
+                  delayChildren: 0.17,
+                },
+              },
+            }}
+            className="flex flex-col"
           >
-            <div className="px-4 py-6 space-y-6">
-              {/* Navigation Links */}
-              <div className="space-y-3">
-                {navigation.map((item) => (
+            {navigation.map((item, idx) => {
+              const active = location.pathname === item.href;
+
+              return (
+                <motion.div
+                  key={item.name}
+                  variants={{
+                    hidden: { opacity: 0, y: 8 },
+                    visible: { opacity: 1, y: 0 },
+                  }}
+                >
                   <Link
-                    key={item.name}
                     to={item.href}
                     onClick={() => setIsMobileMenuOpen(false)}
-                    className={`block px-4 py-3 text-base font-medium transition-all duration-300 ${
-                      location.pathname === item.href
-                        ? 'text-primary-600 bg-primary-50 border-l-4 border-primary-600'
-                        : 'text-gray-700 hover:text-primary-600 hover:bg-gray-50'
-                    } rounded-r-lg`}
+                    className="group block py-3"
                   >
-                    {item.name}
+                    <div
+                      className={`inline-flex items-baseline gap-3 font-serif text-[24px] leading-tight ${
+                        active ? 'text-gray-900' : 'text-gray-700'
+                      }`}
+                    >
+                      <span className="border-b border-transparent group-hover:border-gray-900/30 transition-colors">
+                        {item.name}
+                      </span>
+
+                      {active && (
+                        <span className="h-[6px] w-[6px] rounded-full bg-[#0092D1]" />
+                      )}
+                    </div>
                   </Link>
-                ))}
-              </div>
 
-              {/* Book Now Button */}
-              <div className="pt-6">
-                <Link
-                  to="/upcoming-trip"
-                  onClick={() => setIsMobileMenuOpen(false)}
-                  className="flex items-center justify-center space-x-3 bg-broskii-light-blue-500 hover:bg-broskii-light-blue-600 text-black px-6 py-4 rounded-xl text-lg font-bold transition-all duration-300"
-                >
-                  <Calendar className="h-5 w-5" />
-                  <span>Book Now</span>
-                </Link>
-              </div>
-            </div>
-          </motion.div>
-        )}
-      </AnimatePresence>
-    </motion.header>
-  );
-};
+                  {/* ultra-soft divider (optional, very subtle) */}
+                  {idx !== navigation.length - 1 && (
+                    <div className="h-px bg-black/5" />
+                  )}
+                </motion.div>
+              );
+            })}
+          </motion.nav>
 
-export default Header;
+      {/* Editorial CTA (text only, neutral) */}
+<div className="mt-8">
+  <Link
+    to="/upcoming-trip"
+    onClick={() => setIsMobileMenuOpen(false)}
+    className="group inline-flex items-center font-serif text-[22px] leading-tight text-gray-900 font-semibold"
+  >
+    <span className="
+      border-b-2
+      border-gray-900/40
+      group-hover:border-gray-900
+      transition-colors duration-200
+    ">
+      Book now
+    </span>
+  </Link>
+</div>
+
+
+
+        </div>
+      </motion.div>
+    </motion.div>
+  )}
+</AnimatePresence>
+
+
+     </>
+   );
+   };
+   
+   export default Header;
+   

@@ -1,29 +1,20 @@
-import React, { useRef } from 'react';
+import { useRef } from 'react';
 import { motion, useScroll, useTransform } from 'framer-motion';
 import { Link } from 'react-router-dom';
 import { 
-  Mountain, 
   Users, 
   Heart, 
-  Star,
-  Calendar,
   Target,
-  Zap,
-  Globe,
   ArrowRight,
-  Quote,
-  Snowflake,
-  Award,
-  Camera,
-  MessageCircle
-} from 'lucide-react';
+  Quote} from 'lucide-react';
 
 const AboutPage = () => {
   const heroRef = useRef(null);
   const { scrollY } = useScroll();
 
   const imageY = useTransform(scrollY, [0, 700], [0, -150]);
-  const imageScale = useTransform(scrollY, [0, 700], [1, 1.05]);
+  const imageScale = useTransform(scrollY, [0, 700], [1, 1.03]);
+
 
   const textY = useTransform(scrollY, [0, 700], [0, -50]);
   const textOpacity = useTransform(scrollY, [0, 300, 600], [1, 1, 0]);
@@ -33,15 +24,16 @@ const AboutPage = () => {
   const founders = [
     {
       name: 'Ali Shaikh',
-      role: 'Co-Founder', 
-      image: '/Screenshot_20250710_212007_Gallery.webp'
+      role: 'Co-Founder',
+      image: 'https://res.cloudinary.com/dtx0og5tm/image/upload/f_auto,q_auto,w_600/v1766872445/broskii-cofounder-ali-shaikh.webp_j8f4kd.webp'
     },
     {
       name: 'Abdullah Green',
       role: 'Co-Founder',
-      image: '/Screenshot_20250710_211429_Gallery.webp'
+      image: 'https://res.cloudinary.com/dtx0og5tm/image/upload/f_auto,q_auto,w_600/v1766872446/broskii-cofounder-abdullah-green.webp_y3r3g5.webp'
     }
   ];
+  
 
   const values = [
     {
@@ -65,19 +57,25 @@ const AboutPage = () => {
   ];
 
   return (
-    <div className="pt-20">
+    <div className="overflow-x-hidden">
+  
       {/* Hero Section */}
-      <section ref={heroRef} className="relative">
+      <section ref={heroRef} className="relative overflow-hidden">
+
         <motion.div
           className="relative"
           style={{ y: imageY, scale: imageScale }}
         >
+          
           <img 
-            src="/IMG-20250116-WA0034.jpg"
-            alt="Two Broskiis enjoying mountain views"
-            className="w-full h-auto min-h-[70vh] object-cover"
-          />
-          <div className="absolute inset-0 bg-gradient-to-r from-black/30 via-black/20 to-black/30"></div>
+  src="https://res.cloudinary.com/dtx0og5tm/image/upload/f_auto,q_auto,w_1600/v1766873565/broskii-founders-mountain-break.JPEG_ol2wox.jpg"
+  alt="Two Broskii co-founders seated on a mountain ridge in ski clothing, looking out over a distant alpine landscape."
+  className="w-full h-[62vh] md:h-[72vh] object-cover object-[center_60%]"
+/>
+
+
+
+          <div className="absolute inset-0 bg-gradient-to-r from-black/25 via-black/15 to-black/25"></div>
         </motion.div>
         
         <div className="absolute inset-0 flex items-center justify-center">
@@ -86,30 +84,21 @@ const AboutPage = () => {
               className="text-center text-white"
               style={{ y: textY, opacity: textOpacity }}
             >
-              <h1 className="text-5xl md:text-7xl font-serif font-black mb-6 leading-tight">
+              <h1 className="text-4xl md:text-6xl font-serif font-bold leading-[1.1] mb-6">
+
                 <span className="block" style={{ textShadow: '0 4px 20px rgba(0,0,0,0.8)' }}>
                   About Us
                 </span>
               </h1>
-              <p className="text-xl md:text-2xl text-gray-100 max-w-4xl mx-auto leading-relaxed font-medium" style={{ textShadow: '0 2px 12px rgba(0,0,0,0.8)' }}>
+              <p className="text-lg md:text-xl text-gray-100 max-w-4xl mx-auto leading-relaxed font-normal" style={{ textShadow: '0 2px 12px rgba(0,0,0,0.8)' }}>
+
                 Broskii.. we're not just hitting the slopes — we're building something bigger.
               </p>
             </motion.div>
           </div>
         </div>
 
-        <motion.div
-          className="absolute top-20 left-10 animate-float"
-          style={{ y: snowflakeY }}
-        >
-          <Snowflake className="h-8 w-8 text-white/20" />
-        </motion.div>
-        <motion.div
-          className="absolute bottom-20 right-10 animate-float"
-          style={{ animationDelay: '2s', y: snowflakeY }}
-        >
-          <Snowflake className="h-6 w-6 text-white/30" />
-        </motion.div>
+        
       </section>
 
       {/* Origin Story */}
@@ -124,7 +113,7 @@ const AboutPage = () => {
               className="space-y-8"
             >
               <div>
-                <h2 className="text-4xl md:text-5xl font-serif font-bold text-gray-900 mb-6">
+                <h2 className="text-3xl md:text-5xl font-serif font-bold text-gray-900 mb-6">
                   Our Story
                 </h2>
                 <div className="w-20 h-1 bg-primary-600 mb-8"></div>
@@ -151,11 +140,12 @@ const AboutPage = () => {
               className="relative"
             >
               <div className="relative rounded-3xl overflow-hidden shadow-2xl">
-                <img 
-                  src="/IMG-20241217-WA0005.jpg"
-                  alt="Group skiing"
-                  className="w-full h-96 object-cover"
-                />
+              <img 
+  src="https://res.cloudinary.com/dtx0og5tm/image/upload/f_auto,q_auto,w_1400/v1766874104/broskii-family-ski-trip-children-group.JPEG_figbe6.jpg"
+  alt="Children from a Broskii family ski trip posing together after a ski school session."
+  className="w-full h-96 object-cover"
+/>
+
                 <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent"></div>
               </div>
             </motion.div>
@@ -264,7 +254,8 @@ const AboutPage = () => {
           <div className="mb-4 sm:mb-6">
             <img
               src={founder.image}
-              alt={founder.name}
+              alt={`${founder.name}, ${founder.role} of Broskii`}
+
               className="w-24 h-24 sm:w-32 sm:h-32 md:w-48 md:h-48 rounded-full mx-auto object-cover shadow-xl"
             />
           </div>
@@ -328,7 +319,7 @@ const AboutPage = () => {
       </h2>
       <p className="text-xl text-primary-100 mb-8">
         If you've ever thought, "I'd love to try that one day" — this is your sign.
-        Whether you're new to skiing or an off-piste legend, come be part of something special.
+        Whether you're new to skiing or an off-piste expert, come be part of something special.
       </p>
       
       <div className="space-y-6">
@@ -337,7 +328,7 @@ const AboutPage = () => {
           className="group relative inline-flex items-center space-x-3 bg-broskii-light-blue-500 hover:bg-broskii-light-blue-600 text-black px-8 py-4 rounded-full text-lg font-bold transition-all duration-300 transform hover:scale-105 shadow-2xl border-2 border-broskii-light-blue-500 hover:border-broskii-light-blue-400 overflow-hidden"
         >
           <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-700"></div>
-          <span className="relative z-10">See our upcoming trips</span>
+          <span className="relative z-10">See upcoming trips</span>
           <ArrowRight className="h-6 w-6" />
         </Link>
         

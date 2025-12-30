@@ -7,15 +7,40 @@
     <priority>1.0</priority>
   </url>
 
-  <url><loc>https://broskii.com/upcoming-trip/</loc></url>
-  <url><loc>https://broskii.com/about/</loc></url>
-  <url><loc>https://broskii.com/gallery/</loc></url>
-  <url><loc>https://broskii.com/faq/</loc></url>
-  <url><loc>https://broskii.com/contact/</loc></url>
+  <url>
+    <loc>https://broskii.com/upcoming-trip/</loc>
+    <lastmod>2025-12-18</lastmod>
+    <priority>0.9</priority>
+  </url>
+
+  <url>
+    <loc>https://broskii.com/about/</loc>
+    <lastmod>2025-12-18</lastmod>
+    <priority>0.8</priority>
+  </url>
+
+  <url>
+    <loc>https://broskii.com/gallery/</loc>
+    <lastmod>2025-12-18</lastmod>
+    <priority>0.7</priority>
+  </url>
+
+  <url>
+    <loc>https://broskii.com/faq/</loc>
+    <lastmod>2025-12-18</lastmod>
+    <priority>0.8</priority>
+  </url>
+
+  <url>
+    <loc>https://broskii.com/contact/</loc>
+    <lastmod>2025-12-18</lastmod>
+    <priority>0.6</priority>
+  </url>
+
+  <!-- Policy pages (lower importance, still indexed) -->
   <url><loc>https://broskii.com/privacy-policy/</loc></url>
   <url><loc>https://broskii.com/terms-of-service/</loc></url>
   <url><loc>https://broskii.com/cookies-policy/</loc></url>
   <url><loc>https://broskii.com/refund-policy/</loc></url>
 
 </urlset>
-

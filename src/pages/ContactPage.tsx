@@ -2,14 +2,15 @@ import React from 'react';
 import { motion } from 'framer-motion';
 import { useForm } from 'react-hook-form';
 import { useNavigate } from 'react-router-dom';
-import { 
-  Mail, 
+import {
+  Mail,
   MessageCircle,
   Send,
   Instagram
 } from 'lucide-react';
 
-import MessageSentPage from './MessageSentPage'; // Adjust this path if needed
+import ContactSuccessPage from './ContactSuccessPage';
+
 
 interface ContactForm {
   name: string;
@@ -23,6 +24,7 @@ const ContactPage = () => {
   const { register, handleSubmit, reset, formState: { errors } } = useForm<ContactForm>();
   const [messageSent, setMessageSent] = React.useState(false);
   const navigate = useNavigate();
+
   const contactInfo = [
     {
       icon: Mail,
@@ -69,15 +71,27 @@ const ContactPage = () => {
       console.error(err);
     }
   };
+
   return (
-    <div className="pt-20">
+    <div className="overflow-x-hidden">
       {messageSent ? (
-        <MessageSentPage />
-      ) : (
+  <ContactSuccessPage />
+) : (
+
         <>
           {/* Hero Section */}
-          <section className="relative py-20 bg-gradient-to-r from-primary-600 to-primary-800">
-            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <section className="relative py-20 overflow-hidden">
+            {/* Background image */}
+            <img
+              src="https://res.cloudinary.com/dtx0og5tm/image/upload/f_auto,q_auto,w_1600/v1766890218/broskii-ski-lesson-instructor-guided-slope.webp_rdonp2.webp"
+              alt="Ski instructor guiding a small group on a gentle alpine slope, representing support and guidance during a Broskii ski trip."
+              className="absolute inset-0 w-full h-full object-cover"
+            />
+
+            {/* Overlay for readability */}
+            <div className="absolute inset-0 bg-black/35"></div>
+
+            <div className="relative z-10 w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
               <motion.div
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
@@ -85,11 +99,14 @@ const ContactPage = () => {
                 className="text-center text-white"
               >
                 <div className="flex items-center justify-center space-x-3 mb-6">
-                  <MessageCircle className="h-12 w-12 text-primary-200" />
-                  <h1 className="text-5xl font-serif font-bold">Let's Chat</h1>
+                  <MessageCircle className="h-12 w-12 text-white/80" />
+                  <h1 className="text-4xl md:text-6xl font-serif font-bold leading-[1.1]">
+                    Let&apos;s Chat
+                  </h1>
                 </div>
-                <p className="text-xl text-primary-100 max-w-4xl mx-auto leading-relaxed">
-                  Need help planning your trip? Whether it's your first time on the slopes or your fifth — we'll guide you every step of the way.
+
+                <p className="text-lg md:text-xl text-white/90 max-w-4xl mx-auto leading-relaxed font-normal">
+                  Need help planning your trip? Whether it&apos;s your first time on the slopes or your sixth — we&apos;ll guide you every step of the way.
                 </p>
               </motion.div>
             </div>
@@ -105,12 +122,15 @@ const ContactPage = () => {
                   whileInView={{ opacity: 1, x: 0 }}
                   transition={{ duration: 0.6 }}
                   viewport={{ once: true }}
-                  className="bg-white rounded-2xl shadow-xl p-8"
+
+                  // Tuned: calmer, lighter container; does not add scroll
+                  className="bg-[#f7fbff] border border-[#e6f1f8] rounded-3xl shadow-sm p-6 sm:p-7"
                 >
-                  <div className="flex items-center space-x-3 mb-8">
+                  <div className="flex items-center space-x-3 mb-6">
                     <MessageCircle className="h-4 w-4" />
-                    <h2 className="text-3xl font-serif font-bold text-gray-900">Send us a Message</h2>
+                    <h2 className="text-2xl font-serif font-bold text-gray-900">Send us a Message</h2>
                   </div>
+
                   <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                       <div>
@@ -125,6 +145,7 @@ const ContactPage = () => {
                         />
                         {errors.name && <p className="text-red-600 text-sm mt-1">{errors.name.message}</p>}
                       </div>
+
                       <div>
                         <label className="block text-sm font-medium text-gray-700 mb-2">
                           Email Address *
@@ -157,6 +178,7 @@ const ContactPage = () => {
                           placeholder="Enter your phone number"
                         />
                       </div>
+
                       <div>
                         <label className="block text-sm font-medium text-gray-700 mb-2">
                           Subject *
@@ -206,6 +228,8 @@ const ContactPage = () => {
                   whileInView={{ opacity: 1, x: 0 }}
                   transition={{ duration: 0.6 }}
                   viewport={{ once: true }}
+
+                  // keep spacing same to avoid adding scroll
                   className="space-y-6"
                 >
                   {contactInfo.map((info, index) => (
@@ -221,14 +245,37 @@ const ContactPage = () => {
                         href={info.link}
                         target={info.link.startsWith('http') ? '_blank' : undefined}
                         rel={info.link.startsWith('http') ? 'noopener noreferrer' : undefined}
-                        className="block bg-white rounded-2xl shadow-xl p-8 text-center hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-2 border border-gray-100"
+
+                        // Tuned: centered, calmer, smaller-feeling; no translate jump
+                        className="
+                          block
+                          bg-white
+                          border border-gray-200/70
+                          rounded-3xl
+                          shadow-sm
+                          hover:shadow-md
+                          transition-shadow duration-300
+                          p-6 sm:p-7
+                          text-center
+                        "
                       >
-                        <div className={`bg-gradient-to-r ${info.color} rounded-full w-16 h-16 flex items-center justify-center mx-auto mb-6 group-hover:scale-110 transition-transform duration-300 shadow-lg`}>
-                          <info.icon className="h-8 w-8 text-white" />
+                        <div
+                          className={`
+                            bg-gradient-to-r ${info.color}
+                            rounded-full
+                            w-14 h-14
+                            flex items-center justify-center
+                            mx-auto
+                            mb-4
+                            shadow-sm
+                          `}
+                        >
+                          <info.icon className="h-7 w-7 text-white" />
                         </div>
-                        <h3 className="text-xl font-bold text-gray-900 mb-2">{info.title}</h3>
-                        <p className="text-gray-900 font-medium mb-2">{info.details}</p>
-                        <p className="text-gray-600 text-sm">{info.description}</p>
+
+                        <h3 className="text-xl font-bold text-gray-900 mb-1">{info.title}</h3>
+                        <p className="text-gray-900 font-medium mb-1">{info.details}</p>
+                        <p className="text-gray-600 text-[15px]">{info.description}</p>
                       </a>
                     </motion.div>
                   ))}
@@ -243,3 +290,4 @@ const ContactPage = () => {
 };
 
 export default ContactPage;
+

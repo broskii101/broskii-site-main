@@ -1,9 +1,11 @@
-import React, { useState, useRef, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom'; // Adjust if you use a different router
+import { useState, useRef, useEffect } from 'react';
+import { useNavigate, useParams } from 'react-router-dom';
+
 import { motion } from 'framer-motion';
 import { useForm } from 'react-hook-form';
 import { supabase } from '../lib/supabaseClient'; // Adjust path if needed
-import { CheckCircle, Calendar, User, Mail, Phone, Users, CreditCard, ArrowRight, Clock, MapPin, Mountain, Plane, Snowflake, Hotel, Sparkles, Bus, HelpCircle, FileText, Info, Globe, Wallet, X, ArrowLeft, Package, GraduationCap, Bed, ShieldCheck, FileSignature as Signature } from 'lucide-react';
+import { CheckCircle, User, Mail, Phone, CreditCard, ArrowRight, Mountain, Plane, HelpCircle, Wallet, X, ArrowLeft, Package, GraduationCap, Bed, ShieldCheck, FileSignature as Signature } from 'lucide-react';
+import toast from 'react-hot-toast';
 
 
 interface BookingForm {
@@ -26,20 +28,73 @@ interface BookingForm {
   terms: boolean;
   electronicSignature: string;
 }
-
 const BookingPage = () => {
+  const { tripId } = useParams<{ tripId?: string }>();
+
+  console.log('BookingPage tripId:', tripId);
+
+  const [trip, setTrip] = useState<any>(null);
+  const [isLoadingTrip, setIsLoadingTrip] = useState(true);
+
+  const isSoldOut =
+  !!trip &&
+  (
+    (typeof trip.capacity === 'number' &&
+      typeof trip.booked_count === 'number' &&
+      trip.booked_count >= trip.capacity) ||
+    trip.status === 'full'
+  );
+
+
+
   const [currentStep, setCurrentStep] = useState(0);
+
+
   const [showTooltip, setShowTooltip] = useState<string | null>(null);
 const formRef = useRef<HTMLFormElement>(null);  // 
   const [paymentOption, setPaymentOption] = useState<string | null>(null);
   const [paymentUrl, setPaymentUrl] = useState<string | null>(null);
   const [showPaymentModal, setShowPaymentModal] = useState(false);
 const [hasSaved, setHasSaved] = useState(false);
+const [isSavingBooking, setIsSavingBooking] = useState(false);
+
+const [showWaitlistModal, setShowWaitlistModal] = useState(false);
+
+
 
   
   const { register, handleSubmit, watch, formState: { errors }, setValue, trigger, getValues } = useForm<BookingForm>();
   
   const equipmentRental = watch('equipmentRental');
+
+  useEffect(() => {
+    const loadTrip = async () => {
+      // If someone visits /booking without a tripId, skip for now
+      if (!tripId) {
+        setIsLoadingTrip(false);
+        return;
+      }
+  
+      const { data, error } = await supabase
+        .from('trips')
+        .select('*')
+        .eq('id', tripId)
+        .single();
+  
+      if (error) {
+        console.error('Failed to load trip:', error);
+      } else {
+        setTrip(data);
+        console.log('Loaded trip:', data);
+      }
+  
+      setIsLoadingTrip(false);
+    };
+  
+    loadTrip();
+  }, [tripId]);
+  
+
   
   useEffect(() => {
     if (equipmentRental !== 'yes') {
@@ -53,26 +108,52 @@ const [hasSaved, setHasSaved] = useState(false);
   const [selectedPaymentAmount, setSelectedPaymentAmount] = useState<'full' | 'deposit' | null>(null);
   const [paymentConfirmed, setPaymentConfirmed] = useState(false);
   const [paymentConfirmedError, setPaymentConfirmedError] = useState('');
+
+
+  // ---- Payment helpers (trip-driven) ----
+  const fullAmount = trip?.full_payment_amount ?? null;
+  const depositAmount = trip?.deposit_amount ?? null;
+  const balanceDueDate = trip?.balance_due_date ?? null;
+
+// ---- Travel helpers (trip-driven) ----
+const departureAirport = trip?.departure_airport ?? null;
+const transferAirport = trip?.transfer_airport ?? null;
+
+
+
+  // Card prices are derived (2% fee)
+  const fullAmountCard =
+    fullAmount !== null ? Math.round(fullAmount * 1.02) : null;
+
+  const depositAmountCard =
+    depositAmount !== null ? Math.round(depositAmount * 1.02) : null;
+
+  // Monzo links
+  const monzoLinks = {
+    bank: {
+      full: trip?.monzo_bank_full_url ?? null,
+      deposit: trip?.monzo_bank_deposit_url ?? null,
+    },
+    card: {
+      full: trip?.monzo_card_full_url ?? null,
+      deposit: trip?.monzo_card_deposit_url ?? null,
+    },
+  };
+
+
+
+
   
 
-  // Trip data
-  const tripData = {
-    dates: "10th - 17th January 2026",
-    location: "Val Thorens",
-    region: "French Alps",
-    resortLocation: "Val Thorens, French Alps",
-    resort: "Europe's Highest Ski Resort",
-    price: "£1200",
-    priceLabel: "Total Trip Price",
-    inclusions: [
-      { text: "Return flights with BA from LHR", icon: Plane },
-      { text: "4★ Luxury Hotel (L'Oxalys)", icon: Hotel },
-      { text: "Private Coach Transfer", icon: Bus },
-      { text: "Ski pass (£370 value)", icon: Snowflake },
-      { text: "Ski in/out access", icon: ArrowRight },
-      { text: "Spa Facilities", icon: Sparkles }
-    ]
-  };
+  useEffect(() => {
+    if (!tripId) {
+      navigate('/upcoming-trip', { replace: true });
+    }
+  }, [tripId, navigate]);
+  
+
+
+  
 
   // Steps (REORDERED: Waiver before Payment)
   const steps = [
@@ -82,34 +163,46 @@ const [hasSaved, setHasSaved] = useState(false);
     { title: 'Payment Information' }
   ];
 
-const experienceOptions = [
-  {
-    value: 'beginner',
-    label: 'First Time / Beginner',
-    description:
-      "It’s your first ski/snowboard trip, or you’ve only been once and are still learning the basics."
-  },
-  {
-    value: 'intermediate',
-    label: 'Intermediate',
-    description:
-      "You’ve been a couple of times, feel comfortable on blue runs, and have started trying reds."
-  },
-  {
-    value: 'advanced',
-    label: 'Advanced',
-    description:
-      "You’re confident on red/black runs, enjoy challenging terrain, and want to refine advanced skills."
-  }
-];
+  const experienceOptions = [
+    {
+      value: 'first-time',
+      label: 'First Time',
+      description:
+        'You have never skied or snowboarded before. This is your first time on snow. Lessons are mandatory at this level and will be arranged for you.'
+    },
+    {
+      value: 'beginner',
+      label: 'Beginner',
+      description:
+        'You have been skiing or snowboarding once or twice and are still learning the basics. Lessons are highly recommended to build confidence and control.'
+    },
+    {
+      value: 'intermediate',
+      label: 'Intermediate',
+      description:
+        'You are comfortable on blue runs and have started skiing or snowboarding red runs with confidence.'
+    },
+    {
+      value: 'advanced',
+      label: 'Advanced',
+      description:
+        'You are confident on red and black runs and comfortable on steeper or more challenging terrain.'
+    }
+  ];
+  
 
-// Save into Supabase + send confirmation email after Step 3 (Waiver)
+
+
 const saveAfterWaiver = async () => {
-  if (hasSaved) return true; // already saved once
+  if (isSavingBooking || hasSaved) return true;
+
+  setIsSavingBooking(true);
 
   const data = getValues();
 
   const transformedData = {
+    trip_id: tripId ?? null,
+
     full_name: data.fullName,
     age: data.age,
     city: data.city,
@@ -123,23 +216,28 @@ const saveAfterWaiver = async () => {
     lessons: data.lessons,
     room_preference: data.roomPreference,
     travel_plans: data.travelPlans,
-    payment_option: data.selectedPaymentOption ?? null, // ensure not undefined
+    payment_option: data.selectedPaymentOption ?? null,
     waiver_agreed: data.waiver,
     extras_balance_adjusted: data.extrasTerms,
     terms_accepted: data.terms,
     electronic_signature: data.electronicSignature,
   };
 
-  const { error: insertError } = await supabase.from('booking').insert([transformedData]);
-  if (insertError) {
-    console.error('Supabase insert error:', insertError);
+  // 1️⃣ Save booking
+  const { error } = await supabase
+    .from('booking')
+    .insert([transformedData]);
+
+  if (error) {
+    console.error('Supabase insert error:', error);
     alert('Failed to save booking. Please try again.');
+    setIsSavingBooking(false);
     return false;
   }
 
-  setHasSaved(true); // mark as saved so we don’t insert again
+  setHasSaved(true);
 
-  // Send single confirmation email that mentions payment
+  // 2️⃣ Send confirmation email (non-blocking)
   try {
     await fetch('/.netlify/functions/sendBookingConfirmation', {
       method: 'POST',
@@ -159,20 +257,29 @@ const saveAfterWaiver = async () => {
         roomPreference: data.roomPreference,
         travelPlans: data.travelPlans,
         selectedPaymentOption: data.selectedPaymentOption,
-        waiver: data.waiver,
-        extrasTerms: data.extrasTerms,
-        terms: data.terms,
         electronicSignature: data.electronicSignature,
         messageType: 'pendingPayment',
       }),
     });
-  } catch (emailErr) {
-    console.warn('Email send failed (non-blocking):', emailErr);
+  } catch (err) {
+    console.warn('Email send failed (non-blocking):', err);
   }
 
+  setIsSavingBooking(false);
   return true;
 };
+
+
+
+
+
 const nextStep = async () => {
+  if (isSoldOut) {
+    setShowWaitlistModal(true);
+    return;
+  }
+
+
   // Clear previous payment confirmation error
   setPaymentConfirmedError('');
 
@@ -238,12 +345,65 @@ const prevStep = () => {
 
 // Final submit on last step -> just navigate to thank-you
 const onSubmit = async () => {
+  if (isSoldOut) {
+    setShowWaitlistModal(true);
+    return;
+  }
   if (!paymentConfirmed) {
     setPaymentConfirmedError('Please confirm your payment before finishing.');
     return;
   }
   navigate('/thank-you');
 };
+
+
+// --------------------
+// Waitlist form logic
+// --------------------
+interface WaitlistFormInputs {
+  fullName: string;
+  email: string;
+  phone?: string;
+}
+
+const {
+  register: registerWaitlist,
+  handleSubmit: handleWaitlistSubmit,
+  reset: resetWaitlist,
+  formState: { errors: waitlistErrors },
+} = useForm<WaitlistFormInputs>();
+
+const onWaitlistSubmit = async (data: WaitlistFormInputs) => {
+  if (!tripId) return;
+
+  try {
+    const { error } = await supabase.from('waitlist').insert([
+      {
+        trip_id: tripId,
+        full_name: data.fullName,
+        email: data.email,
+        phone: data.phone ?? null,
+      },
+    ]);
+
+    if (error) {
+      toast.error(error.message);
+      return;
+    }
+
+    toast.success('You have been added to the waitlist.');
+    resetWaitlist();
+    setShowWaitlistModal(false);
+  } catch {
+    toast.error('Something went wrong. Please try again.');
+  }
+};
+
+const clickableCard =
+  "cursor-pointer transition will-change-transform hover:shadow-md hover:-translate-y-[1px] active:translate-y-0";
+
+
+
 
   const Tooltip = ({ content, id }: { content: string; id: string }) => (
     <div className="relative inline-block">
@@ -275,52 +435,91 @@ const onSubmit = async () => {
     </div>
   );
 
+
+
+  useEffect(() => {
+    if (isLoadingTrip) {
+      document.body.classList.add('booking-loading');
+    } else {
+      document.body.classList.remove('booking-loading');
+    }
+  
+    return () => {
+      document.body.classList.remove('booking-loading');
+    };
+  }, [isLoadingTrip]);
+  
+
+
+
+
+
+  if (isLoadingTrip) {
+    return null;
+  }
+
+
   return (
     <div className="min-h-screen bg-gray-50">
 {/* Hero Section */}
-<section className="relative h-[60vh] md:h-[70vh] flex items-center justify-center overflow-hidden">
+<section className="relative h-[58vh] md:h-[58vh] flex items-center justify-center overflow-hidden">
   <img
-    src="/IMG-20250120-WA0026.webp"
-    alt="Ski slopes background"
+    src="https://res.cloudinary.com/dtx0og5tm/image/upload/f_auto,q_auto,w_1600/v1766869280/alpine-skiing-panorama-hero.webp_nhhysp.webp"
+    alt="Panoramic view of high-altitude alpine ski terrain with snow-covered mountains under a clear sky."
     className="absolute inset-0 w-full h-full object-cover"
   />
-  <div className="absolute inset-0 bg-black/50"></div>
+  <div className="absolute inset-0 bg-black/45"></div>
 
   <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex items-center justify-center">
-    {/* Moved everything slightly lower */}
     <motion.div
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.6 }}
-      className="text-center text-white relative z-10 mt-20 md:mt-28"
+      className="text-center text-white relative z-10"
 >
  {/* increased top margin to move block down */}  
     
       <div className="flex items-center justify-center space-x-3 mb-2 md:mb-4">
-        <h1 className="text-5xl font-serif font-bold text-white drop-shadow-lg">
-          SKI 3 VALLEYS
+      <h1 className="text-4xl md:text-6xl font-serif font-bold text-white leading-[1.1] drop-shadow-lg">
+
+        {trip?.title ?? 'Loading trip...'}
+
         </h1>
       </div>
 
-      <p className="text-lg font-semibold text-white/90 max-w-4xl mx-auto drop-shadow-md mb-6">
-        Val Thorens, French Alps
+      <p className="text-lg md:text-xl font-normal text-white/90 max-w-4xl mx-auto drop-shadow-md mb-5">
+
+      {trip?.location ?? ''}
+
       </p>
 
-      <p className="text-xl text-white/90 max-w-4xl mx-auto leading-relaxed drop-shadow-md mb-7">
-        Where every run feels legendary — 600km of epic slopes at Europe's highest ski resort.
+      <p className="text-base md:text-lg text-white/85 max-w-4xl mx-auto leading-relaxed drop-shadow-md mb-6">
+
+      {trip?.hero_description ?? ''}
+
       </p>
 
       <p className="text-2xl text-white font-semibold max-w-4xl mx-auto drop-shadow-md mb-7">
-        10th – 17th January 2026
-      </p>
+  {trip
+    ? `${new Date(trip.start_date).toLocaleDateString('en-GB', {
+        day: 'numeric',
+      })} – ${new Date(trip.end_date).toLocaleDateString('en-GB', {
+        day: 'numeric',
+        month: 'long',
+        year: 'numeric',
+      })}`
+    : ''}
+</p>
+
 
       {/* Grouped Total Trip Price and Price */}
       <div className="max-w-4xl mx-auto drop-shadow-md">
         <p className="text-sm font-semibold text-white/80 uppercase tracking-wider mb-0">
-          Total Trip Price
+          Trip Price
         </p>
         <p className="text-3xl font-bold text-primary-400 drop-shadow-[0_0_10px_rgba(255,255,255,0.3)] mt-1">
-          £1,200
+        {trip?.hero_price ?? ''}
+
         </p>
       </div>
     </motion.div>
@@ -645,7 +844,7 @@ const onSubmit = async () => {
       <div className="flex-1">
         <div className="font-medium text-gray-900">I'll be bringing my own skis/snowboard</div>
         <div className="text-sm text-gray-600">
-          (airline carriage fees may apply — details will be sent closer to the trip)
+          (Airline carriage fees may apply — details will be sent closer to the trip)
         </div>
       </div>
     </label>
@@ -741,7 +940,7 @@ const onSubmit = async () => {
                           />
                           <div className="flex-1">
                             <div className="font-medium text-gray-900">I'd like to request my own room</div>
-                            <div className="text-sm text-gray-600">(approx. £550 extra – subject to availability)</div>
+                            <div className="text-sm text-gray-600">(Subject to availability)</div>
                           </div>
                         </label>
                       </div>
@@ -756,21 +955,27 @@ const onSubmit = async () => {
                         <Plane className="h-6 w-6 text-primary-600" />
                         <span>Travel Plans</span>
                       </h3>
+                      
+
                       <div className="text-gray-600 mb-4 space-y-4">
-                        <p>Our package includes return flights from London Heathrow (LHR) to Geneva (GVA), along with private coach transfers from Geneva to the resort.</p>
+  {trip?.travel_information && (
+    <div
+      className="space-y-4"
+      dangerouslySetInnerHTML={{ __html: trip.travel_information }}
+    />
+  )}
 
-                        <p>If you're travelling from another UK airport or from abroad, you'll need to arrange your own flights. You can still join our private coach transfer from Geneva — we'll share our flight details and transfer timings in advance to help you coordinate.</p>
+  {trip?.important_notice && (
+    <div className="bg-amber-50 border border-amber-200 rounded-lg p-4 text-amber-700">
+      <div dangerouslySetInnerHTML={{ __html: trip.important_notice }} />
+    </div>
+  )}
+</div>
 
-                        <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
-                          <p className="text-blue-800 font-medium mb-2">If you're arranging your own flights and/or transfer:</p>
-                          <p className="text-blue-700">Please only pay the deposit when booking. We will deduct the cost of the flights and/or transfers from your total and send you an adjusted invoice for the remaining balance.</p>
-                        </div>
 
-                        <div className="bg-amber-50 border border-amber-200 rounded-lg p-4">
-                          <p className="text-amber-800 font-semibold mb-2">Important:</p>
-                          <p className="text-amber-700">If you miss your group flight from London or miss the group transfer in Geneva, you'll be responsible for arranging your own transportation to the resort at your own expense.</p>
-                        </div>
-                      </div>
+
+
+                      
                       <p className="text-gray-700 font-medium mb-4">How will you be travelling?</p>
                       <div className="space-y-3">
                         <label className="flex items-start space-x-3 p-4 border border-gray-200 rounded-lg hover:bg-white transition-colors cursor-pointer">
@@ -781,7 +986,8 @@ const onSubmit = async () => {
                             className="mt-1 h-4 w-4 text-primary-600 focus:ring-primary-500 border-gray-300"
                           />
                           <div className="flex-1">
-                            <div className="font-medium text-gray-900">I'll be flying with the group from London Heathrow</div>
+                            <div className="font-medium text-gray-900">I'll be flying with the group from {departureAirport ?? 'London Heathrow'}
+</div>
                             <div className="text-sm text-gray-600">(included in the package)</div>
                           </div>
                         </label>
@@ -795,7 +1001,8 @@ const onSubmit = async () => {
                           <div className="flex-1">
                             <div>
                               <div className="font-medium text-gray-900">I'll be travelling from another UK airport or abroad</div>
-                              <div className="text-sm text-gray-600 mt-1">I will join the group coach transfer from Geneva</div>
+                              <div className="text-sm text-gray-600 mt-1">I will join the group coach transfer from {transferAirport ?? 'Geneva'}
+</div>
                             </div>
                           </div>
                         </label>
@@ -876,9 +1083,32 @@ const onSubmit = async () => {
                             {...register('terms', { required: 'You must agree to the terms of service' })}
                             className="mt-1 h-4 w-4 text-primary-600 focus:ring-primary-500 border-gray-300 rounded"
                           />
+                          
                           <span className="text-gray-700">
-                            I have read and agree to the terms of service, including the refund policy. *
-                          </span>
+  I have read and agree to the{' '}
+  <a
+    href="/termsofservice"
+    target="_blank"
+    rel="noopener noreferrer"
+    className="text-primary-600 underline underline-offset-2 hover:text-primary-700 cursor-pointer"
+  >
+    terms of service
+  </a>
+  , including the{' '}
+  <a
+    href="/refund-policy"
+    target="_blank"
+    rel="noopener noreferrer"
+    className="text-primary-600 underline underline-offset-2 hover:text-primary-700 cursor-pointer"
+  >
+    refund policy
+  </a>
+  . *
+</span>
+
+
+
+
                         </label>
                         {errors.terms && (
                           <p className="mt-1 text-sm text-red-600">{errors.terms.message}</p>
@@ -925,20 +1155,19 @@ const onSubmit = async () => {
                     className="space-y-6"
                   >
 
-                    {/* 2. Payment Info Box */}
-                    <div className="mb-6 p-4 bg-blue-50 border border-blue-200 rounded text-blue-900 text-sm leading-relaxed font-medium">
-                      <h4 className="font-semibold text-base mb-2">💳 Payment Options</h4>
-                      <p className="mb-2">
-                        You can choose to pay either the <strong>full amount (£1200)</strong> or a <strong>£300 deposit</strong> to secure your spot.
-                      </p>
-                      <p className="mb-2">
-                        If you’ve selected <strong>extras</strong> (like equipment hire or lessons), or if you're flying from a <strong>different airport</strong>, please only pay the deposit for now.
-                        We'll send you a revised total after your booking is confirmed.
-                      </p>
-                      <p>
-                        🗓️ If you choose to pay the deposit, the remaining balance is due by <strong>01/11/2025</strong>.
-                      </p>
-                    </div>
+                    
+{/* 2. Payment Info Box */}
+{trip?.payment_explanation && (
+  <div className="mb-6 p-4 bg-blue-50 border border-blue-200 rounded text-blue-900 text-sm leading-relaxed font-medium">
+    <h4 className="font-semibold text-base mb-2">💳 Payment Options</h4>
+    <p
+      className="mb-2"
+      dangerouslySetInnerHTML={{ __html: trip.payment_explanation }}
+    />
+  </div>
+  )}
+
+
 
         {/* 3. Subheader */}
 <h3 className="text-xl font-semibold text-gray-900 mb-3">How would you like to pay?</h3>
@@ -982,7 +1211,10 @@ const onSubmit = async () => {
       <div className="flex flex-col items-center sm:flex-row sm:items-center sm:gap-2">
         <CreditCard className="h-4 w-4" />
         <span>Card</span>
-        <span className="text-[11px] sm:text-xs text-blue-700/80 sm:ml-1 sm:mt-0 mt-0.5">2% fee</span>
+        <span className="text-[11px] sm:text-xs text-slate-500 sm:ml-1 sm:mt-0 mt-0.5">
+  2% fee
+</span>
+
       </div>
       {paymentMethod === 'cardPayment' && <CheckCircle className="h-4 w-4 text-green-600 ml-2" />}
     </button>
@@ -994,38 +1226,67 @@ const onSubmit = async () => {
 {paymentMethod === 'bankTransfer' && (
   <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
     <button
-      type="button"
-      onClick={() => {
-        setSelectedPaymentAmount('full');
-        setPaymentUrl('https://monzo.com/pay/r/broskii-ltd_M9c3CNpxlcIlWL');
-        setShowPaymentModal(true);
-      }}
-      className={`w-full rounded-xl border p-3 sm:p-4 text-left transition
-        ${selectedPaymentAmount === 'full'
-          ? 'border-gray-300 ring-2 ring-gray-200 bg-white'
-          : 'border-gray-200 hover:bg-gray-50'
-        }`}
-    >
-      <div className="font-semibold text-gray-900">Full Payment</div>
-      <div className="text-sm text-gray-600">£1,200</div>
-    </button>
+  type="button"
+  onClick={() => {
+    setSelectedPaymentAmount('full');
+    setPaymentUrl(monzoLinks.bank.full);
+    setShowPaymentModal(true);
+  }}
+  className={`w-full rounded-xl border p-3 sm:p-4 text-left ${clickableCard}
+    ${selectedPaymentAmount === 'full'
+      ? 'border-gray-300 ring-2 ring-gray-200 bg-white'
+      : 'border-gray-200 hover:bg-gray-100/70 bg-white'
+    }`}
+>
+  <div className="font-semibold text-gray-900">Full Payment</div>
 
-    <button
-      type="button"
-      onClick={() => {
-        setSelectedPaymentAmount('deposit');
-        setPaymentUrl('https://monzo.com/pay/r/broskii-ltd_2h3KswpLAxWlnJ');
-        setShowPaymentModal(true);
-      }}
-      className={`w-full rounded-xl border p-3 sm:p-4 text-left transition
-        ${selectedPaymentAmount === 'deposit'
-          ? 'border-gray-300 ring-2 ring-gray-200 bg-white'
-          : 'border-gray-200 hover:bg-gray-50'
-        }`}
-    >
-      <div className="font-semibold text-gray-900">Deposit</div>
-      <div className="text-sm text-gray-600">£300 • Balance due 01/11/2025</div>
-    </button>
+  {fullAmount !== null && (
+  <div className="text-lg font-semibold text-gray-900">
+    £{fullAmount}
+  </div>
+)}
+
+<div className="text-xs font-medium text-gray-500 mt-1">
+  Tap to select
+</div>
+
+</button>
+
+
+<button
+  type="button"
+  onClick={() => {
+    setSelectedPaymentAmount('deposit');
+    setPaymentUrl(monzoLinks.bank.deposit);
+    setShowPaymentModal(true);
+  }}
+  className={`w-full rounded-xl border p-3 sm:p-4 text-left ${clickableCard}
+    ${selectedPaymentAmount === 'deposit'
+      ? 'border-gray-300 ring-2 ring-gray-200 bg-white'
+      : 'border-gray-200 hover:bg-gray-100/70 bg-white'
+    }`}
+>
+  <div className="font-semibold text-gray-900">Deposit</div>
+
+  {depositAmount !== null && (
+  <div className="text-lg font-semibold text-gray-900">
+    £{depositAmount}
+    {balanceDueDate ? (
+      <span className="text-sm font-normal text-gray-600">
+        {' '}• Remaining balance due{' '}
+        {new Date(balanceDueDate).toLocaleDateString('en-GB')}
+      </span>
+    ) : null}
+  </div>
+)}
+
+<div className="text-xs font-medium text-gray-500 mt-1">
+  Tap to select
+</div>
+
+
+</button>
+
   </div>
 )}
 
@@ -1033,38 +1294,73 @@ const onSubmit = async () => {
 {paymentMethod === 'cardPayment' && (
   <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
     <button
-      type="button"
-      onClick={() => {
-        setSelectedPaymentAmount('full');
-        setPaymentUrl('https://monzo.com/pay/r/broskii-ltd_sWuhRPwxUlU5zS');
-        setShowPaymentModal(true);
-      }}
-      className={`w-full rounded-xl border p-3 sm:p-4 text-left transition
-        ${selectedPaymentAmount === 'full'
-          ? 'border-blue-300 ring-2 ring-blue-200 bg-white'
-          : 'border-blue-200 hover:bg-blue-50'
-        }`}
-    >
-      <div className="font-semibold text-blue-900">Full Payment</div>
-      <div className="text-sm text-blue-700">£1,224 (incl. 2% fee)</div>
-    </button>
+  type="button"
+  onClick={() => {
+    setSelectedPaymentAmount('full');
+    setPaymentUrl(monzoLinks.card.full);
+    setShowPaymentModal(true);
+  }}
+  className={`w-full rounded-xl border p-3 sm:p-4 text-left ${clickableCard}
+    ${selectedPaymentAmount === 'full'
+      ? 'border-slate-300 ring-2 ring-slate-200 bg-white'
+      : 'border-slate-200 hover:bg-slate-50 bg-white'
+    }`}
+>
+  <div className="font-semibold text-slate-900">Full Payment</div>
 
-    <button
-      type="button"
-      onClick={() => {
-        setSelectedPaymentAmount('deposit');
-        setPaymentUrl('https://monzo.com/pay/r/broskii-ltd_qFFngtKWtWWJQA');
-        setShowPaymentModal(true);
-      }}
-      className={`w-full rounded-xl border p-3 sm:p-4 text-left transition
-        ${selectedPaymentAmount === 'deposit'
-          ? 'border-blue-300 ring-2 ring-blue-200 bg-white'
-          : 'border-blue-200 hover:bg-blue-50'
-        }`}
-    >
-      <div className="font-semibold text-blue-900">Deposit</div>
-      <div className="text-sm text-blue-700">£306 (incl. 2% fee) • Balance due 01/11/2025</div>
-    </button>
+  {fullAmountCard !== null && (
+  <div className="text-lg font-semibold text-gray-900">
+    £{fullAmountCard}
+    <span className="text-sm font-normal text-slate-600">
+      {' '} (incl. 2% fee)
+    </span>
+  </div>
+)}
+
+<div className="text-xs font-medium text-gray-500 mt-1">
+  Tap to select
+</div>
+
+</button>
+
+
+<button
+  type="button"
+  onClick={() => {
+    setSelectedPaymentAmount('deposit');
+    setPaymentUrl(monzoLinks.card.deposit);
+    setShowPaymentModal(true);
+  }}
+  className={`w-full rounded-xl border p-3 sm:p-4 text-left ${clickableCard}
+    ${selectedPaymentAmount === 'deposit'
+      ? 'border-slate-300 ring-2 ring-slate-200 bg-white'
+      : 'border-slate-200 hover:bg-slate-50 bg-white'
+    }`}
+>
+  <div className="font-semibold text-slate-900">Deposit</div>
+
+  {depositAmountCard !== null && (
+  <div className="text-lg font-semibold text-gray-900">
+    £{depositAmountCard}
+    <span className="text-sm font-normal text-slate-600">
+      {' '} (incl. 2% fee)
+    </span>
+    {balanceDueDate ? (
+      <span className="text-sm font-normal text-gray-600">
+        {' '}• Remaining balance due{' '}
+        {new Date(balanceDueDate).toLocaleDateString('en-GB')}
+      </span>
+    ) : null}
+  </div>
+)}
+
+<div className="text-xs font-medium text-gray-500 mt-1">
+  Tap to select
+</div>
+
+</button>
+
+
   </div>
 )}
 
@@ -1126,14 +1422,28 @@ const onSubmit = async () => {
                             >
                               Cancel
                             </button>
-                            <a
-                              href={paymentUrl!}
-                              target="_blank"
-                              rel="noopener noreferrer"
-                              className="px-4 py-2 text-sm bg-blue-600 text-white rounded-md hover:bg-blue-700 transition font-medium"
-                            >
-                              Proceed to Payment
-                            </a>
+       
+
+                            <button
+  type="button"
+  onClick={() => {
+
+    if (paymentUrl) {
+      window.open(paymentUrl, '_blank', 'noopener,noreferrer');
+    }
+
+    
+  }}
+  className="px-4 py-2 text-sm bg-blue-600 text-white rounded-md hover:bg-blue-700 transition font-medium"
+>
+  Proceed to Payment
+</button>
+
+
+
+
+
+
                           </div>
                         </div>
                       </div>
@@ -1185,7 +1495,7 @@ const onSubmit = async () => {
                 )}
 
                 {/* Navigation Buttons */}
-                <div className="flex justify-between pt-8 border-t">
+                <div className="flex justify-between gap-3 pt-8 border-t">
                   <button
                     type="button"
                     onClick={prevStep}
@@ -1200,24 +1510,39 @@ const onSubmit = async () => {
                     Previous
                   </button>
 
+                
                   {currentStep < steps.length - 1 ? (
-                    <button
-                      type="button"
-                      onClick={nextStep}
-                      className="flex items-center px-6 py-3 bg-primary-600 text-white rounded-lg font-medium h-11 leading-5 hover:bg-primary-700 transition-all duration-300 shadow-lg hover:shadow-xl"
-                    >
-                      Next
-                      <ArrowRight className="h-4 w-4 ml-2" />
-                    </button>
-                  ) : (
-                    <button
-                      type="submit"
-                      disabled={isSubmitting}
-                      className="flex items-center px-6 py-3 bg-green-600 text-white rounded-lg font-medium h-11 leading-5 hover:bg-green-700 transition-all duration-300 shadow-lg hover:shadow-xl disabled:opacity-50 disabled:cursor-not-allowed"
-                    >
-                      <CheckCircle className="h-4 w-4 mr-2" />
-                      {isSubmitting ? 'Submitting...' : 'Complete Booking'}
-                    </button>
+  isSoldOut ? (
+    <button
+      type="button"
+      onClick={() => setShowWaitlistModal(true)}
+      className="flex items-center px-6 py-3 bg-primary-600 text-white rounded-lg font-medium h-11 leading-5 hover:bg-primary-700 transition-all duration-300 shadow-lg hover:shadow-xl"
+    >
+      Join waitlist
+    </button>
+  ) : (
+    <button
+      type="button"
+      onClick={nextStep}
+      className="flex items-center px-6 py-3 bg-primary-600 text-white rounded-lg font-medium h-11 leading-5 hover:bg-primary-700 transition-all duration-300 shadow-lg hover:shadow-xl"
+    >
+      Next
+      <ArrowRight className="h-4 w-4 ml-2" />
+    </button>
+  )
+) : (
+
+
+<button
+  type="submit"
+  disabled={isSubmitting}
+  className="flex items-center px-6 py-3 bg-primary-600 text-white rounded-lg font-medium h-11 leading-5 hover:bg-primary-700 transition-all duration-300 shadow-lg hover:shadow-xl disabled:opacity-50 disabled:cursor-not-allowed"
+>
+  <CheckCircle className="h-4 w-4 mr-2" />
+  {isSubmitting ? 'Submitting...' : 'Complete Booking'}
+</button>
+
+                    
                   )}
                 </div>
 
@@ -1226,6 +1551,102 @@ const onSubmit = async () => {
           </div>
         </div>
       </section>
+
+
+      
+      {/* Waitlist Modal */}
+{showWaitlistModal && (
+  <div
+    className="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-center justify-center p-4"
+    onClick={() => setShowWaitlistModal(false)}
+  >
+    <div
+      className="relative bg-white rounded-2xl shadow-2xl max-w-md w-full p-8"
+      onClick={(e) => e.stopPropagation()}
+    >
+      <button
+        onClick={() => setShowWaitlistModal(false)}
+        className="absolute top-4 right-4 p-2 rounded-full text-gray-400 hover:bg-gray-100 hover:text-gray-600 transition-colors"
+      >
+        <X className="h-6 w-6" />
+      </button>
+
+      <h2 className="text-3xl font-serif font-bold text-gray-900 mb-4 text-center">
+        Join the waitlist
+      </h2>
+
+      <p className="text-gray-700 text-center mb-6">
+        This trip is currently full. Enter your details below and we’ll notify you if a spot becomes available.
+      </p>
+
+      <form
+        onSubmit={handleWaitlistSubmit(onWaitlistSubmit)}
+        className="space-y-4"
+      >
+        <div>
+          <label className="block text-sm font-medium text-gray-700 mb-2">
+            Full name *
+          </label>
+          <input
+            type="text"
+            {...registerWaitlist('fullName', { required: 'Full name is required' })}
+            className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent"
+          />
+          {waitlistErrors.fullName && (
+            <p className="text-sm text-red-600 mt-1">
+              {waitlistErrors.fullName.message}
+            </p>
+          )}
+        </div>
+
+        <div>
+          <label className="block text-sm font-medium text-gray-700 mb-2">
+            Email address *
+          </label>
+          <input
+            type="email"
+            {...registerWaitlist('email', {
+              required: 'Email is required',
+              pattern: {
+                value: /^\S+@\S+$/i,
+                message: 'Invalid email address',
+              },
+            })}
+            className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent"
+          />
+          {waitlistErrors.email && (
+            <p className="text-sm text-red-600 mt-1">
+              {waitlistErrors.email.message}
+            </p>
+          )}
+        </div>
+
+        <div>
+          <label className="block text-sm font-medium text-gray-700 mb-2">
+            Phone number (optional)
+          </label>
+          <input
+            type="tel"
+            {...registerWaitlist('phone')}
+            className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent"
+          />
+        </div>
+
+        <button
+          type="submit"
+          className="w-full mt-4 inline-flex items-center justify-center bg-primary-600 hover:bg-primary-700 text-white px-6 py-3 rounded-lg text-lg font-bold shadow-lg transition-transform duration-300 hover:scale-105"
+        >
+          Join waitlist
+        </button>
+      </form>
+    </div>
+  </div>
+)}
+
+
+
+
+
     </div>
   );
 };

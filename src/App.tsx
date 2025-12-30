@@ -14,8 +14,9 @@ import ContactPage from './pages/ContactPage';
 import FAQPage from './pages/FAQPage';
 import RefundPolicyPage from './pages/RefundPolicyPage';
 import UpcomingTripDetailsPage from './pages/UpcomingTripDetailsPage';
-import ThankYouPage from './pages/ThankYouPage';
-import MessageSentPage from './pages/MessageSentPage';
+import BookingSuccessPage from './pages/BookingSuccessPage';
+import ContactSuccessPage from './pages/ContactSuccessPage';
+
 import GalleryPage from './pages/GalleryPage';
 import TermsPage from './pages/termsofservice';      // lowercase filename
 import PrivacyPolicyPage from './pages/privacypolicy'; // lowercase filename
@@ -23,14 +24,21 @@ import CookiesPolicyPage from './pages/cookiespolicy';  // lowercase filename
 
 function App() {
   return (
-    <Router>
+    <Router basename="/">
+
       <ScrollToTop />
       <div className="min-h-screen bg-white">
         <Header />
         <main>
           <Routes>
             <Route path="/" element={<HomePage />} />
-            <Route path="/booking" element={<BookingPage />} />
+            {/* Legacy booking route (will be phased out safely) */}
+<Route path="/booking" element={<BookingPage />} />
+
+<Route path="/booking" element={<BookingPage />} />
+<Route path="/booking/:tripId" element={<BookingPage />} />
+
+
             <Route path="/about" element={<AboutPage />} />
             <Route path="/contact" element={<ContactPage />} />
             <Route path="/faq" element={<FAQPage />} />
@@ -39,13 +47,14 @@ function App() {
             <Route path="/refund-policy" element={<RefundPolicyPage />} />
             <Route path="/privacy-policy" element={<PrivacyPolicyPage />} />
             <Route path="/cookiespolicy" element={<CookiesPolicyPage />} />  {/* Added cookies policy */}
-            <Route path="/thank-you" element={<ThankYouPage />} />
-            <Route path="/message-sent" element={<MessageSentPage />} />
+            <Route path="/thank-you" element={<BookingSuccessPage />} />
+<Route path="/message-sent" element={<ContactSuccessPage />} />
+
             <Route path="/termsofservice" element={<TermsPage />} />
           </Routes>
         </main>
         <Footer />
-        <FloatingContactButton />
+        
         <Toaster position="top-right" />
       </div>
     </Router>

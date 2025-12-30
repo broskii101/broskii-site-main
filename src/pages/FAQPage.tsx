@@ -377,17 +377,18 @@ For full contact info, check out our <a href='/contact' class='text-primary-600 
   };
 
   return (
-    <div className="pt-20 min-h-screen bg-gray-50">
+    <div>
       {/* Hero Section */}
       <section className="relative py-20 overflow-hidden">
         {/* Background Image */}
         <img 
-          src="/Snapshot_20250114_230101.webp"
-          alt="Skiing adventure background"
-          className="absolute inset-0 w-full h-full object-cover"
-        />
+  src="https://res.cloudinary.com/dtx0og5tm/image/upload/f_auto,q_auto,w_1600/v1766883701/broskii-ski-boot-pov-alpine-slope.webp_nojdlh.webp"
+  alt="First-person view of ski boots clipped into skis on a snowy alpine slope, with sunlit mountains ahead."
+  className="absolute inset-0 w-full h-full object-cover"
+/>
+
         {/* Dark overlay for text readability */}
-        <div className="absolute inset-0 bg-black/50"></div>
+        <div className="absolute inset-0 bg-black/35"></div>
         
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <motion.div
@@ -398,11 +399,15 @@ For full contact info, check out our <a href='/contact' class='text-primary-600 
           >
             <div className="flex items-center justify-center space-x-3 mb-6">
              
-              <h1 className="text-5xl font-serif font-bold">FAQs — We've Got You Covered</h1>
+            <h1 className="text-4xl md:text-6xl font-serif font-bold leading-[1.1]">
+  FAQs — We've Got You Covered
+</h1>
+
             </div>
-            <p className="text-xl text-primary-100 max-w-4xl mx-auto leading-relaxed">
-              From booking your spot to hitting the slopes, here's everything you need to know about our Broskii trips.
-            </p>
+            <p className="text-lg md:text-xl text-primary-100 max-w-4xl mx-auto leading-relaxed font-normal">
+  From booking your spot to hitting the slopes, here's everything you need to know about our Broskii trips.
+</p>
+
           </motion.div>
         </div>
       </section>
@@ -670,68 +675,7 @@ For full contact info, check out our <a href='/contact' class='text-primary-600 
         </section>
       )}
 
-{/* Contact Section */}
-<section className="py-12 bg-white">
-  <div className="max-w-4xl mx-auto text-center px-4 sm:px-6 lg:px-8">
-    <motion.div
-      initial={{ opacity: 0, y: 12 }}
-      whileInView={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.5 }}
-      viewport={{ once: true }}
-    >
-      <div className="mb-6">
-        <h3 className="text-2xl sm:text-3xl font-serif font-semibold text-black">
-          Still got questions?
-        </h3>
-        <p className="text-base sm:text-lg text-black mt-2">
-          We're just a message away and happy to help
-        </p>
-      </div>
 
-      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4">
-        <Link
-          to="/contact"
-          className="group bg-[#00a6fb]/10 hover:bg-[#00a6fb]/20 rounded-md p-4 transition"
-        >
-          <Send className="h-6 w-6 mx-auto mb-2 text-[#00a6fb] group-hover:text-white" />
-          <div className="text-sm font-semibold text-black">Send a Message</div>
-          <div className="text-xs text-black hidden">Contact Form</div>
-        </Link>
-
-        <a
-          href="mailto:salaam@broskii.co"
-          className="group bg-[#00a6fb]/10 hover:bg-[#00a6fb]/20 rounded-md p-4 transition"
-        >
-          <Mail className="h-6 w-6 mx-auto mb-2 text-[#00a6fb] group-hover:text-white" />
-          <div className="text-sm font-semibold text-black">Email</div>
-          <div className="text-xs text-black hidden">salaam@broskii.com</div>
-        </a>
-
-        <a
-          href="https://wa.me/447749939192"
-          target="_blank"
-          rel="noopener noreferrer"
-          className="group bg-[#00a6fb]/10 hover:bg-[#00a6fb]/20 rounded-md p-4 transition"
-        >
-          <MessageCircle className="h-6 w-6 mx-auto mb-2 text-[#00a6fb] group-hover:text-white" />
-          <div className="text-sm font-semibold text-black">WhatsApp</div>
-          <div className="text-xs text-black hidden">+44 7749 939192</div>
-        </a>
-
-        <a
-          href="https://www.instagram.com/broskiiuk"
-          target="_blank"
-          rel="noopener noreferrer"
-          className="group bg-[#00a6fb]/10 hover:bg-[#00a6fb]/20 rounded-md p-4 transition"
-        >
-          <Instagram className="h-6 w-6 mx-auto mb-2 text-[#00a6fb] group-hover:text-white" />
-          <div className="text-sm font-semibold text-black">Instagram</div>
-          <div className="text-xs text-black hidden">@broskiiuk</div>
-        </a>
-      </div>
-    </motion.div>
-  </div>
-</section>
 
 
 
