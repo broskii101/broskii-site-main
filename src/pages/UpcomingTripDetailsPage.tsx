@@ -260,7 +260,7 @@ const UpcomingTripDetailsPage = () => {
               "https://res.cloudinary.com/dtx0og5tm/image/upload/f_auto,q_auto,w_1200/v1769048687/broskii-tignes-april-ski-trip-poster_zpf1oe.jpg"
             )
           }
-          className="w-full rounded-2xl shadow-xl cursor-pointer ring-1 ring-black/5 scale-[0.90]"
+          className="w-full h-full object-contain cursor-pointer"
 
         />
 
