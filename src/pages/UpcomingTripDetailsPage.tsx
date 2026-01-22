@@ -91,7 +91,7 @@ const UpcomingTripDetailsPage = () => {
       }
     },
     image: [
-      "https://res.cloudinary.com/dtx0og5tm/image/upload/f_auto,q_auto,w_1200/v1766871242/broskii-tignes-april-ski-trip-poster.JPG_mu5ffe.jpg"
+      "https://res.cloudinary.com/dtx0og5tm/image/upload/f_auto,q_auto,w_1200/v1769048687/broskii-tignes-april-ski-trip-poster_zpf1oe.jpg"
     ],
     organizer: {
       "@type": "Organization",
@@ -252,12 +252,12 @@ const UpcomingTripDetailsPage = () => {
     >
       <div className="relative">
         <img
-          src="https://res.cloudinary.com/dtx0og5tm/image/upload/f_auto,q_auto,w_1200/v1766871242/broskii-tignes-april-ski-trip-poster.JPG_mu5ffe.jpg"
+          src="https://res.cloudinary.com/dtx0og5tm/image/upload/f_auto,q_auto,w_1200/v1769048687/broskii-tignes-april-ski-trip-poster_zpf1oe.jpg"
           alt="Broskii poster promoting an April ski trip to Tignes, part of the Tignes–Val d’Isère ski area in the French Alps.
           "
           onClick={() =>
             openFullScreenImage(
-              "https://res.cloudinary.com/dtx0og5tm/image/upload/f_auto,q_auto,w_1200/v1766871242/broskii-tignes-april-ski-trip-poster.JPG_mu5ffe.jpg"
+              "https://res.cloudinary.com/dtx0og5tm/image/upload/f_auto,q_auto,w_1200/v1769048687/broskii-tignes-april-ski-trip-poster_zpf1oe.jpg"
             )
           }
           className="w-full rounded-2xl shadow-xl cursor-pointer ring-1 ring-black/5 scale-[0.90]"
