@@ -247,10 +247,10 @@ const UpcomingTripDetailsPage = () => {
       initial={{ opacity: 0, y: 12 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.6, delay: 0.15 }}
-      className="max-w-md mx-auto"
+      className="mx-auto w-[92%] max-w-sm"
 
     >
-      <div className="relative h-[85vh]">
+      <div className="relative">
         <img
           src="https://res.cloudinary.com/dtx0og5tm/image/upload/f_auto,q_auto,w_1200/v1769048687/broskii-tignes-april-ski-trip-poster_zpf1oe.jpg"
           alt="Broskii poster promoting an April ski trip to Tignes, part of the Tignes–Val d’Isère ski area in the French Alps.
