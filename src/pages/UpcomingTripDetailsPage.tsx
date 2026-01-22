@@ -250,7 +250,7 @@ const UpcomingTripDetailsPage = () => {
       className="max-w-md mx-auto"
 
     >
-      <div className="relative">
+      <div className="relative h-[85vh]">
         <img
           src="https://res.cloudinary.com/dtx0og5tm/image/upload/f_auto,q_auto,w_1200/v1769048687/broskii-tignes-april-ski-trip-poster_zpf1oe.jpg"
           alt="Broskii poster promoting an April ski trip to Tignes, part of the Tignes–Val d’Isère ski area in the French Alps.
