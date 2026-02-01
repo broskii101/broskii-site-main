@@ -1171,9 +1171,14 @@ const clickableCard =
         dangerouslySetInnerHTML={{ __html: trip.payment_explanation }}
       />
     ) : (
-      <p className="mb-0">
-        Full payment is required to confirm your booking.
-      </p>
+      
+<p className="mb-0">
+  Full payment is required to confirm your booking.
+  <br />
+  Selecting an option below will take you to our secure <strong>Monzo</strong> payment page.
+</p>
+
+
     )}
   </div>
 )}
