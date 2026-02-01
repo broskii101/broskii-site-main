@@ -1202,48 +1202,57 @@ const clickableCard =
       method: 'bankTransfer',
       amountType: 'full',
       title: 'Bank Transfer',
-      note: 'No fees',
+      note: 'Full payment • No fees',
       amount: fullAmount,
       meta: null,
       url: monzoLinks.bank.full,
     },
+    
+
+
     {
       id: 'full_card',
       method: 'cardPayment',
       amountType: 'full',
       title: 'Card',
-      note: 'Includes 2% fee',
+      note: 'Full payment • 2% fee',
       amount: fullAmountCard,
-      meta: '(incl. 2% fee)',
+      meta: null, // ✅ removes the duplicated "(incl. 2% fee)"
       url: monzoLinks.card.full,
     },
+    
+
 
     ...(depositEnabled
       ? [
-          {
-            id: 'deposit_bank',
-            method: 'bankTransfer',
-            amountType: 'deposit',
-            title: 'Deposit (Bank Transfer)',
-            note: 'No fees',
-            amount: depositAmount,
-            meta: balanceDueDate
-              ? `Remaining balance due ${new Date(balanceDueDate).toLocaleDateString('en-GB')}`
-              : null,
-            url: monzoLinks.bank.deposit,
-          },
-          {
-            id: 'deposit_card',
-            method: 'cardPayment',
-            amountType: 'deposit',
-            title: 'Deposit (Card)',
-            note: 'Includes 2% fee',
-            amount: depositAmountCard,
-            meta: balanceDueDate
-              ? `Remaining balance due ${new Date(balanceDueDate).toLocaleDateString('en-GB')}`
-              : null,
-            url: monzoLinks.card.deposit,
-          },
+        {
+          id: 'deposit_bank',
+          method: 'bankTransfer',
+          amountType: 'deposit',
+          title: 'Bank Transfer',
+          note: 'Deposit • No fees',
+          amount: depositAmount,
+          meta: balanceDueDate
+            ? `Remaining balance due ${new Date(balanceDueDate).toLocaleDateString('en-GB')}`
+            : null,
+          url: monzoLinks.bank.deposit,
+        },
+        
+
+        {
+          id: 'deposit_card',
+          method: 'cardPayment',
+          amountType: 'deposit',
+          title: 'Card',
+          note: 'Deposit • 2% fee',
+          amount: depositAmountCard,
+          meta: balanceDueDate
+            ? `Remaining balance due ${new Date(balanceDueDate).toLocaleDateString('en-GB')}`
+            : null,
+          url: monzoLinks.card.deposit,
+        },
+        
+
         ]
       : []),
   
@@ -1292,9 +1301,13 @@ const clickableCard =
                   <div className="font-semibold text-gray-900">
                     {opt.title}
                   </div>
-                  <span className="text-xs font-medium text-gray-500">
-                    {opt.note}
-                  </span>
+
+                  <span className="text-[11px] font-medium text-gray-600 bg-gray-100 border border-gray-200 px-2 py-1 rounded-full">
+  {opt.note}
+</span>
+
+
+
                 </div>
 
                 {opt.amount !== null && (
