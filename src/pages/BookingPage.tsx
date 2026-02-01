@@ -27,7 +27,11 @@ interface BookingForm {
   extrasTerms: boolean;
   terms: boolean;
   electronicSignature: string;
+
 }
+
+  
+
 const BookingPage = () => {
   const { tripId } = useParams<{ tripId?: string }>();
 
@@ -1159,210 +1163,175 @@ const clickableCard =
 {/* 2. Payment Info Box */}
 {trip?.payment_explanation && (
   <div className="mb-6 p-4 bg-blue-50 border border-blue-200 rounded text-blue-900 text-sm leading-relaxed font-medium">
-    <h4 className="font-semibold text-base mb-2">💳 Payment Options</h4>
-    <p
-      className="mb-2"
-      dangerouslySetInnerHTML={{ __html: trip.payment_explanation }}
-    />
-  </div>
-  )}
+    <h4 className="font-semibold text-base mb-2">💳 Payment</h4>
 
-
-
-        {/* 3. Subheader */}
-<h3 className="text-xl font-semibold text-gray-900 mb-3">How would you like to pay?</h3>
-
-{/* Segmented method selector – with inline fee notes */}
-<div className="mb-5">
-  <p className="sm:hidden text-xs text-gray-500 mb-2">Tap a method to continue</p>
-  <div className="inline-flex w-full sm:w-auto rounded-xl bg-gray-50 border border-gray-200 p-1">
-    <button
-      type="button"
-      onClick={() => setPaymentMethod('bankTransfer')}
-      aria-pressed={paymentMethod === 'bankTransfer'}
-      className={`flex-1 sm:flex-none inline-flex items-center justify-center gap-2
-        px-4 py-3 rounded-lg text-sm font-medium transition
-        border focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-500 active:scale-[.98]
-        ${paymentMethod === 'bankTransfer'
-          ? 'bg-white text-gray-900 border-gray-300 shadow'
-          : 'bg-gray-100 text-gray-800 border-transparent active:bg-gray-200'
-        }`}
-    >
-      <div className="flex flex-col items-center sm:flex-row sm:items-center sm:gap-2">
-        <Wallet className="h-4 w-4" />
-        <span>Bank Transfer</span>
-        <span className="text-[11px] sm:text-xs text-gray-500 sm:ml-1 sm:mt-0 mt-0.5">No fees</span>
-      </div>
-      {paymentMethod === 'bankTransfer' && <CheckCircle className="h-4 w-4 text-green-600 ml-2" />}
-    </button>
-
-    <button
-      type="button"
-      onClick={() => setPaymentMethod('cardPayment')}
-      aria-pressed={paymentMethod === 'cardPayment'}
-      className={`flex-1 sm:flex-none inline-flex items-center justify-center gap-2
-        px-4 py-3 rounded-lg text-sm font-medium transition
-        border focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 active:scale-[.98]
-        ${paymentMethod === 'cardPayment'
-          ? 'bg-white text-blue-900 border-blue-300 shadow'
-          : 'bg-blue-50 text-blue-800 border-transparent active:bg-blue-100'
-        }`}
-    >
-      <div className="flex flex-col items-center sm:flex-row sm:items-center sm:gap-2">
-        <CreditCard className="h-4 w-4" />
-        <span>Card</span>
-        <span className="text-[11px] sm:text-xs text-slate-500 sm:ml-1 sm:mt-0 mt-0.5">
-  2% fee
-</span>
-
-      </div>
-      {paymentMethod === 'cardPayment' && <CheckCircle className="h-4 w-4 text-green-600 ml-2" />}
-    </button>
-  </div>
-</div>
-
-
-{/* Bank Transfer options */}
-{paymentMethod === 'bankTransfer' && (
-  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-    <button
-  type="button"
-  onClick={() => {
-    setSelectedPaymentAmount('full');
-    setPaymentUrl(monzoLinks.bank.full);
-    setShowPaymentModal(true);
-  }}
-  className={`w-full rounded-xl border p-3 sm:p-4 text-left ${clickableCard}
-    ${selectedPaymentAmount === 'full'
-      ? 'border-gray-300 ring-2 ring-gray-200 bg-white'
-      : 'border-gray-200 hover:bg-gray-100/70 bg-white'
-    }`}
->
-  <div className="font-semibold text-gray-900">Full Payment</div>
-
-  {fullAmount !== null && (
-  <div className="text-lg font-semibold text-gray-900">
-    £{fullAmount}
+    {trip?.deposit_enabled ? (
+      <p
+        className="mb-2"
+        dangerouslySetInnerHTML={{ __html: trip.payment_explanation }}
+      />
+    ) : (
+      <p className="mb-0">
+        Full payment is required to confirm your booking.
+      </p>
+    )}
   </div>
 )}
 
-<div className="text-xs font-medium text-gray-500 mt-1">
-  Tap to select
-</div>
-
-</button>
 
 
-<button
-  type="button"
-  onClick={() => {
-    setSelectedPaymentAmount('deposit');
-    setPaymentUrl(monzoLinks.bank.deposit);
-    setShowPaymentModal(true);
-  }}
-  className={`w-full rounded-xl border p-3 sm:p-4 text-left ${clickableCard}
-    ${selectedPaymentAmount === 'deposit'
-      ? 'border-gray-300 ring-2 ring-gray-200 bg-white'
-      : 'border-gray-200 hover:bg-gray-100/70 bg-white'
-    }`}
->
-  <div className="font-semibold text-gray-900">Deposit</div>
+{/* 3. Subheader */}
+<h3 className="text-xl font-semibold text-gray-900 mb-2">
+  How would you like to pay?
+</h3>
+<p className="text-sm text-gray-600 mb-5">
+  Select an option below to continue.
+</p>
 
-  {depositAmount !== null && (
-  <div className="text-lg font-semibold text-gray-900">
-    £{depositAmount}
-    {balanceDueDate ? (
-      <span className="text-sm font-normal text-gray-600">
-        {' '}• Remaining balance due{' '}
-        {new Date(balanceDueDate).toLocaleDateString('en-GB')}
-      </span>
-    ) : null}
-  </div>
-)}
+{/* One-step payment options (amounts always visible) */}
+{(() => {
+  const depositEnabled = trip?.deposit_enabled ?? false;
 
-<div className="text-xs font-medium text-gray-500 mt-1">
-  Tap to select
-</div>
+ 
+  const paymentOptions = [
 
 
-</button>
 
-  </div>
-)}
+    {
+      id: 'full_bank',
+      method: 'bankTransfer',
+      amountType: 'full',
+      title: 'Bank Transfer',
+      note: 'No fees',
+      amount: fullAmount,
+      meta: null,
+      url: monzoLinks.bank.full,
+    },
+    {
+      id: 'full_card',
+      method: 'cardPayment',
+      amountType: 'full',
+      title: 'Card',
+      note: 'Includes 2% fee',
+      amount: fullAmountCard,
+      meta: '(incl. 2% fee)',
+      url: monzoLinks.card.full,
+    },
 
-{/* Card options */}
-{paymentMethod === 'cardPayment' && (
-  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-    <button
-  type="button"
-  onClick={() => {
-    setSelectedPaymentAmount('full');
-    setPaymentUrl(monzoLinks.card.full);
-    setShowPaymentModal(true);
-  }}
-  className={`w-full rounded-xl border p-3 sm:p-4 text-left ${clickableCard}
-    ${selectedPaymentAmount === 'full'
-      ? 'border-slate-300 ring-2 ring-slate-200 bg-white'
-      : 'border-slate-200 hover:bg-slate-50 bg-white'
-    }`}
->
-  <div className="font-semibold text-slate-900">Full Payment</div>
-
-  {fullAmountCard !== null && (
-  <div className="text-lg font-semibold text-gray-900">
-    £{fullAmountCard}
-    <span className="text-sm font-normal text-slate-600">
-      {' '} (incl. 2% fee)
-    </span>
-  </div>
-)}
-
-<div className="text-xs font-medium text-gray-500 mt-1">
-  Tap to select
-</div>
-
-</button>
-
-
-<button
-  type="button"
-  onClick={() => {
-    setSelectedPaymentAmount('deposit');
-    setPaymentUrl(monzoLinks.card.deposit);
-    setShowPaymentModal(true);
-  }}
-  className={`w-full rounded-xl border p-3 sm:p-4 text-left ${clickableCard}
-    ${selectedPaymentAmount === 'deposit'
-      ? 'border-slate-300 ring-2 ring-slate-200 bg-white'
-      : 'border-slate-200 hover:bg-slate-50 bg-white'
-    }`}
->
-  <div className="font-semibold text-slate-900">Deposit</div>
-
-  {depositAmountCard !== null && (
-  <div className="text-lg font-semibold text-gray-900">
-    £{depositAmountCard}
-    <span className="text-sm font-normal text-slate-600">
-      {' '} (incl. 2% fee)
-    </span>
-    {balanceDueDate ? (
-      <span className="text-sm font-normal text-gray-600">
-        {' '}• Remaining balance due{' '}
-        {new Date(balanceDueDate).toLocaleDateString('en-GB')}
-      </span>
-    ) : null}
-  </div>
-)}
-
-<div className="text-xs font-medium text-gray-500 mt-1">
-  Tap to select
-</div>
-
-</button>
+    ...(depositEnabled
+      ? [
+          {
+            id: 'deposit_bank',
+            method: 'bankTransfer',
+            amountType: 'deposit',
+            title: 'Deposit (Bank Transfer)',
+            note: 'No fees',
+            amount: depositAmount,
+            meta: balanceDueDate
+              ? `Remaining balance due ${new Date(balanceDueDate).toLocaleDateString('en-GB')}`
+              : null,
+            url: monzoLinks.bank.deposit,
+          },
+          {
+            id: 'deposit_card',
+            method: 'cardPayment',
+            amountType: 'deposit',
+            title: 'Deposit (Card)',
+            note: 'Includes 2% fee',
+            amount: depositAmountCard,
+            meta: balanceDueDate
+              ? `Remaining balance due ${new Date(balanceDueDate).toLocaleDateString('en-GB')}`
+              : null,
+            url: monzoLinks.card.deposit,
+          },
+        ]
+      : []),
+  
+    ] as Array<{
+      id: string;
+      method: 'bankTransfer' | 'cardPayment';
+      amountType: 'full' | 'deposit';
+      title: string;
+      note: string;
+      amount: number | null;
+      meta: string | null;
+      url: string | null;
+    }>;
+  
 
 
-  </div>
-)}
+  return (
+    <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+      {paymentOptions.map((opt) => {
+        const isSelected =
+          paymentMethod === opt.method &&
+          selectedPaymentAmount === opt.amountType;
+
+        return (
+          <button
+            key={opt.id}
+            type="button"
+            onClick={() => {
+              // Select both method + amount in one tap
+              setPaymentMethod(opt.method);
+              setSelectedPaymentAmount(opt.amountType);
+
+              // Set link and open confirmation modal
+              setPaymentUrl(opt.url);
+              setShowPaymentModal(true);
+            }}
+            className={`w-full rounded-2xl border p-4 sm:p-5 text-left transition
+              ${isSelected
+                ? 'border-gray-300 bg-white ring-2 ring-gray-200 shadow-sm'
+                : 'border-gray-200 bg-white hover:bg-gray-50/60'
+              } ${clickableCard}`}
+          >
+            <div className="flex items-start justify-between gap-3">
+              <div className="min-w-0">
+                <div className="flex items-center gap-2">
+                  <div className="font-semibold text-gray-900">
+                    {opt.title}
+                  </div>
+                  <span className="text-xs font-medium text-gray-500">
+                    {opt.note}
+                  </span>
+                </div>
+
+                {opt.amount !== null && (
+                  <div className="mt-3 text-xl font-semibold tracking-tight text-gray-900">
+                    £{opt.amount}{' '}
+                    {opt.meta ? (
+                      <span className="text-sm font-normal text-gray-600">
+                        {opt.meta}
+                      </span>
+                    ) : null}
+                  </div>
+                )}
+
+                <div className="mt-2 text-xs font-medium text-gray-500">
+                  Tap to select
+                </div>
+              </div>
+
+              {isSelected ? (
+                <CheckCircle className="h-5 w-5 text-green-600 mt-1 shrink-0" />
+              ) : (
+                <div className="h-5 w-5 mt-1 shrink-0 rounded-full border border-gray-300" />
+              )}
+            </div>
+          </button>
+        );
+      })}
+    </div>
+  );
+})()}
+
+
+
+
+
+
+
 
 
                     {/* 7. Manual Bank Transfer Accordion */}
