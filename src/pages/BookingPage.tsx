@@ -1431,48 +1431,7 @@ const clickableCard =
                       </div>
                     )}
 
-                    {/* 9. Responsive Style Block */}
-                    <style>
-                      {`
-                        .payment-container {
-                          display: flex;
-                          gap: 0.5rem;
-                          margin-top: 0.5rem;
-                          flex-wrap: wrap;
-                        }
-                        .payment-box {
-                          border-radius: 0.5rem;
-                          padding: 1rem;
-                          flex: 1 1 220px;
-                          display: flex;
-                          flex-direction: column;
-                          align-items: center;
-                        }
-                        .bank-transfer-box {
-                          background: #f5f7fa;
-                          border: 2px solid #cbd2d9;
-                        }
-                        .card-payment-box {
-                          background: #e8f0fe;
-                          border: 2px solid #a9c1ff;
-                        }
-                        @media (max-width: 640px) {
-                          .payment-container {
-                            flex-direction: column;
-                          }
-                          .payment-box {
-                            width: 100%;
-                            padding: 0.75rem;
-                          }
-                          button {
-                            padding: 0.75rem 1rem;
-                          }
-                          p {
-                            margin-top: 0.25rem !important;
-                          }
-                        }
-                      `}
-                    </style>
+               
                   </motion.div>
                 )}
 
