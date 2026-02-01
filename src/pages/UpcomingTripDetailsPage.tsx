@@ -201,13 +201,17 @@ const UpcomingTripDetailsPage = () => {
 </h1>
 
 <div className="mt-10 md:mt-12">
-  <p className="text-sm md:text-base text-primary-100 font-medium tracking-wide mb-1">
+  <p className="text-base md:text-lg text-primary-100 font-medium tracking-wide mb-1">
     Limited spaces
   </p>
+
+  {/*
   <p className="text-sm md:text-base text-primary-100/85 font-normal">
     Secure your place with a £300 deposit
   </p>
+  */}
 </div>
+
 
 
     </motion.div>
@@ -346,9 +350,12 @@ const UpcomingTripDetailsPage = () => {
         Book Now
       </Link>
 
+{/*
       <p className="text-sm text-gray-600 mt-3">
         Reserve your place with a £300 deposit
       </p>
+      */}
+      
     </>
   )}
 </div>
