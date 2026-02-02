@@ -1355,7 +1355,7 @@ const clickableCard =
                     {/* 7. Manual Bank Transfer Accordion */}
                     <div className="mt-6 max-w-md mx-auto">
                       <details className="bg-gray-100 rounded-lg p-4 shadow-sm group">
-                        <summary className="font-medium text-blue-700 cursor-pointer hover:underline transition">
+                        <summary className="font-medium text-primary-600 cursor-pointer hover:underline transition">
                           🔽 Prefer to pay via your own banking app? Click here for manual bank details
                         </summary>
                         <div className="mt-4 text-sm text-gray-800 leading-relaxed space-y-1">
@@ -1393,10 +1393,12 @@ const clickableCard =
                       <div className="fixed inset-0 z-50 bg-black bg-opacity-50 flex items-center justify-center px-4">
                         <div className="bg-white rounded-xl shadow-xl w-full max-w-md p-6 space-y-5 relative">
                           <h2 className="text-lg font-semibold text-gray-800">
-                            You’ll be redirected to a <span className="text-blue-600">secure payment page</span>.
+                          You’ll be redirected to a <span className="text-primary-600 font-medium">secure payment page</span>.
+
                           </h2>
 
-          <div className="bg-amber-100 border border-amber-300 rounded-md p-4 text-sm text-amber-900 shadow-sm">
+                          <div className="bg-amber-50 border border-amber-200 rounded-md p-4 text-sm text-amber-900">
+
   <p className="font-semibold text-base mb-1">⚠️ <span className="underline">IMPORTANT</span></p>
   <p>Your place is not confirmed until payment is completed. Please complete payment on the next page to secure your spot.</p>
 </div>
@@ -1421,7 +1423,7 @@ const clickableCard =
 
     
   }}
-  className="px-4 py-2 text-sm bg-blue-600 text-white rounded-md hover:bg-blue-700 transition font-medium"
+  className="px-4 py-2 text-sm bg-primary-600 text-white rounded-md hover:bg-primary-700 transition font-medium"
 >
   Proceed to Payment
 </button>
