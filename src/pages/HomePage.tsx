@@ -138,11 +138,21 @@ className="absolute inset-0 will-change-transform transition-transform duration-
 >
  
 <img
-  src="https://res.cloudinary.com/dtx0og5tm/image/upload/f_auto,q_auto,w_1600/v1766874825/broskii-ski-trip-group-evening.webp_kkhnxt.jpg"
+  src="https://res.cloudinary.com/dtx0og5tm/image/upload/f_auto,q_auto,c_fill,w_840,h_1000/v1766874825/broskii-ski-trip-group-evening.webp_kkhnxt.jpg"
+  srcSet="
+    https://res.cloudinary.com/dtx0og5tm/image/upload/f_auto,q_auto,c_fill,w_420,h_500/v1766874825/broskii-ski-trip-group-evening.webp_kkhnxt.jpg 420w,
+    https://res.cloudinary.com/dtx0og5tm/image/upload/f_auto,q_auto,c_fill,w_640,h_760/v1766874825/broskii-ski-trip-group-evening.webp_kkhnxt.jpg 640w,
+    https://res.cloudinary.com/dtx0og5tm/image/upload/f_auto,q_auto,c_fill,w_840,h_1000/v1766874825/broskii-ski-trip-group-evening.webp_kkhnxt.jpg 840w
+  "
+  sizes="(max-width: 639px) 420px, 420px"
+  width="840"
+  height="1000"
   alt="Group of people standing together outdoors in falling snow after a day of skiing."
   loading="lazy"
+  decoding="async"
   className="w-full h-full object-cover object-center"
 />
+
 
 
 </div>
@@ -352,11 +362,7 @@ alt: "Broskii skier descending an Alpine slope while holding padel tennis racket
     text.length <= maxLength ? text : text.substring(0, maxLength) + '…';
 
 
-  const primaryButtonClasses =
-    'inline-flex items-center justify-center space-x-2 px-6 py-3 rounded-full text-sm md:text-base font-semibold bg-[#0092D1] text-white shadow-sm hover:shadow-md transition-all duration-300';
 
-  const secondaryButtonClasses =
-    'inline-flex items-center justify-center space-x-2 px-6 py-3 rounded-full text-sm md:text-base font-semibold border border-gray-300 bg-white text-gray-900 shadow-sm hover:shadow-md transition-all duration-300';
 
     const heroPrimaryButtonClasses =
   'inline-flex items-center justify-center space-x-3 ' +
@@ -617,16 +623,27 @@ alt: "Broskii skier descending an Alpine slope while holding padel tennis racket
       "
       onClick={() =>
         setFullScreenImage(
-          'https://res.cloudinary.com/dtx0og5tm/image/upload/f_auto,q_auto,w_1200/v1769048687/broskii-tignes-april-ski-trip-poster_zpf1oe.jpg'
+          'https://res.cloudinary.com/dtx0og5tm/image/upload/f_auto,q_auto,c_scale,w_2000/v1769048687/broskii-tignes-april-ski-trip-poster_zpf1oe.jpg'
+
         )
       }
     >
-      <img
-        src='https://res.cloudinary.com/dtx0og5tm/image/upload/f_auto,q_auto,w_1200/v1769048687/broskii-tignes-april-ski-trip-poster_zpf1oe.jpg'
-        alt="Broskii poster promoting an April ski trip to Tignes, part of the Tignes–Val d’Isère ski area in the French Alps.
-        "
-        className="w-full h-auto"
-      />
+     
+     <img
+  src="https://res.cloudinary.com/dtx0og5tm/image/upload/f_auto,q_auto,c_scale,w_600/v1769048687/broskii-tignes-april-ski-trip-poster_zpf1oe.jpg"
+  srcSet="
+    https://res.cloudinary.com/dtx0og5tm/image/upload/f_auto,q_auto,c_scale,w_420/v1769048687/broskii-tignes-april-ski-trip-poster_zpf1oe.jpg 420w,
+    https://res.cloudinary.com/dtx0og5tm/image/upload/f_auto,q_auto,c_scale,w_600/v1769048687/broskii-tignes-april-ski-trip-poster_zpf1oe.jpg 600w,
+    https://res.cloudinary.com/dtx0og5tm/image/upload/f_auto,q_auto,c_scale,w_820/v1769048687/broskii-tignes-april-ski-trip-poster_zpf1oe.jpg 820w
+  "
+  sizes="(max-width: 639px) 280px, 410px"
+  width="1200"
+  height="1500"
+  alt="Broskii poster promoting an April ski trip to Tignes, part of the Tignes–Val d’Isère ski area in the French Alps."
+  className="w-full h-auto"
+/>
+
+
     </div>
 
     {/* CTA */}
