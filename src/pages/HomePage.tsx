@@ -221,10 +221,12 @@ const HomePage: React.FC = () => {
   const [currentSlide, setCurrentSlide] = useState(0);
   const [videoError, setVideoError] = useState(false);
   const iframeRef = useRef<HTMLIFrameElement | null>(null);
+  const [loadVideo, setLoadVideo] = useState(false);
+
 
   const [selectedTestimonial, setSelectedTestimonial] = useState<Testimonial | null>(null);
   const [fullScreenImage, setFullScreenImage] = useState<string | null>(null);
-  const [isMobile, setIsMobile] = useState(false);
+  const [, setIsMobile] = useState(false);
 
   // Newsletter
   const [email, setEmail] = useState('');
@@ -247,7 +249,8 @@ const HomePage: React.FC = () => {
 
     const heroImages = [
       {
-        src: "https://res.cloudinary.com/dtx0og5tm/image/upload/f_auto,q_auto,w_1600/v1766261594/broskii-bro-mountain-view-alps_czxoyo.webp",
+        src: "https://res.cloudinary.com/dtx0og5tm/image/upload/f_auto,q_auto,w_1200/v1766261594/broskii-bro-mountain-view-alps_czxoyo.webp",
+        
         alt: "A bro sitting on the snow overlooking a mountain resort in the Alps",
       },
       {
@@ -316,24 +319,6 @@ alt: "Broskii skier descending an Alpine slope while holding padel tennis racket
     return () => observer.disconnect();
   }, []);
 
-  const handleVideoClick = () => {
-    if (!iframeRef.current) return;
-
-    const unmute = JSON.stringify({
-      event: 'command',
-      func: 'unMute',
-      args: [],
-    });
-
-    const play = JSON.stringify({
-      event: 'command',
-      func: 'playVideo',
-      args: [],
-    });
-
-    iframeRef.current.contentWindow?.postMessage(unmute, '*');
-    iframeRef.current.contentWindow?.postMessage(play, '*');
-  };
 
   const testimonials: Testimonial[] = [
     {
@@ -366,34 +351,6 @@ alt: "Broskii skier descending an Alpine slope while holding padel tennis racket
   const truncateText = (text: string, maxLength: number) =>
     text.length <= maxLength ? text : text.substring(0, maxLength) + '…';
 
-  const upcomingTrip = {
-    id: 'val-thorens 2026',
-    title: 'SKI 3 VALLEYS',
-    subtitle: 'High-altitude slopes and huge terrain',
-    image: '/1000088456.jpg',
-    price: '£1200',
-    dates: '10–17 January 2026',
-    location: 'Val Thorens, France',
-    duration: '7 days',
-    groupSize: 'For solo travellers, friends and families',
-    description:
-      'A full week of skiing, snowboarding and slow moments off the mountain – surrounded by Muslim brothers and families.',
-    inclusions: [
-      { text: 'Return flights from LHR', highlight: true },
-      { text: 'Lift pass included', highlight: true },
-      { text: '4★ accommodation' },
-      { text: 'Spa facilities' },
-      { text: 'Ski-in/ski-out access' },
-      { text: 'Private coach transfers' },
-    ],
-    highlights: [
-      'Beginner & intermediate friendly',
-      'Big terrain and big views',
-      'Time on the mountain and time to switch off',
-      'Atmosphere that feels like you’ve always been part of it',
-    ],
-    badge: 'Beginners welcome',
-  };
 
   const primaryButtonClasses =
     'inline-flex items-center justify-center space-x-2 px-6 py-3 rounded-full text-sm md:text-base font-semibold bg-[#0092D1] text-white shadow-sm hover:shadow-md transition-all duration-300';
@@ -451,11 +408,20 @@ alt: "Broskii skier descending an Alpine slope while holding padel tennis racket
           transition={{ duration: 1.3, ease: 'easeInOut' }}
           className="absolute inset-0"
         >
-          <img
-            src={heroImages[currentSlide].src}
-            alt={heroImages[currentSlide].alt}
-            className="w-full h-full object-cover"
-          />
+         
+         <img
+  src={heroImages[currentSlide].src}
+  alt={heroImages[currentSlide].alt}
+  className="w-full h-full object-cover"
+  decoding="async"
+  loading={currentSlide === 0 ? "eager" : "lazy"}
+  fetchPriority={currentSlide === 0 ? "high" : "auto"}
+  width={1200}
+  height={1600}
+/>
+
+
+
           {/* IMPORTANT: no global overlay (matches old site) */}
         </motion.div>
       </AnimatePresence>
@@ -794,17 +760,51 @@ alt: "Broskii skier descending an Alpine slope while holding padel tennis racket
 
 
           {!videoError ? (
-            <iframe
-              ref={iframeRef}
-              onClick={handleVideoClick}
-              src="https://www.youtube.com/embed/4B4TGO_qZrU?vq=hd1080&enablejsapi=1&mute=1"
-              title="Broskii - Muslim ski & snowboarding trips"
-              className="w-full aspect-[9/16] min-h-[380px] sm:min-h-[420px]"
+            
+<div className="w-full aspect-[9/16] min-h-[380px] sm:min-h-[420px]">
+  {!loadVideo ? (
+    <button
+      type="button"
+      onClick={() => setLoadVideo(true)}
+      aria-label="Watch our story"
+      className="relative w-full h-full overflow-hidden"
+    >
+      <img
+        src="https://img.youtube.com/vi/4B4TGO_qZrU/hqdefault.jpg"
+        alt="Watch our story"
+        className="absolute inset-0 w-full h-full object-cover"
+        loading="lazy"
+        decoding="async"
+      />
 
-              allowFullScreen
-              referrerPolicy="strict-origin-when-cross-origin"
-              onError={() => setVideoError(true)}
-            />
+      {/* subtle overlay for legibility */}
+      <div className="absolute inset-0 bg-black/25" />
+
+      {/* play affordance */}
+      <div className="absolute inset-0 flex items-center justify-center">
+        <div className="inline-flex items-center gap-2 rounded-full bg-white/90 px-5 py-3 shadow-sm">
+          <Play className="h-4 w-4 text-black" />
+          <span className="text-sm font-medium text-black">Watch our story</span>
+        </div>
+      </div>
+    </button>
+  ) : (
+    <iframe
+      ref={iframeRef}
+      src="https://www.youtube.com/embed/4B4TGO_qZrU?autoplay=1&playsinline=1&rel=0&mute=1&enablejsapi=1"
+      title="Broskii - Muslim ski & snowboarding trips"
+      className="w-full h-full"
+      allow="autoplay; encrypted-media; picture-in-picture"
+      allowFullScreen
+      referrerPolicy="strict-origin-when-cross-origin"
+      onError={() => setVideoError(true)}
+    />
+  )}
+</div>
+
+
+
+
           ) : (
             <div className="w-full aspect-[9/16] bg-gray-900 flex items-center justify-center">
               <div className="text-center text-white px-4">
