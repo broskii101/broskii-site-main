@@ -254,20 +254,20 @@ const HomePage: React.FC = () => {
         alt: "A bro sitting on the snow overlooking a mountain resort in the Alps",
       },
       {
-        src: "https://res.cloudinary.com/dtx0og5tm/image/upload/f_auto,q_auto,w_1600/v1766943421/broskii-skiing-padel-rackets-alps_h5dyl1.jpg",
+        src: "https://res.cloudinary.com/dtx0og5tm/image/upload/f_auto,q_auto,w_1200/v1766943421/broskii-skiing-padel-rackets-alps_h5dyl1.jpg",
 alt: "Broskii skier descending an Alpine slope while holding padel tennis rackets",
 
       },
       {
-        src: "https://res.cloudinary.com/dtx0og5tm/image/upload/f_auto,q_auto,w_1600/v1766261597/broskii-snow-trike-astronaut-suit-alps_xw9pjb.webp",
+        src: "https://res.cloudinary.com/dtx0og5tm/image/upload/f_auto,q_auto,w_1200/v1766261597/broskii-snow-trike-astronaut-suit-alps_xw9pjb.webp",
         alt: "A bro riding a snow trike in the Alps while wearing an astronaut suit",
       },
       {
-        src: "https://res.cloudinary.com/dtx0og5tm/image/upload/f_auto,q_auto,w_1600/v1766261594/broskii-snowboarder-group-alps_v5duwe.webp",
+        src: "https://res.cloudinary.com/dtx0og5tm/image/upload/f_auto,q_auto,w_1200/v1766261594/broskii-snowboarder-group-alps_v5duwe.webp",
         alt: "A snowboarder in green posing with the Broskii group on the slopes in the Alps",
       },
       {
-        src: "https://res.cloudinary.com/dtx0og5tm/image/upload/f_auto,q_auto,w_1600/v1766261595/broskii-skiing-action-shot-alps_xlr1lc.webp",
+        src: "https://res.cloudinary.com/dtx0og5tm/image/upload/f_auto,q_auto,w_1200/v1766261595/broskii-skiing-action-shot-alps_xlr1lc.webp",
         alt: "A bro skiing downhill on a groomed slope in the Alps",
       },
     ];
@@ -405,7 +405,7 @@ alt: "Broskii skier descending an Alpine slope while holding padel tennis racket
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
-          transition={{ duration: 1.3, ease: 'easeInOut' }}
+          transition={{ duration: 1.2, ease: 'easeInOut' }}
           className="absolute inset-0"
         >
          
