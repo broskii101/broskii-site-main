@@ -352,11 +352,7 @@ alt: "Broskii skier descending an Alpine slope while holding padel tennis racket
     text.length <= maxLength ? text : text.substring(0, maxLength) + '…';
 
 
-  const primaryButtonClasses =
-    'inline-flex items-center justify-center space-x-2 px-6 py-3 rounded-full text-sm md:text-base font-semibold bg-[#0092D1] text-white shadow-sm hover:shadow-md transition-all duration-300';
 
-  const secondaryButtonClasses =
-    'inline-flex items-center justify-center space-x-2 px-6 py-3 rounded-full text-sm md:text-base font-semibold border border-gray-300 bg-white text-gray-900 shadow-sm hover:shadow-md transition-all duration-300';
 
     const heroPrimaryButtonClasses =
   'inline-flex items-center justify-center space-x-3 ' +

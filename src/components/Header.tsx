@@ -1,13 +1,12 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Menu, X, Calendar, Mail, MessageCircle, Instagram, Mountain } from 'lucide-react';
+import { Menu, X, Calendar } from 'lucide-react';
 
 const Header = () => {
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const location = useLocation();
-  const isHome = location.pathname === '/';
 // Header is always light and independent (no transparent overlay state)
 
 
@@ -55,13 +54,18 @@ const Header = () => {
   ];
 
   // Company Logo Component with proper colors and vertical flip
+  
   const CompanyLogo = ({ className }: { className?: string }) => (
     <svg
       className={className}
       viewBox="0 0 614 614"
       xmlns="http://www.w3.org/2000/svg"
       style={{ transform: 'scaleY(-1)' }}
+      aria-hidden="true"
+      focusable="false"
     >
+  
+
       <defs>
         <clipPath id="clipPath18" clipPathUnits="userSpaceOnUse">
           <path d="M 0,614 H 614 V 0 H 0 Z" />
@@ -199,8 +203,12 @@ const Header = () => {
       <div className="flex justify-between items-center h-[72px] sm:h-[88px]">
 
 {/* Mobile Menu Button */}
+
 <button
   onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+  aria-label={isMobileMenuOpen ? 'Close menu' : 'Open menu'}
+  aria-expanded={isMobileMenuOpen}
+  aria-controls="mobile-menu"
   className="md:hidden flex items-center justify-center h-11 w-11 rounded-full bg-black/5 hover:bg-black/10 transition-colors duration-200 text-gray-900"
 >
   {isMobileMenuOpen ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
@@ -208,13 +216,21 @@ const Header = () => {
 
 
 
+
           {/* Logo Only - Bigger Size and Vertically Flipped - Moved Left */}
-          <Link to="/" className="flex items-center -mr-3">
+         
+          <Link
+  to="/"
+  aria-label="Broskii Home"
+  className="flex items-center -mr-3"
+>
+  <CompanyLogo
+    className="h-[77px] w-[77px] sm:h-[80px] sm:w-[80px]"
+  
+  />
+</Link>
 
-          <CompanyLogo className="h-[77px] w-[77px] sm:h-[80px] sm:w-[80px]" />
 
-
-          </Link>
 
           {/* Desktop Navigation */}
 <nav className="hidden md:flex items-center space-x-2">
@@ -287,6 +303,11 @@ const Header = () => {
       {/* Panel (anchored under header, right aligned) */}
       <motion.div
         key="mobileMenuPanel"
+        id="mobile-menu"
+        role="dialog"
+aria-label="Mobile menu"
+
+
         onClick={(e) => e.stopPropagation()}
 
         initial={{ x: -64, opacity: 0 }}
