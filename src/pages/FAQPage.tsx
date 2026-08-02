@@ -12,7 +12,6 @@ import {
   Hotel,
   Users,
   Heart,
-  Instagram,
   CreditCard,
   Send
 } from 'lucide-react';
@@ -379,7 +378,7 @@ For full contact info, check out our <a href='/contact' class='text-primary-600 
   return (
     <div>
       {/* Hero Section */}
-      <section className="relative py-20 overflow-hidden">
+      <section className="relative flex min-h-[36vh] items-center overflow-hidden sm:min-h-[42vh]">
         {/* Background Image */}
         <img 
   src="https://res.cloudinary.com/dtx0og5tm/image/upload/f_auto,q_auto,w_1600/v1766883701/broskii-ski-boot-pov-alpine-slope.webp_nojdlh.webp"
@@ -390,21 +389,21 @@ For full contact info, check out our <a href='/contact' class='text-primary-600 
         {/* Dark overlay for text readability */}
         <div className="absolute inset-0 bg-black/35"></div>
         
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="mx-auto max-w-7xl px-5 sm:px-6">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6 }}
-            className="text-center text-white relative z-10"
+            className="mx-auto max-w-3xl text-center text-white"
           >
-            <div className="flex items-center justify-center space-x-3 mb-6">
+            <div className="mb-5 flex items-center justify-center">
              
-            <h1 className="text-4xl md:text-6xl font-serif font-bold leading-[1.1]">
+            <h1 className="text-4xl font-bold leading-tight sm:text-5xl md:text-6xl">
   FAQs — We've Got You Covered
 </h1>
 
             </div>
-            <p className="text-lg md:text-xl text-primary-100 max-w-4xl mx-auto leading-relaxed font-normal">
+            <p className="mx-auto mt-5 max-w-2xl text-base leading-relaxed text-white/90 sm:text-lg">
   From booking your spot to hitting the slopes, here's everything you need to know about our Broskii trips.
 </p>
 
@@ -413,8 +412,8 @@ For full contact info, check out our <a href='/contact' class='text-primary-600 
       </section>
 
       {/* Search Section */}
-      <section className="py-12">
-        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+      <section className="border-b border-gray-200 bg-white py-10 sm:py-12">
+        <div className="mx-auto max-w-4xl px-5 sm:px-6">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
@@ -429,7 +428,7 @@ For full contact info, check out our <a href='/contact' class='text-primary-600 
               placeholder="Search FAQs..."
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
-              className="w-full pl-12 pr-4 py-4 text-lg border border-gray-300 rounded-2xl focus:ring-2 focus:ring-primary-500 focus:border-transparent shadow-lg"
+              className="w-full rounded-2xl border border-gray-300 bg-white py-4 pl-12 pr-4 text-base shadow-sm outline-none transition focus:border-transparent focus:ring-2 focus:ring-primary-500 sm:text-lg"
             />
           </motion.div>
         </div>
@@ -438,8 +437,8 @@ For full contact info, check out our <a href='/contact' class='text-primary-600 
       {/* Search Results */}
       {searchTerm && (
         <section className="pb-12">
-          <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
-            <h2 className="text-2xl font-serif font-bold text-gray-900 mb-6">
+          <div className="mx-auto max-w-4xl px-5 sm:px-6">
+            <h2 className="mb-6 text-2xl font-bold text-gray-900">
               Search Results ({filteredFAQs.length})
             </h2>
             <div className="space-y-4">
@@ -448,19 +447,19 @@ For full contact info, check out our <a href='/contact' class='text-primary-600 
                   key={faq.id}
                   initial={{ opacity: 0, y: 20 }}
                   animate={{ opacity: 1, y: 0 }}
-                  className="bg-white rounded-xl shadow-lg overflow-hidden"
+                  className="overflow-hidden rounded-2xl border border-gray-200 bg-white shadow-sm"
                 >
                   <button
                     onClick={() => toggleFAQ(faq.id)}
-                    className="w-full px-6 py-4 text-left flex items-center justify-between hover:bg-gray-50 transition-colors"
+                    className="flex w-full items-center justify-between px-5 py-4 text-left transition-colors hover:bg-gray-50 sm:px-6"
                   >
-                    <div className="flex items-center space-x-4">
+                    <div className="flex items-center gap-4">
                       <div className={`p-2 rounded-lg ${faq.categoryColor}`}>
                         <faq.categoryIcon className="h-5 w-5" />
                       </div>
                       <div>
                         <div className="text-sm text-gray-500 mb-1">{faq.categoryTitle}</div>
-                        <div className="font-serif font-semibold text-gray-900">{faq.question}</div>
+                        <div className="font-semibold text-gray-900">{faq.question}</div>
                       </div>
                     </div>
                     {openFAQ === faq.id ? (
@@ -480,7 +479,7 @@ For full contact info, check out our <a href='/contact' class='text-primary-600 
   aria-hidden={openFAQ !== faq.id}
 >
   <div
-    className="px-6 pb-4 text-gray-600 leading-relaxed whitespace-pre-line"
+    className="mx-4 mb-4 rounded-xl bg-primary-50/70 px-4 py-4 text-base leading-7 text-gray-700 whitespace-pre-line sm:mx-6 sm:px-5"
     dangerouslySetInnerHTML={{ __html: faq.answer }}
   />
 </motion.div>
@@ -494,9 +493,9 @@ For full contact info, check out our <a href='/contact' class='text-primary-600 
 
       {/* FAQ Categories */}
       {!searchTerm && (
-        <section className="pb-20">
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div className="space-y-12">
+        <section className="bg-gray-50 py-14 sm:py-20">
+          <div className="mx-auto max-w-7xl px-5 sm:px-6">
+            <div className="space-y-8 sm:space-y-10">
               {faqCategories.map((category, categoryIndex) => (
                 <motion.div
                   key={category.title}
@@ -504,14 +503,14 @@ For full contact info, check out our <a href='/contact' class='text-primary-600 
                   whileInView={{ opacity: 1, y: 0 }}
                   transition={{ duration: 0.6, delay: categoryIndex * 0.1 }}
                   viewport={{ once: true }}
-                  className="bg-white rounded-2xl shadow-xl overflow-hidden"
+                  className="overflow-hidden rounded-3xl border border-gray-200 bg-white shadow-sm"
                 >
-                  <div className="bg-gradient-to-r from-gray-50 to-gray-100 px-8 py-6">
-                    <div className="flex items-center space-x-4">
-                      <div className={`p-3 rounded-xl ${category.color}`}>
+                  <div className="border-b border-gray-100 bg-white px-5 py-5 sm:px-7 sm:py-6">
+                    <div className="flex items-center gap-4">
+                      <div className="rounded-xl bg-primary-50 p-3 text-primary-600">
                         <category.icon className="h-8 w-8" />
                       </div>
-                      <h2 className="text-3xl font-serif font-bold text-gray-900">{category.title}</h2>
+                      <h2 className="text-2xl font-bold text-gray-900 sm:text-3xl">{category.title}</h2>
                     </div>
                   </div>
                   <div className="divide-y divide-gray-200">
@@ -521,15 +520,15 @@ For full contact info, check out our <a href='/contact' class='text-primary-600 
                         <div key={faqIndex}>
                           <button
                             onClick={() => toggleFAQ(faqId)}
-                            className="w-full px-8 py-6 text-left flex items-center justify-between hover:bg-gray-50 transition-colors"
+                            className="flex w-full items-center justify-between px-5 py-5 text-left transition-colors hover:bg-gray-50 sm:px-7 sm:py-6"
                           >
-                            <h3 className="font-serif font-semibold text-gray-900 text-lg pr-4">
+                            <h3 className="pr-4 text-base font-semibold leading-snug text-gray-900 sm:text-lg">
                               {faq.question}
                             </h3>
                             {openFAQ === faqId ? (
-                              <ChevronUp className="h-6 w-6 text-gray-500 flex-shrink-0" />
+                              <ChevronUp className="h-5 w-5 flex-shrink-0 text-gray-400" />
                             ) : (
-                              <ChevronDown className="h-6 w-6 text-gray-500 flex-shrink-0" />
+                              <ChevronDown className="h-5 w-5 flex-shrink-0 text-gray-400" />
                             )}
                           </button>
                           <motion.div
@@ -543,7 +542,7 @@ For full contact info, check out our <a href='/contact' class='text-primary-600 
   aria-hidden={openFAQ !== faqId}
 >
   <div
-    className="px-8 pb-6 text-gray-600 leading-relaxed text-lg whitespace-pre-line"
+    className="mx-5 mb-5 rounded-2xl bg-primary-50/70 px-5 py-4 text-base leading-7 text-gray-700 whitespace-pre-line sm:mx-7 sm:mb-6"
     dangerouslySetInnerHTML={{ __html: faq.answer }}
   />
 </motion.div>
@@ -561,14 +560,14 @@ For full contact info, check out our <a href='/contact' class='text-primary-600 
                 whileInView={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.6 }}
                 viewport={{ once: true }}
-                className="bg-white rounded-2xl shadow-xl overflow-hidden"
+                className="overflow-hidden rounded-3xl border border-gray-200 bg-white shadow-sm"
               >
-                <div className="bg-gradient-to-r from-gray-50 to-gray-100 px-8 py-6">
-                  <div className="flex items-center space-x-4">
-                    <div className="p-3 rounded-xl bg-gray-100 text-gray-600">
+                <div className="border-b border-gray-100 bg-white px-5 py-5 sm:px-7 sm:py-6">
+                  <div className="flex items-center gap-4">
+                    <div className="rounded-xl bg-primary-50 p-3 text-primary-600">
                       <MessageCircle className="h-8 w-8" />
                     </div>
-                    <h2 className="text-3xl font-serif font-bold text-gray-900">Support</h2>
+                    <h2 className="text-2xl font-bold text-gray-900 sm:text-3xl">Support</h2>
                   </div>
                 </div>
                 <div className="divide-y divide-gray-200">
@@ -578,15 +577,15 @@ For full contact info, check out our <a href='/contact' class='text-primary-600 
                       <div key={faqIndex}>
                         <button
                           onClick={() => toggleFAQ(faqId)}
-                          className="w-full px-8 py-6 text-left flex items-center justify-between hover:bg-gray-50 transition-colors"
+                          className="flex w-full items-center justify-between px-5 py-5 text-left transition-colors hover:bg-gray-50 sm:px-7 sm:py-6"
                         >
-                          <h3 className="font-serif font-semibold text-gray-900 text-lg pr-4">
+                          <h3 className="pr-4 text-base font-semibold leading-snug text-gray-900 sm:text-lg">
                             {faq.question}
                           </h3>
                           {openFAQ === faqId ? (
-                            <ChevronUp className="h-6 w-6 text-gray-500 flex-shrink-0" />
+                            <ChevronUp className="h-5 w-5 flex-shrink-0 text-gray-400" />
                           ) : (
-                            <ChevronDown className="h-6 w-6 text-gray-500 flex-shrink-0" />
+                            <ChevronDown className="h-5 w-5 flex-shrink-0 text-gray-400" />
                           )}
                         </button>
                         <motion.div
@@ -599,7 +598,7 @@ For full contact info, check out our <a href='/contact' class='text-primary-600 
   className="overflow-hidden"
   aria-hidden={openFAQ !== faqId}
 >
-  <div className="px-8 pb-6 text-gray-600 leading-relaxed text-lg">
+  <div className="mx-5 mb-5 rounded-2xl bg-primary-50/70 px-5 py-4 text-base leading-7 text-gray-700 sm:mx-7 sm:mb-6">
     {faq.question === "How do I cancel or transfer my booking?" ? (
       <div>
         <div className="whitespace-pre-line mb-6">{faq.answer}</div>
@@ -610,9 +609,9 @@ For full contact info, check out our <a href='/contact' class='text-primary-600 
                                       <div className="grid grid-cols-1 gap-4">
                                         <a
                                           href="mailto:salaam@broskii.com"
-                                          className="group block p-6 rounded-xl shadow-md hover:shadow-lg transition-all duration-300 bg-white border border-gray-200 hover:border-primary-300"
+                                          className="group block rounded-2xl border border-gray-200 bg-white p-5 shadow-sm transition-all duration-300 hover:border-primary-300 hover:shadow-md"
                                         >
-                                          <div className="flex items-center space-x-4">
+                                          <div className="flex items-center gap-4">
                                             <div className="w-12 h-12 bg-primary-100 text-primary-600 rounded-full flex items-center justify-center flex-shrink-0">
                                               <Mail className="h-6 w-6" />
                                             </div>
@@ -627,9 +626,9 @@ For full contact info, check out our <a href='/contact' class='text-primary-600 
                                           href="https://wa.me/447749939192"
                                           target="_blank"
                                           rel="noopener noreferrer"
-                                          className="group block p-6 rounded-xl shadow-md hover:shadow-lg transition-all duration-300 bg-white border border-gray-200 hover:border-green-300"
+                                          className="group block rounded-2xl border border-gray-200 bg-white p-5 shadow-sm transition-all duration-300 hover:border-green-300 hover:shadow-md"
                                         >
-                                          <div className="flex items-center space-x-4">
+                                          <div className="flex items-center gap-4">
                                             <div className="w-12 h-12 bg-green-100 text-green-600 rounded-full flex items-center justify-center flex-shrink-0">
                                               <MessageCircle className="h-6 w-6" />
                                             </div>
@@ -642,14 +641,14 @@ For full contact info, check out our <a href='/contact' class='text-primary-600 
                                         
                                         <a
                                           href="/contact"
-                                          className="group block p-6 rounded-xl shadow-md hover:shadow-lg transition-all duration-300 bg-white border border-gray-200 hover:border-broskii-light-blue-300"
+                                          className="group block rounded-2xl border border-gray-200 bg-white p-5 shadow-sm transition-all duration-300 hover:border-primary-300 hover:shadow-md"
                                         >
-                                          <div className="flex items-center space-x-4">
-                                            <div className="w-12 h-12 bg-broskii-light-blue-100 text-broskii-light-blue-600 rounded-full flex items-center justify-center flex-shrink-0">
+                                          <div className="flex items-center gap-4">
+                                            <div className="flex h-12 w-12 flex-shrink-0 items-center justify-center rounded-full bg-primary-100 text-primary-600">
                                               <Send className="h-6 w-6" />
                                             </div>
                                             <div>
-                                              <div className="font-semibold text-gray-900 group-hover:text-broskii-light-blue-700 transition-colors">Contact Form</div>
+                                              <div className="font-semibold text-gray-900 transition-colors group-hover:text-primary-700">Contact Form</div>
                                               <div className="text-sm text-gray-600">Send us a message</div>
                                             </div>
                                           </div>
