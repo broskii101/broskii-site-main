@@ -903,10 +903,11 @@ ${data.additionalInformation || 'None provided'}
                   </div>
 
                   <p className="mt-5 leading-relaxed text-gray-700">
-                    Stay in a premium 4★ ski-in / ski-out
-                    hotel in Les Arcs with a flexible
-                    family package tailored to your group
-                    and skiing requirements.
+                    Stay in a 4★ ski-in / ski-out hotel
+                    in Les Arcs with spa facilities, while
+                    we tailor your family’s ski holiday
+                    around your group size, skiing ability
+                    and lesson requirements.
                   </p>
 
                   <div className="mt-7">
@@ -921,8 +922,17 @@ ${data.additionalInformation || 'None provided'}
                       </IncludedItem>
 
                       <IncludedItem>
+                        Spa facilities
+                      </IncludedItem>
+
+                      <IncludedItem>
                         Ski passes tailored to each
                         traveller’s requirements
+                      </IncludedItem>
+
+                      <IncludedItem>
+                        Ski and snowboard lessons arranged
+                        with trusted local ski schools
                       </IncludedItem>
 
                       <IncludedItem>
@@ -934,12 +944,21 @@ ${data.additionalInformation || 'None provided'}
 
                   <div className="mt-7 border-t border-gray-100 pt-6">
                     <p className="font-serif text-2xl font-bold text-gray-900">
-                      Tailored quote
+                      Travel
+                    </p>
+
+                    <p className="mt-2 leading-relaxed text-gray-700">
+                      Most Broskii families choose to
+                      drive directly to the resort, giving
+                      you the flexibility to travel on
+                      your own schedule and bring
+                      everything you need for the week.
                     </p>
 
                     <p className="mt-2 text-sm leading-relaxed text-gray-600">
-                      Flights and organised airport
-                      transfers are not included.
+                      Travel is self-arranged. We’ll
+                      provide full arrival information
+                      before your trip.
                     </p>
 
                     {FAMILY_TRIP_STATUS ===
@@ -1012,11 +1031,10 @@ ${data.additionalInformation || 'None provided'}
                   </div>
 
                   <p className="mt-5 leading-relaxed text-gray-700">
-                    Stay at L'Oxalys, a premium 4★
-                    ski-in / ski-out hotel in Europe’s
-                    highest ski resort, with direct access
-                    to the legendary Three Valleys ski
-                    area.
+                    Stay at L'Oxalys, a 4★ ski-in /
+                    ski-out hotel in Europe’s highest ski
+                    resort, with direct access to the
+                    legendary Three Valleys ski area.
                   </p>
 
                   <div className="mt-7 space-y-3">
@@ -1034,8 +1052,7 @@ ${data.additionalInformation || 'None provided'}
                     </IncludedItem>
 
                     <IncludedItem>
-                      Stay at the 4★ L'Oxalys ski-in /
-                      ski-out hotel
+                      4★ L'Oxalys ski-in / ski-out hotel
                     </IncludedItem>
 
                     <IncludedItem>
@@ -1044,6 +1061,11 @@ ${data.additionalInformation || 'None provided'}
 
                     <IncludedItem>
                       Full Three Valleys ski pass
+                    </IncludedItem>
+
+                    <IncludedItem>
+                      Ski and snowboard lessons arranged
+                      with trusted local ski schools
                     </IncludedItem>
                   </div>
 
