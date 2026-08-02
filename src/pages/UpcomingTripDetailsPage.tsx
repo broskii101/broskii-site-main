@@ -4,7 +4,6 @@ import { Link } from 'react-router-dom';
 import { Helmet } from 'react-helmet-async';
 import {
   CalendarDays,
-  Car,
   CheckCircle,
   Clock3,
   Mail,
@@ -12,10 +11,8 @@ import {
   Mountain,
   Phone,
   Plane,
-  Plus,
   Send,
   Sparkles,
-  Trash2,
   Users,
   X
 } from 'lucide-react';
@@ -102,7 +99,6 @@ type SkiPassRequirement =
   | 'not-sure';
 
 interface FamilyTraveller {
-  name: string;
   travellerType: 'adult' | 'child';
   age: string;
   skiExperience: SkiExperience | '';
@@ -113,8 +109,11 @@ interface FamilyQuoteFormInputs {
   leadName: string;
   email: string;
   phone: string;
-  apartmentPreference: string;
-  convoyInterest: 'yes' | 'maybe' | 'no' | '';
+  adultCount: string;
+  childCount: string;
+  sameExperience: 'yes' | 'no' | '';
+  sharedExperience: SkiExperience | '';
+  sharedSkiPass: SkiPassRequirement | '';
   travellers: FamilyTraveller[];
   additionalInformation: string;
 }
@@ -305,6 +304,8 @@ const UpcomingTripDetailsPage = () => {
     control: familyControl,
     handleSubmit: handleFamilySubmit,
     reset: resetFamilyForm,
+    watch: watchFamily,
+    setValue: setFamilyValue,
     formState: {
       errors: familyErrors,
       isSubmitting: familySubmitting
@@ -314,11 +315,13 @@ const UpcomingTripDetailsPage = () => {
       leadName: '',
       email: '',
       phone: '',
-      apartmentPreference: '',
-      convoyInterest: '',
+      adultCount: '1',
+      childCount: '0',
+      sameExperience: '',
+      sharedExperience: '',
+      sharedSkiPass: '',
       travellers: [
         {
-          name: '',
           travellerType: 'adult',
           age: '',
           skiExperience: '',
@@ -331,12 +334,103 @@ const UpcomingTripDetailsPage = () => {
 
   const {
     fields: travellerFields,
-    append: appendTraveller,
-    remove: removeTraveller
+    replace: replaceTravellers
   } = useFieldArray({
     control: familyControl,
     name: 'travellers'
   });
+
+  const adultCount = Number(
+    watchFamily('adultCount') || 1
+  );
+  const childCount = Number(
+    watchFamily('childCount') || 0
+  );
+  const sameExperience =
+    watchFamily('sameExperience');
+  const sharedExperience =
+    watchFamily('sharedExperience');
+  const sharedSkiPass =
+    watchFamily('sharedSkiPass');
+
+  React.useEffect(() => {
+    const travellers: FamilyTraveller[] = [
+      ...Array.from(
+        { length: adultCount },
+        () => ({
+          travellerType: 'adult' as const,
+          age: '',
+          skiExperience: '',
+          skiPassRequired: ''
+        })
+      ),
+      ...Array.from(
+        { length: childCount },
+        () => ({
+          travellerType: 'child' as const,
+          age: '',
+          skiExperience: '',
+          skiPassRequired: ''
+        })
+      )
+    ];
+
+    replaceTravellers(travellers);
+  }, [
+    adultCount,
+    childCount,
+    replaceTravellers
+  ]);
+
+  React.useEffect(() => {
+    if (
+      sameExperience === 'yes' &&
+      sharedExperience
+    ) {
+      travellerFields.forEach((_, index) => {
+        setFamilyValue(
+          `travellers.${index}.skiExperience`,
+          sharedExperience,
+          { shouldValidate: true }
+        );
+
+        const defaultSkiPass:
+          | SkiPassRequirement
+          | '' =
+          sharedExperience === 'intermediate' ||
+          sharedExperience === 'advanced'
+            ? 'yes'
+            : 'no';
+
+        setFamilyValue(
+          `travellers.${index}.skiPassRequired`,
+          defaultSkiPass,
+          { shouldValidate: true }
+        );
+      });
+    }
+  }, [
+    sameExperience,
+    sharedExperience,
+    travellerFields,
+    setFamilyValue
+  ]);
+
+  React.useEffect(() => {
+    if (sharedSkiPass) {
+      travellerFields.forEach((_, index) => {
+        setFamilyValue(
+          `travellers.${index}.skiPassRequired`,
+          sharedSkiPass,
+          { shouldValidate: true }
+        );
+      });
+    }
+  }, [
+    sharedSkiPass,
+    travellerFields,
+    setFamilyValue
+  ]);
 
   /* ---------------------------------------------------------
      WAITLIST FORM
@@ -422,15 +516,34 @@ const UpcomingTripDetailsPage = () => {
   ) => {
     const travellerSummary = data.travellers
       .map((traveller, index) => {
+        const adultNumber = data.travellers
+          .slice(0, index + 1)
+          .filter(
+            (item) =>
+              item.travellerType === 'adult'
+          ).length;
+
+        const childNumber = data.travellers
+          .slice(0, index + 1)
+          .filter(
+            (item) =>
+              item.travellerType === 'child'
+          ).length;
+
+        const label =
+          traveller.travellerType === 'adult'
+            ? adultNumber === 1
+              ? 'Adult 1 (Lead traveller)'
+              : `Adult ${adultNumber}`
+            : `Child ${childNumber}`;
+
         const ageText =
-          traveller.travellerType === 'child' &&
-          traveller.age
-            ? ` | Age: ${traveller.age}`
+          traveller.travellerType === 'child'
+            ? `\nAge: ${traveller.age || 'Not provided'}`
             : '';
 
         return [
-          `Traveller ${index + 1}:`,
-          `Name: ${traveller.name || 'Not provided'}`,
+          `${label}:`,
           `Type: ${
             traveller.travellerType === 'adult'
               ? 'Adult'
@@ -453,27 +566,26 @@ Trip:
 Les Arcs Family Ski Trip
 12–19 December 2026
 
-Lead traveller:
+LEAD TRAVELLER
+
+Name:
 ${data.leadName}
 
+Email:
+${data.email}
+
 Phone:
-${data.phone || 'Not provided'}
+${data.phone}
 
-Apartment preference:
-${data.apartmentPreference || 'Please recommend a suitable apartment'}
+FAMILY
 
-London driving convoy:
-${
-  data.convoyInterest === 'yes'
-    ? 'Yes, interested in joining'
-    : data.convoyInterest === 'maybe'
-      ? 'Possibly interested'
-      : data.convoyInterest === 'no'
-        ? 'No'
-        : 'Not specified'
-}
+Adults:
+${data.adultCount}
 
-TRAVELLERS
+Children:
+${data.childCount}
+
+SKIING REQUIREMENTS
 
 ${travellerSummary}
 
@@ -508,7 +620,7 @@ ${data.additionalInformation || 'None provided'}
       }
 
       toast.success(
-        'Your family trip quote request has been sent.'
+        'Your personalised quote request has been sent.'
       );
 
       resetFamilyForm();
@@ -791,10 +903,10 @@ ${data.additionalInformation || 'None provided'}
                   </div>
 
                   <p className="mt-5 leading-relaxed text-gray-700">
-                    A flexible family ski package built
-                    around your chosen apartment, family
-                    size and individual ski-pass
-                    requirements.
+                    Stay in a premium 4★ ski-in / ski-out
+                    hotel in Les Arcs with a flexible
+                    family package tailored to your group
+                    and skiing requirements.
                   </p>
 
                   <div className="mt-7">
@@ -804,7 +916,8 @@ ${data.additionalInformation || 'None provided'}
 
                     <div className="mt-4 space-y-3">
                       <IncludedItem>
-                        Apartment accommodation
+                        4★ ski-in / ski-out hotel
+                        accommodation
                       </IncludedItem>
 
                       <IncludedItem>
@@ -816,25 +929,6 @@ ${data.additionalInformation || 'None provided'}
                         Options for first-time, beginner,
                         intermediate and advanced skiers
                       </IncludedItem>
-                    </div>
-                  </div>
-
-                  <div className="mt-7 rounded-2xl bg-gray-50 p-5">
-                    <div className="flex items-start gap-3">
-                      <Car className="mt-0.5 h-5 w-5 flex-shrink-0 text-primary-600" />
-
-                      <div>
-                        <p className="font-bold text-gray-900">
-                          Join the London convoy
-                        </p>
-
-                        <p className="mt-1 text-sm leading-relaxed text-gray-600">
-                          We’ll be travelling from London
-                          to the Alps in private cars.
-                          Families are welcome to join the
-                          convoy and travel with the group.
-                        </p>
-                      </div>
                     </div>
                   </div>
 
@@ -918,9 +1012,11 @@ ${data.additionalInformation || 'None provided'}
                   </div>
 
                   <p className="mt-5 leading-relaxed text-gray-700">
-                    Stay in Europe’s highest ski resort
-                    with direct access to the legendary
-                    Three Valleys ski area.
+                    Stay at L'Oxalys, a premium 4★
+                    ski-in / ski-out hotel in Europe’s
+                    highest ski resort, with direct access
+                    to the legendary Three Valleys ski
+                    area.
                   </p>
 
                   <div className="mt-7 space-y-3">
@@ -938,7 +1034,8 @@ ${data.additionalInformation || 'None provided'}
                     </IncludedItem>
 
                     <IncludedItem>
-                      4-star ski-in / ski-out accommodation
+                      Stay at the 4★ L'Oxalys ski-in /
+                      ski-out hotel
                     </IncludedItem>
 
                     <IncludedItem>
@@ -1237,33 +1334,17 @@ ${data.additionalInformation || 'None provided'}
 
         {showFamilyQuoteModal && (
           <motion.div
-            initial={{
-              opacity: 0
-            }}
-            animate={{
-              opacity: 1
-            }}
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
             className="fixed inset-0 z-[60] flex items-end justify-center overflow-y-auto bg-black/65 p-0 backdrop-blur-sm sm:items-center sm:p-5"
             onClick={closeFamilyQuoteModal}
           >
             <motion.div
-              initial={{
-                opacity: 0,
-                y: 30,
-                scale: 0.98
-              }}
-              animate={{
-                opacity: 1,
-                y: 0,
-                scale: 1
-              }}
-              transition={{
-                duration: 0.25
-              }}
+              initial={{ opacity: 0, y: 30, scale: 0.98 }}
+              animate={{ opacity: 1, y: 0, scale: 1 }}
+              transition={{ duration: 0.25 }}
               className="relative max-h-[94vh] w-full max-w-3xl overflow-y-auto rounded-t-3xl bg-white p-5 shadow-2xl sm:rounded-3xl sm:p-8"
-              onClick={(event) =>
-                event.stopPropagation()
-              }
+              onClick={(event) => event.stopPropagation()}
             >
               <button
                 type="button"
@@ -1278,54 +1359,44 @@ ${data.additionalInformation || 'None provided'}
                 <p className="text-sm font-bold uppercase tracking-[0.18em] text-amber-700">
                   Les Arcs · 12–19 December 2026
                 </p>
-
                 <h2 className="mt-2 font-serif text-3xl font-bold text-gray-900">
                   Request a Family Trip Quote
                 </h2>
-
                 <p className="mt-3 leading-relaxed text-gray-600">
-                  Tell us about your family, preferred
-                  apartment and each traveller’s skiing
-                  requirements. We’ll reply with a
-                  tailored quote.
+                  Tell us a little about your family and we’ll prepare a
+                  personalised quote based on your group size and skiing
+                  requirements.
                 </p>
               </div>
 
               <form
-                onSubmit={handleFamilySubmit(
-                  onFamilyQuoteSubmit
-                )}
+                onSubmit={handleFamilySubmit(onFamilyQuoteSubmit)}
                 className="mt-8 space-y-8"
               >
-                {/* Lead traveller */}
-
                 <section>
-                  <h3 className="font-serif text-xl font-bold text-gray-900">
-                    Lead traveller
+                  <p className="text-xs font-bold uppercase tracking-[0.18em] text-primary-600">
+                    Step 1 of 3
+                  </p>
+                  <h3 className="mt-2 font-serif text-2xl font-bold text-gray-900">
+                    Your Details
                   </h3>
 
-                  <div className="mt-4 grid grid-cols-1 gap-5 sm:grid-cols-2">
+                  <div className="mt-5 grid grid-cols-1 gap-5 sm:grid-cols-2">
                     <div>
                       <label className="mb-2 block text-sm font-semibold text-gray-700">
                         Full name *
                       </label>
-
                       <input
                         type="text"
                         {...registerFamily('leadName', {
-                          required:
-                            'Full name is required'
+                          required: 'Full name is required'
                         })}
                         className="w-full rounded-xl border border-gray-300 px-4 py-3 focus:border-transparent focus:ring-2 focus:ring-primary-500"
                         placeholder="Your full name"
                       />
-
                       {familyErrors.leadName && (
                         <p className="mt-1 text-sm text-red-600">
-                          {
-                            familyErrors.leadName
-                              .message
-                          }
+                          {familyErrors.leadName.message}
                         </p>
                       )}
                     </div>
@@ -1334,22 +1405,18 @@ ${data.additionalInformation || 'None provided'}
                       <label className="mb-2 block text-sm font-semibold text-gray-700">
                         Email address *
                       </label>
-
                       <input
                         type="email"
                         {...registerFamily('email', {
-                          required:
-                            'Email address is required',
+                          required: 'Email address is required',
                           pattern: {
                             value: /^\S+@\S+$/i,
-                            message:
-                              'Enter a valid email address'
+                            message: 'Enter a valid email address'
                           }
                         })}
                         className="w-full rounded-xl border border-gray-300 px-4 py-3 focus:border-transparent focus:ring-2 focus:ring-primary-500"
                         placeholder="you@example.com"
                       />
-
                       {familyErrors.email && (
                         <p className="mt-1 text-sm text-red-600">
                           {familyErrors.email.message}
@@ -1357,315 +1424,310 @@ ${data.additionalInformation || 'None provided'}
                       )}
                     </div>
 
-                    <div>
+                    <div className="sm:col-span-2">
                       <label className="mb-2 block text-sm font-semibold text-gray-700">
-                        Phone number
+                        Phone number *
                       </label>
-
                       <input
                         type="tel"
-                        {...registerFamily('phone')}
+                        {...registerFamily('phone', {
+                          required: 'Phone number is required'
+                        })}
                         className="w-full rounded-xl border border-gray-300 px-4 py-3 focus:border-transparent focus:ring-2 focus:ring-primary-500"
                         placeholder="Your phone number"
                       />
+                      {familyErrors.phone && (
+                        <p className="mt-1 text-sm text-red-600">
+                          {familyErrors.phone.message}
+                        </p>
+                      )}
+                    </div>
+                  </div>
+                </section>
+
+                <section className="border-t border-gray-100 pt-8">
+                  <p className="text-xs font-bold uppercase tracking-[0.18em] text-primary-600">
+                    Step 2 of 3
+                  </p>
+                  <h3 className="mt-2 font-serif text-2xl font-bold text-gray-900">
+                    Your Family
+                  </h3>
+
+                  <div className="mt-5 grid grid-cols-1 gap-5 sm:grid-cols-2">
+                    <div>
+                      <label className="mb-2 block text-sm font-semibold text-gray-700">
+                        How many adults? *
+                      </label>
+                      <select
+                        {...registerFamily('adultCount', {
+                          required: 'Select the number of adults'
+                        })}
+                        className="w-full rounded-xl border border-gray-300 bg-white px-4 py-3 focus:border-transparent focus:ring-2 focus:ring-primary-500"
+                      >
+                        {Array.from({ length: 8 }, (_, index) => index + 1).map(
+                          (count) => (
+                            <option key={count} value={count}>
+                              {count}
+                            </option>
+                          )
+                        )}
+                      </select>
+                      <p className="mt-2 text-xs text-gray-500">
+                        Includes the lead traveller.
+                      </p>
                     </div>
 
                     <div>
                       <label className="mb-2 block text-sm font-semibold text-gray-700">
-                        London convoy
+                        How many children? *
                       </label>
-
                       <select
-                        {...registerFamily(
-                          'convoyInterest'
-                        )}
+                        {...registerFamily('childCount', {
+                          required: 'Select the number of children'
+                        })}
                         className="w-full rounded-xl border border-gray-300 bg-white px-4 py-3 focus:border-transparent focus:ring-2 focus:ring-primary-500"
                       >
-                        <option value="">
-                          Select an option
-                        </option>
-                        <option value="yes">
-                          Yes, we would like to join
-                        </option>
-                        <option value="maybe">
-                          Maybe — please send details
-                        </option>
-                        <option value="no">
-                          No, we will arrange our own
-                          travel
-                        </option>
+                        {Array.from({ length: 9 }, (_, index) => index).map(
+                          (count) => (
+                            <option key={count} value={count}>
+                              {count}
+                            </option>
+                          )
+                        )}
                       </select>
                     </div>
                   </div>
                 </section>
 
-                {/* Apartment */}
-
-                <section>
-                  <h3 className="font-serif text-xl font-bold text-gray-900">
-                    Apartment preference
+                <section className="border-t border-gray-100 pt-8">
+                  <p className="text-xs font-bold uppercase tracking-[0.18em] text-primary-600">
+                    Step 3 of 3
+                  </p>
+                  <h3 className="mt-2 font-serif text-2xl font-bold text-gray-900">
+                    Skiing Requirements
                   </h3>
 
-                  <p className="mt-1 text-sm text-gray-600">
-                    Enter the apartment or option you are
-                    interested in. Leave it blank and we
-                    will recommend one based on your
-                    family size.
-                  </p>
-
-                  <input
-                    type="text"
-                    {...registerFamily(
-                      'apartmentPreference'
-                    )}
-                    className="mt-4 w-full rounded-xl border border-gray-300 px-4 py-3 focus:border-transparent focus:ring-2 focus:ring-primary-500"
-                    placeholder="Apartment name, option or ‘please recommend’"
-                  />
-                </section>
-
-                {/* Travellers */}
-
-                <section>
-                  <div className="flex items-center justify-between gap-4">
+                  <div className="mt-5 space-y-5">
                     <div>
-                      <h3 className="font-serif text-xl font-bold text-gray-900">
-                        Travellers
-                      </h3>
-
-                      <p className="mt-1 text-sm text-gray-600">
-                        Add every adult and child who
-                        would be travelling.
-                      </p>
+                      <label className="mb-2 block text-sm font-semibold text-gray-700">
+                        Does everyone have the same ski experience? *
+                      </label>
+                      <select
+                        {...registerFamily('sameExperience', {
+                          required: 'Select an option'
+                        })}
+                        className="w-full rounded-xl border border-gray-300 bg-white px-4 py-3 focus:border-transparent focus:ring-2 focus:ring-primary-500"
+                      >
+                        <option value="">Select an option</option>
+                        <option value="yes">Yes</option>
+                        <option value="no">No</option>
+                      </select>
                     </div>
 
-                    <button
-                      type="button"
-                      onClick={() =>
-                        appendTraveller({
-                          name: '',
-                          travellerType: 'adult',
-                          age: '',
-                          skiExperience: '',
-                          skiPassRequired: ''
-                        })
-                      }
-                      className="inline-flex flex-shrink-0 items-center gap-2 rounded-full bg-primary-50 px-4 py-2 text-sm font-bold text-primary-700 transition hover:bg-primary-100"
-                    >
-                      <Plus className="h-4 w-4" />
-                      Add
-                    </button>
+                    {sameExperience === 'yes' && (
+                      <div>
+                        <label className="mb-2 block text-sm font-semibold text-gray-700">
+                          Ski experience *
+                        </label>
+                        <select
+                          {...registerFamily('sharedExperience', {
+                            required: 'Select a ski experience level'
+                          })}
+                          className="w-full rounded-xl border border-gray-300 bg-white px-4 py-3 focus:border-transparent focus:ring-2 focus:ring-primary-500"
+                        >
+                          <option value="">Select experience</option>
+                          <option value="never-skied">First Time</option>
+                          <option value="beginner">Beginner</option>
+                          <option value="intermediate">Intermediate</option>
+                          <option value="advanced">Advanced</option>
+                        </select>
+                      </div>
+                    )}
+
+                    <div>
+                      <label className="mb-2 block text-sm font-semibold text-gray-700">
+                        Does everyone require a ski pass? *
+                      </label>
+                      <select
+                        {...registerFamily('sharedSkiPass', {
+                          required: 'Select a ski-pass option'
+                        })}
+                        className="w-full rounded-xl border border-gray-300 bg-white px-4 py-3 focus:border-transparent focus:ring-2 focus:ring-primary-500"
+                      >
+                        <option value="">Select an option</option>
+                        <option value="yes">Yes</option>
+                        <option value="no">No — select individually</option>
+                        <option value="not-sure">Not sure</option>
+                      </select>
+                    </div>
                   </div>
 
-                  <div className="mt-5 space-y-5">
-                    {travellerFields.map(
-                      (field, index) => (
+                  <div className="mt-6 space-y-4">
+                    {travellerFields.map((field, index) => {
+                      const isAdult = index < adultCount;
+                      const adultNumber = index + 1;
+                      const childNumber = index - adultCount + 1;
+                      const label = isAdult
+                        ? adultNumber === 1
+                          ? 'You'
+                          : `Adult ${adultNumber}`
+                        : `Child ${childNumber}`;
+
+                      return (
                         <div
                           key={field.id}
                           className="rounded-2xl border border-gray-200 bg-gray-50 p-4 sm:p-5"
                         >
-                          <div className="mb-4 flex items-center justify-between">
-                            <p className="font-bold text-gray-900">
-                              Traveller {index + 1}
-                            </p>
+                          <p className="font-bold text-gray-900">{label}</p>
 
-                            {travellerFields.length >
-                              1 && (
-                              <button
-                                type="button"
-                                onClick={() =>
-                                  removeTraveller(index)
-                                }
-                                className="inline-flex items-center gap-1 text-sm font-semibold text-red-600 transition hover:text-red-700"
-                              >
-                                <Trash2 className="h-4 w-4" />
-                                Remove
-                              </button>
+                          <input
+                            type="hidden"
+                            value={isAdult ? 'adult' : 'child'}
+                            {...registerFamily(
+                              `travellers.${index}.travellerType`
+                            )}
+                          />
+
+                          <div className="mt-4 grid grid-cols-1 gap-4 sm:grid-cols-2">
+                            {!isAdult && (
+                              <div>
+                                <label className="mb-2 block text-sm font-semibold text-gray-700">
+                                  Age *
+                                </label>
+                                <select
+                                  {...registerFamily(
+                                    `travellers.${index}.age`,
+                                    { required: 'Child age is required' }
+                                  )}
+                                  className="w-full rounded-xl border border-gray-300 bg-white px-4 py-3 focus:border-transparent focus:ring-2 focus:ring-primary-500"
+                                >
+                                  <option value="">Select age</option>
+                                  {Array.from(
+                                    { length: 17 },
+                                    (_, ageIndex) => ageIndex + 1
+                                  ).map((age) => (
+                                    <option key={age} value={age}>
+                                      {age}
+                                    </option>
+                                  ))}
+                                </select>
+                              </div>
+                            )}
+
+                            {sameExperience === 'no' && (
+                              <div>
+                                <label className="mb-2 block text-sm font-semibold text-gray-700">
+                                  Ski experience *
+                                </label>
+                                <select
+                                  {...registerFamily(
+                                    `travellers.${index}.skiExperience`,
+                                    {
+                                      required:
+                                        'Select a ski experience level',
+                                      onChange: (event) => {
+                                        const value =
+                                          event.target.value as SkiExperience;
+                                        if (
+                                          sharedSkiPass ===
+                                          'no'
+                                        ) {
+                                          const skiPass:
+                                            | SkiPassRequirement
+                                            | '' =
+                                            value ===
+                                              'intermediate' ||
+                                            value ===
+                                              'advanced'
+                                              ? 'yes'
+                                              : value
+                                                ? 'no'
+                                                : '';
+
+                                          setFamilyValue(
+                                            `travellers.${index}.skiPassRequired`,
+                                            skiPass,
+                                            {
+                                              shouldValidate:
+                                                true
+                                            }
+                                          );
+                                        }
+                                      }
+                                    }
+                                  )}
+                                  className="w-full rounded-xl border border-gray-300 bg-white px-4 py-3 focus:border-transparent focus:ring-2 focus:ring-primary-500"
+                                >
+                                  <option value="">Select experience</option>
+                                  <option value="never-skied">First Time</option>
+                                  <option value="beginner">Beginner</option>
+                                  <option value="intermediate">Intermediate</option>
+                                  <option value="advanced">Advanced</option>
+                                </select>
+                              </div>
+                            )}
+
+                            {sharedSkiPass === 'no' && (
+                              <div className="sm:col-span-2">
+                                <label className="mb-2 block text-sm font-semibold text-gray-700">
+                                  Ski pass required? *
+                                </label>
+                                <select
+                                  {...registerFamily(
+                                    `travellers.${index}.skiPassRequired`,
+                                    {
+                                      required:
+                                        'Select a ski-pass option'
+                                    }
+                                  )}
+                                  className="w-full rounded-xl border border-gray-300 bg-white px-4 py-3 focus:border-transparent focus:ring-2 focus:ring-primary-500"
+                                >
+                                  <option value="">Select an option</option>
+                                  <option value="yes">Yes</option>
+                                  <option value="no">No</option>
+                                  <option value="not-sure">Not sure</option>
+                                </select>
+                              </div>
                             )}
                           </div>
-
-                          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-                            <div>
-                              <label className="mb-2 block text-sm font-semibold text-gray-700">
-                                Name *
-                              </label>
-
-                              <input
-                                type="text"
-                                {...registerFamily(
-                                  `travellers.${index}.name`,
-                                  {
-                                    required:
-                                      'Traveller name is required'
-                                  }
-                                )}
-                                className="w-full rounded-xl border border-gray-300 bg-white px-4 py-3 focus:border-transparent focus:ring-2 focus:ring-primary-500"
-                                placeholder="Traveller name"
-                              />
-
-                              {familyErrors
-                                .travellers?.[index]
-                                ?.name && (
-                                <p className="mt-1 text-sm text-red-600">
-                                  {
-                                    familyErrors
-                                      .travellers[index]
-                                      ?.name?.message
-                                  }
-                                </p>
-                              )}
-                            </div>
-
-                            <div>
-                              <label className="mb-2 block text-sm font-semibold text-gray-700">
-                                Adult or child *
-                              </label>
-
-                              <select
-                                {...registerFamily(
-                                  `travellers.${index}.travellerType`,
-                                  {
-                                    required:
-                                      'Select adult or child'
-                                  }
-                                )}
-                                className="w-full rounded-xl border border-gray-300 bg-white px-4 py-3 focus:border-transparent focus:ring-2 focus:ring-primary-500"
-                              >
-                                <option value="adult">
-                                  Adult
-                                </option>
-                                <option value="child">
-                                  Child
-                                </option>
-                              </select>
-                            </div>
-
-                            <div>
-                              <label className="mb-2 block text-sm font-semibold text-gray-700">
-                                Age
-                              </label>
-
-                              <input
-                                type="number"
-                                min="0"
-                                max="100"
-                                {...registerFamily(
-                                  `travellers.${index}.age`
-                                )}
-                                className="w-full rounded-xl border border-gray-300 bg-white px-4 py-3 focus:border-transparent focus:ring-2 focus:ring-primary-500"
-                                placeholder="Required for children"
-                              />
-                            </div>
-
-                            <div>
-                              <label className="mb-2 block text-sm font-semibold text-gray-700">
-                                Ski experience *
-                              </label>
-
-                              <select
-                                {...registerFamily(
-                                  `travellers.${index}.skiExperience`,
-                                  {
-                                    required:
-                                      'Select a ski experience level'
-                                  }
-                                )}
-                                className="w-full rounded-xl border border-gray-300 bg-white px-4 py-3 focus:border-transparent focus:ring-2 focus:ring-primary-500"
-                              >
-                                <option value="">
-                                  Select experience
-                                </option>
-                                <option value="never-skied">
-                                  Never skied
-                                </option>
-                                <option value="beginner">
-                                  Beginner
-                                </option>
-                                <option value="intermediate">
-                                  Intermediate
-                                </option>
-                                <option value="advanced">
-                                  Advanced
-                                </option>
-                              </select>
-
-                              {familyErrors
-                                .travellers?.[index]
-                                ?.skiExperience && (
-                                <p className="mt-1 text-sm text-red-600">
-                                  {
-                                    familyErrors
-                                      .travellers[index]
-                                      ?.skiExperience
-                                      ?.message
-                                  }
-                                </p>
-                              )}
-                            </div>
-
-                            <div className="sm:col-span-2">
-                              <label className="mb-2 block text-sm font-semibold text-gray-700">
-                                Ski pass required? *
-                              </label>
-
-                              <select
-                                {...registerFamily(
-                                  `travellers.${index}.skiPassRequired`,
-                                  {
-                                    required:
-                                      'Select a ski-pass option'
-                                  }
-                                )}
-                                className="w-full rounded-xl border border-gray-300 bg-white px-4 py-3 focus:border-transparent focus:ring-2 focus:ring-primary-500"
-                              >
-                                <option value="">
-                                  Select an option
-                                </option>
-                                <option value="yes">
-                                  Yes
-                                </option>
-                                <option value="no">
-                                  No
-                                </option>
-                                <option value="not-sure">
-                                  Not sure — please advise
-                                </option>
-                              </select>
-
-                              {familyErrors
-                                .travellers?.[index]
-                                ?.skiPassRequired && (
-                                <p className="mt-1 text-sm text-red-600">
-                                  {
-                                    familyErrors
-                                      .travellers[index]
-                                      ?.skiPassRequired
-                                      ?.message
-                                  }
-                                </p>
-                              )}
-                            </div>
-                          </div>
                         </div>
-                      )
-                    )}
+                      );
+                    })}
                   </div>
                 </section>
 
-                {/* Additional information */}
-
-                <section>
+                <section className="border-t border-gray-100 pt-8">
                   <label className="block font-serif text-xl font-bold text-gray-900">
-                    Anything else we should know?
+                    Additional Information
+                    <span className="ml-2 font-sans text-sm font-medium text-gray-400">
+                      Optional
+                    </span>
                   </label>
-
                   <textarea
-                    {...registerFamily(
-                      'additionalInformation'
-                    )}
-                    rows={5}
+                    {...registerFamily('additionalInformation')}
+                    rows={4}
                     className="mt-4 w-full rounded-xl border border-gray-300 px-4 py-3 focus:border-transparent focus:ring-2 focus:ring-primary-500"
-                    placeholder="Questions, accessibility needs, lessons, equipment hire or other requirements..."
+                    placeholder="Lessons, equipment hire, accessibility requirements or anything else you’d like us to know."
                   />
+                </section>
+
+                <section className="rounded-2xl bg-primary-50 p-5">
+                  <h3 className="font-serif text-xl font-bold text-gray-900">
+                    What happens next?
+                  </h3>
+                  <div className="mt-4 space-y-3">
+                    <IncludedItem>We’ll review your requirements</IncludedItem>
+                    <IncludedItem>
+                      We’ll prepare your personalised quote
+                    </IncludedItem>
+                    <IncludedItem>
+                      We’ll contact you by phone or email to discuss your trip
+                      and answer any questions
+                    </IncludedItem>
+                    <IncludedItem>
+                      We aim to respond within 24–48 hours
+                    </IncludedItem>
+                  </div>
                 </section>
 
                 <button
@@ -1674,11 +1736,10 @@ ${data.additionalInformation || 'None provided'}
                   className="inline-flex w-full items-center justify-center gap-2 rounded-full bg-amber-600 px-6 py-4 text-base font-bold text-white shadow-lg transition hover:bg-amber-700 disabled:cursor-not-allowed disabled:opacity-60"
                 >
                   <Send className="h-5 w-5" />
-
                   <span>
                     {familySubmitting
                       ? 'Sending Request…'
-                      : 'Send Quote Request'}
+                      : 'Request My Personalised Quote'}
                   </span>
                 </button>
               </form>
