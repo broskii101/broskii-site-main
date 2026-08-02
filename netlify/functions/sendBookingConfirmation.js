@@ -1,7 +1,7 @@
-const { Resend } = require('resend');
+import { Resend } from 'resend';
 const resend = new Resend(process.env.RESEND_API_KEY);
 
-exports.handler = async (event) => {
+export const handler = async (event) => {
   const headers = {
     'Access-Control-Allow-Origin': '*',
     'Access-Control-Allow-Headers': 'Content-Type',
