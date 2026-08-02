@@ -2,18 +2,87 @@ import React from 'react';
 import { motion } from 'framer-motion';
 import { Link } from 'react-router-dom';
 import { Helmet } from 'react-helmet-async';
-
 import {
+  CalendarDays,
+  Car,
   CheckCircle,
-  X,
-  Users,
+  Clock3,
   Mail,
+  MapPin,
+  Mountain,
   Phone,
-  Send
+  Plane,
+  Plus,
+  Send,
+  Sparkles,
+  Trash2,
+  Users,
+  X
 } from 'lucide-react';
-import { useForm } from 'react-hook-form';
-import { supabase } from '../lib/supabaseClient';
+import {
+  useFieldArray,
+  useForm
+} from 'react-hook-form';
 import toast from 'react-hot-toast';
+
+import { supabase } from '../lib/supabaseClient';
+
+/* =========================================================
+   CONSTANTS
+   ========================================================= */
+
+const JANUARY_2027_TRIP_ID =
+  '6db8abe3-efa0-4847-a90d-2fb944fd36a8';
+
+const FAMILY_TRIP_STATUS:
+  | 'enquiries_open'
+  | 'limited'
+  | 'sold_out' = 'enquiries_open';
+
+const IMAGES = {
+  pageHero:
+    'https://res.cloudinary.com/dtx0og5tm/image/upload/f_auto,q_auto,w_1600/v1766874462/broskii-skiing-action-alpine-hero.webp_qlnwfp.webp',
+
+  seasonPoster:
+    'https://res.cloudinary.com/dtx0og5tm/image/upload/f_auto,q_auto,w_1200/v1785682931/broskii-2026-2027-ski-season-poster.webp_lynqvu.jpg',
+
+  decemberFamily:
+    'https://res.cloudinary.com/dtx0og5tm/image/upload/f_auto,q_auto,w_1400/v1785684164/broskii-family-ski-trip-december-2026.webp_chycxd.jpg',
+
+  januaryValThorens:
+    'https://res.cloudinary.com/dtx0og5tm/image/upload/f_auto,q_auto,w_1400/v1785684467/broskii-val-thorens-january-2027.webp_qinxth.jpg',
+
+  aprilValThorens:
+    'https://res.cloudinary.com/dtx0og5tm/image/upload/f_auto,q_auto,w_1400/v1785684117/broskii-val-thorens-april-2027.webp_lfgweu.jpg',
+
+  april2026Poster:
+    'https://res.cloudinary.com/dtx0og5tm/image/upload/f_auto,q_auto,w_1200/v1769048687/broskii-tignes-april-ski-trip-poster_zpf1oe.jpg',
+
+  january2026Poster:
+    'https://res.cloudinary.com/dtx0og5tm/image/upload/f_auto,q_auto,w_1200/broskii-val-thorens-ski-3-valleys-january-2026-sold-out_ijudjp.jpg',
+
+  january2025Poster:
+    'https://res.cloudinary.com/dtx0og5tm/image/upload/f_auto,q_auto,w_1200/broskii-val-thorens-ski-3-valleys-january-2025-sold-out_pjrvzr.jpg',
+
+  december2024Poster:
+    'https://res.cloudinary.com/dtx0og5tm/image/upload/f_auto,q_auto,w_1200/broskii-tignes-val-disere-december-2024-sold-out_jlsgmn.jpg'
+};
+
+/* =========================================================
+   TYPES
+   ========================================================= */
+
+interface SupabaseTripAvailability {
+  id: string;
+  capacity: number | null;
+  booked_count: number | null;
+  status: string | null;
+}
+
+interface SelectedWaitlistTrip {
+  id: string;
+  title: string;
+}
 
 interface WaitlistFormInputs {
   fullName: string;
@@ -21,575 +90,1755 @@ interface WaitlistFormInputs {
   phone: string;
 }
 
-const UpcomingTripDetailsPage = () => {
-  const [fullScreenImage, setFullScreenImage] = React.useState<string | null>(null);
-  const [showWaitlistModal, setShowWaitlistModal] = React.useState(false);
-  const [trip, setTrip] = React.useState<any>(null);
+type SkiExperience =
+  | 'never-skied'
+  | 'beginner'
+  | 'intermediate'
+  | 'advanced';
 
-  const { register, handleSubmit, reset, formState: { errors } } =
-    useForm<WaitlistFormInputs>();
+type SkiPassRequirement =
+  | 'yes'
+  | 'no'
+  | 'not-sure';
+
+interface FamilyTraveller {
+  name: string;
+  travellerType: 'adult' | 'child';
+  age: string;
+  skiExperience: SkiExperience | '';
+  skiPassRequired: SkiPassRequirement | '';
+}
+
+interface FamilyQuoteFormInputs {
+  leadName: string;
+  email: string;
+  phone: string;
+  apartmentPreference: string;
+  convoyInterest: 'yes' | 'maybe' | 'no' | '';
+  travellers: FamilyTraveller[];
+  additionalInformation: string;
+}
+
+/* =========================================================
+   HELPERS
+   ========================================================= */
+
+const isTripSoldOut = (
+  trip: SupabaseTripAvailability | null
+): boolean => {
+  if (!trip) return false;
+
+  if (
+    trip.status === 'full' ||
+    trip.status === 'sold_out'
+  ) {
+    return true;
+  }
+
+  if (
+    typeof trip.capacity === 'number' &&
+    typeof trip.booked_count === 'number'
+  ) {
+    return trip.booked_count >= trip.capacity;
+  }
+
+  return false;
+};
+
+const getSkiExperienceLabel = (
+  value: FamilyTraveller['skiExperience']
+) => {
+  switch (value) {
+    case 'never-skied':
+      return 'Never skied';
+    case 'beginner':
+      return 'Beginner';
+    case 'intermediate':
+      return 'Intermediate';
+    case 'advanced':
+      return 'Advanced';
+    default:
+      return 'Not provided';
+  }
+};
+
+const getSkiPassLabel = (
+  value: FamilyTraveller['skiPassRequired']
+) => {
+  switch (value) {
+    case 'yes':
+      return 'Yes';
+    case 'no':
+      return 'No';
+    case 'not-sure':
+      return 'Not sure';
+    default:
+      return 'Not provided';
+  }
+};
+
+/* =========================================================
+   SMALL COMPONENTS
+   ========================================================= */
+
+const IncludedItem = ({
+  children
+}: {
+  children: React.ReactNode;
+}) => (
+  <div className="flex items-start gap-3">
+    <CheckCircle className="mt-0.5 h-5 w-5 flex-shrink-0 text-primary-600" />
+    <span className="text-[0.95rem] font-medium leading-relaxed text-gray-800">
+      {children}
+    </span>
+  </div>
+);
+
+const TripImage = ({
+  src,
+  alt,
+  onClick
+}: {
+  src: string;
+  alt: string;
+  onClick: () => void;
+}) => (
+  <button
+    type="button"
+    onClick={onClick}
+    className="block w-full overflow-hidden text-left"
+    aria-label={`Open full-size image: ${alt}`}
+  >
+    <img
+      src={src}
+      alt={alt}
+      className="aspect-[16/10] w-full object-cover transition-transform duration-500 hover:scale-[1.02]"
+    />
+  </button>
+);
+
+const PastTripPoster = ({
+  label,
+  src,
+  alt,
+  onOpen
+}: {
+  label: string;
+  src: string;
+  alt: string;
+  onOpen: () => void;
+}) => (
+  <article className="mx-auto w-full max-w-sm">
+    <p className="mb-4 text-center text-xs font-semibold uppercase tracking-[0.22em] text-gray-400">
+      {label}
+    </p>
+
+    <div className="relative overflow-hidden rounded-2xl border border-gray-200 bg-white shadow-sm">
+      <button
+        type="button"
+        onClick={onOpen}
+        className="block w-full"
+        aria-label={`View ${label} trip poster`}
+      >
+        <img
+          src={src}
+          alt={alt}
+          className="w-full object-cover opacity-95 transition-transform duration-500 hover:scale-[1.02]"
+        />
+      </button>
+
+      <div className="absolute right-3 top-3 rounded-full bg-gray-950/90 px-4 py-1.5 text-xs font-bold tracking-wide text-white shadow-md">
+        SOLD OUT
+      </div>
+    </div>
+  </article>
+);
+
+/* =========================================================
+   PAGE
+   ========================================================= */
+
+const UpcomingTripDetailsPage = () => {
+  const [fullScreenImage, setFullScreenImage] =
+    React.useState<string | null>(null);
+
+  const [
+    januaryAvailability,
+    setJanuaryAvailability
+  ] = React.useState<SupabaseTripAvailability | null>(
+    null
+  );
+
+  const [
+    availabilityLoading,
+    setAvailabilityLoading
+  ] = React.useState(true);
+
+  const [
+    availabilityError,
+    setAvailabilityError
+  ] = React.useState(false);
+
+  const [
+    showFamilyQuoteModal,
+    setShowFamilyQuoteModal
+  ] = React.useState(false);
+
+  const [
+    showWaitlistModal,
+    setShowWaitlistModal
+  ] = React.useState(false);
+
+  const [
+    selectedWaitlistTrip,
+    setSelectedWaitlistTrip
+  ] = React.useState<SelectedWaitlistTrip | null>(
+    null
+  );
+
+  /* ---------------------------------------------------------
+     FAMILY QUOTE FORM
+     --------------------------------------------------------- */
+
+  const {
+    register: registerFamily,
+    control: familyControl,
+    handleSubmit: handleFamilySubmit,
+    reset: resetFamilyForm,
+    formState: {
+      errors: familyErrors,
+      isSubmitting: familySubmitting
+    }
+  } = useForm<FamilyQuoteFormInputs>({
+    defaultValues: {
+      leadName: '',
+      email: '',
+      phone: '',
+      apartmentPreference: '',
+      convoyInterest: '',
+      travellers: [
+        {
+          name: '',
+          travellerType: 'adult',
+          age: '',
+          skiExperience: '',
+          skiPassRequired: ''
+        }
+      ],
+      additionalInformation: ''
+    }
+  });
+
+  const {
+    fields: travellerFields,
+    append: appendTraveller,
+    remove: removeTraveller
+  } = useFieldArray({
+    control: familyControl,
+    name: 'travellers'
+  });
+
+  /* ---------------------------------------------------------
+     WAITLIST FORM
+     --------------------------------------------------------- */
+
+  const {
+    register: registerWaitlist,
+    handleSubmit: handleWaitlistSubmit,
+    reset: resetWaitlistForm,
+    formState: {
+      errors: waitlistErrors,
+      isSubmitting: waitlistSubmitting
+    }
+  } = useForm<WaitlistFormInputs>();
+
+  /* ---------------------------------------------------------
+     LOAD JANUARY AVAILABILITY
+     --------------------------------------------------------- */
 
   React.useEffect(() => {
-    const loadTrip = async () => {
-      const { data } = await supabase
+    let isMounted = true;
+
+    const loadJanuaryAvailability = async () => {
+      setAvailabilityLoading(true);
+      setAvailabilityError(false);
+
+      const { data, error } = await supabase
         .from('trips')
-        .select('id, capacity, booked_count, status')
-        .eq('id', '648bbce7-7b1f-4b53-aee3-0bfbfb32a1c1')
+        .select(
+          'id, capacity, booked_count, status'
+        )
+        .eq('id', JANUARY_2027_TRIP_ID)
         .single();
 
-      if (data) setTrip(data);
+      if (!isMounted) return;
+
+      if (error) {
+        console.error(
+          'Unable to load January trip availability:',
+          error
+        );
+        setAvailabilityError(true);
+      } else {
+        setJanuaryAvailability(data);
+      }
+
+      setAvailabilityLoading(false);
     };
 
-    loadTrip();
+    loadJanuaryAvailability();
+
+    return () => {
+      isMounted = false;
+    };
   }, []);
 
-  const isSoldOut =
-    !!trip &&
-    (
-      (typeof trip.capacity === 'number' &&
-        typeof trip.booked_count === 'number' &&
-        trip.booked_count >= trip.capacity) ||
-      trip.status === 'full'
-    );
+  const januarySoldOut = isTripSoldOut(
+    januaryAvailability
+  );
 
-    const openFullScreenImage = (src: string) => {
-      setFullScreenImage(src);
-    };
-  
-    const closeFullScreenImage = () => {
-      setFullScreenImage(null);
-    };
-  
-    const premiumReveal = {
-      initial: { opacity: 0, y: 12 },
-      whileInView: { opacity: 1, y: 0 },
-      viewport: { once: true },
-      transition: { duration: 0.6 }
-    };
-  
+  /* ---------------------------------------------------------
+     IMAGE MODAL
+     --------------------------------------------------------- */
 
+  const openFullScreenImage = (src: string) => {
+    setFullScreenImage(src);
+  };
 
-  /* -------------------------------
-     EVENT SCHEMA (GOOGLE ONLY)
-     ------------------------------- */
-  const eventSchema = {
-    "@context": "https://schema.org",
-    "@type": "Event",
-    name: "Broskii Ski Trip – Tignes, French Alps (April 2026)",
-    startDate: "2026-04-11",
-    endDate: "2026-04-18",
-    eventStatus: "https://schema.org/EventScheduled",
-    eventAttendanceMode: "https://schema.org/OfflineEventAttendanceMode",
-    location: {
-      "@type": "Place",
-      name: "Tignes / Val d’Isère",
-      address: {
-        "@type": "PostalAddress",
-        addressCountry: "FR"
+  const closeFullScreenImage = () => {
+    setFullScreenImage(null);
+  };
+
+  /* ---------------------------------------------------------
+     FAMILY FORM MODAL
+     --------------------------------------------------------- */
+
+  const closeFamilyQuoteModal = () => {
+    setShowFamilyQuoteModal(false);
+  };
+
+  const onFamilyQuoteSubmit = async (
+    data: FamilyQuoteFormInputs
+  ) => {
+    const travellerSummary = data.travellers
+      .map((traveller, index) => {
+        const ageText =
+          traveller.travellerType === 'child' &&
+          traveller.age
+            ? ` | Age: ${traveller.age}`
+            : '';
+
+        return [
+          `Traveller ${index + 1}:`,
+          `Name: ${traveller.name || 'Not provided'}`,
+          `Type: ${
+            traveller.travellerType === 'adult'
+              ? 'Adult'
+              : 'Child'
+          }${ageText}`,
+          `Ski experience: ${getSkiExperienceLabel(
+            traveller.skiExperience
+          )}`,
+          `Ski pass required: ${getSkiPassLabel(
+            traveller.skiPassRequired
+          )}`
+        ].join('\n');
+      })
+      .join('\n\n');
+
+    const message = `
+FAMILY SKI TRIP QUOTE REQUEST
+
+Trip:
+Les Arcs Family Ski Trip
+12–19 December 2026
+
+Lead traveller:
+${data.leadName}
+
+Phone:
+${data.phone || 'Not provided'}
+
+Apartment preference:
+${data.apartmentPreference || 'Please recommend a suitable apartment'}
+
+London driving convoy:
+${
+  data.convoyInterest === 'yes'
+    ? 'Yes, interested in joining'
+    : data.convoyInterest === 'maybe'
+      ? 'Possibly interested'
+      : data.convoyInterest === 'no'
+        ? 'No'
+        : 'Not specified'
+}
+
+TRAVELLERS
+
+${travellerSummary}
+
+ADDITIONAL INFORMATION
+
+${data.additionalInformation || 'None provided'}
+    `.trim();
+
+    try {
+      const response = await fetch(
+        '/.netlify/functions/sendContactMessage',
+        {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({
+            name: data.leadName,
+            email: data.email,
+            phone: data.phone,
+            subject:
+              'Family Trip Quote Request – Les Arcs December 2026',
+            message
+          })
+        }
+      );
+
+      if (!response.ok) {
+        throw new Error(
+          'The family quote request could not be sent.'
+        );
       }
-    },
-    image: [
-      "https://res.cloudinary.com/dtx0og5tm/image/upload/f_auto,q_auto,w_1200/v1769048687/broskii-tignes-april-ski-trip-poster_zpf1oe.jpg"
-    ],
-    organizer: {
-      "@type": "Organization",
-      name: "Broskii",
-      url: "https://broskii.com/"
-    },
-    description:
-      "A premium April ski trip to Tignes in the French Alps, offering high-altitude terrain, ski-in ski-out accommodation, full area ski pass, and a well-paced alpine experience.",
-    
 
-    url: "https://broskii.com/upcoming-trip/",
-    offers: {
-      "@type": "Offer",
-      url: "https://broskii.com/upcoming-trip/",
-      price: "1099",
-      priceCurrency: "GBP",
-      availability: "https://schema.org/InStock"
+      toast.success(
+        'Your family trip quote request has been sent.'
+      );
+
+      resetFamilyForm();
+      setShowFamilyQuoteModal(false);
+    } catch (error) {
+      console.error(error);
+      toast.error(
+        'Sorry, your request could not be sent. Please try again.'
+      );
     }
   };
-  
 
-  
+  /* ---------------------------------------------------------
+     WAITLIST MODAL
+     --------------------------------------------------------- */
 
-  const onWaitlistSubmit = async (data: WaitlistFormInputs) => {
+  const openWaitlist = (
+    trip: SelectedWaitlistTrip
+  ) => {
+    setSelectedWaitlistTrip(trip);
+    setShowWaitlistModal(true);
+  };
+
+  const closeWaitlist = () => {
+    setShowWaitlistModal(false);
+    setSelectedWaitlistTrip(null);
+    resetWaitlistForm();
+  };
+
+  const onWaitlistSubmit = async (
+    data: WaitlistFormInputs
+  ) => {
+    if (!selectedWaitlistTrip) {
+      toast.error('No trip was selected.');
+      return;
+    }
+
     try {
-      const { error } = await supabase.from('waitlist').insert([
-        {
-          trip_id: '648bbce7-7b1f-4b53-aee3-0bfbfb32a1c1',
-          full_name: data.fullName,
-          email: data.email,
-          phone: data.phone || null
-        }
-      ]);
+      const { error } = await supabase
+        .from('waitlist')
+        .insert({
+          trip_id: selectedWaitlistTrip.id,
+          full_name: data.fullName.trim(),
+          email: data.email.trim().toLowerCase(),
+          phone: data.phone?.trim() || null
+        });
+
+      if (error?.code === '23505') {
+        toast.error(
+          'This email is already on the waitlist for this trip.'
+        );
+        return;
+      }
 
       if (error) {
         toast.error(error.message);
-      } else {
-        toast.success('Successfully joined the waitlist');
-        reset();
-        setShowWaitlistModal(false);
+        return;
       }
-    } catch {
-      toast.error('Unexpected error');
+
+      toast.success(
+        `You joined the waitlist for ${selectedWaitlistTrip.title}.`
+      );
+
+      closeWaitlist();
+    } catch (error) {
+      console.error(error);
+      toast.error('An unexpected error occurred.');
+    }
+  };
+
+  const premiumReveal = {
+    initial: {
+      opacity: 0,
+      y: 16
+    },
+    whileInView: {
+      opacity: 1,
+      y: 0
+    },
+    viewport: {
+      once: true,
+      amount: 0.15
+    },
+    transition: {
+      duration: 0.55
     }
   };
 
   return (
     <>
-      {/* EVENT SCHEMA INJECTION */}
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{
-          __html: JSON.stringify(eventSchema)
-        }}
-      />
+      <Helmet>
+        <title>
+          Upcoming Ski Trips 2026/27 | Broskii
+        </title>
 
-      <div className="min-h-screen bg-gray-50">
-
-        <Helmet>
-          <title>
-            Tignes Ski Trip, French Alps | April 2026 – Broskii
-          </title>
-
-          <meta
-            name="description"
-            content="Join Broskii on a premium April ski trip to Tignes in the French Alps, featuring ski-in ski-out accommodation, full area ski pass, and high-altitude late-season conditions."
-          />
-
-          <link
-            rel="canonical"
-            href="https://broskii.com/upcoming-trip/"
-          />
-        </Helmet>
-
-
-
-
-
-      {/* Header Section */}
-      <section className="relative overflow-hidden min-h-[38vh] sm:min-h-[44vh] flex items-center">
-
-  {/* Background Image */}
-  <div className="absolute inset-0">
-  <img
-  src="https://res.cloudinary.com/dtx0og5tm/image/upload/f_auto,q_auto,w_1200/v1766874462/broskii-skiing-action-alpine-hero.webp_qlnwfp.webp"
-  alt="Action shot of a skier descending an alpine slope with two others nearby, showing the tips of skis in the foreground."
-  className="absolute inset-0 w-full h-full object-cover"
-/>
-
-
-    {/* Cinematic overlay (lighter than before) */}
-    <div className="absolute inset-0 bg-black/35"></div>
-
-    {/* Subtle vignette for premium depth */}
-    <div className="absolute inset-0 bg-gradient-to-b from-black/10 via-transparent to-black/30"></div>
-  </div>
-
-  <div className="max-w-7xl mx-auto px-6">
-    <motion.div
-      initial={{ opacity: 0, y: 16 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.6 }}
-      className="text-white relative z-10 text-center"
-    >
-      <h1 className="text-4xl md:text-6xl font-serif font-bold mb-6">
-  Upcoming Trips
-</h1>
-
-<div className="mt-10 md:mt-12">
-  <p className="text-base md:text-lg text-primary-100 font-medium tracking-wide mb-1">
-    Limited spaces
-  </p>
-
-  {/*
-  <p className="text-sm md:text-base text-primary-100/85 font-normal">
-    Secure your place with a £300 deposit
-  </p>
-  */}
-</div>
-
-
-
-    </motion.div>
-  </div>
-</section>
-
-
-     
-{/* Trip Details Section */}
-<section className="py-12">
-  <div className="max-w-7xl mx-auto px-6">
-  <motion.div
-  initial={{ opacity: 0, y: 14 }}
-  animate={{ opacity: 1, y: 0 }}
-  transition={{ duration: 0.6, delay: 0.05 }}
-  className="text-center mb-10"
->
-  <h2 className="text-[2.1rem] leading-tight font-serif font-bold text-gray-900 mb-3">
-    Tignes, French Alps
-  </h2>
-
-  <p className="text-[1.3rem] font-semibold text-primary-600 mb-3">
-    11th – 18th April 2026
-  </p>
-
-  <p className="text-[1rem] font-medium text-gray-600 tracking-wide">
-    Tignes le Lac · 2,100 m
-  </p>
-</motion.div>
-
-   
-
-
-
-    {/* April poster (clickable) */}
-    <motion.div
-      initial={{ opacity: 0, y: 12 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.6, delay: 0.15 }}
-      className="mx-auto w-[92%] max-w-sm"
-
-    >
-      <div className="relative">
-        <img
-          src="https://res.cloudinary.com/dtx0og5tm/image/upload/f_auto,q_auto,w_1200/v1769048687/broskii-tignes-april-ski-trip-poster_zpf1oe.jpg"
-          alt="Broskii poster promoting an April ski trip to Tignes, part of the Tignes–Val d’Isère ski area in the French Alps.
-          "
-          onClick={() =>
-            openFullScreenImage(
-              "https://res.cloudinary.com/dtx0og5tm/image/upload/f_auto,q_auto,w_1200/v1769048687/broskii-tignes-april-ski-trip-poster_zpf1oe.jpg"
-            )
-          }
-          className="w-full h-full object-contain cursor-pointer"
-
+        <meta
+          name="description"
+          content="Explore Broskii's 2026/27 ski trips to Les Arcs and Val Thorens, including a family ski package and group trips to the Three Valleys."
         />
 
-        
-      </div>
-    </motion.div>
+        <link
+          rel="canonical"
+          href="https://broskii.com/upcoming-trip/"
+        />
+      </Helmet>
 
-    {/* April details */}
-    <motion.div
-      initial={{ opacity: 0, y: 12 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.6, delay: 0.2 }}
-      className="mt-10 max-w-2xl mx-auto"
-    >
-      {/* Why Tignes (short, premium) */}
-      <motion.section {...premiumReveal} className="mb-8">
+      <div className="min-h-screen overflow-x-hidden bg-gray-50">
+        {/* =================================================
+            HERO
+            ================================================= */}
 
-        <h3 className="text-xl font-serif font-bold text-gray-900 mb-3">
-          Why Tignes?
-        </h3>
-        <div className="space-y-2 text-gray-700">
-          <p>
-            High-altitude terrain and reliable late-season conditions make Tignes a strong choice for April skiing.
-          </p>
-          <p>
-            Expect big, varied slopes with a great mix for different ability levels — plus a lively alpine resort feel.
-          </p>
+        <section className="relative flex min-h-[36vh] items-center overflow-hidden sm:min-h-[42vh]">
+          <img
+            src={IMAGES.pageHero}
+            alt="Skiers descending an alpine mountain during a Broskii ski trip"
+            className="absolute inset-0 h-full w-full object-cover"
+          />
+
+          <div className="absolute inset-0 bg-black/40" />
+
+          <div className="absolute inset-0 bg-gradient-to-b from-black/10 via-transparent to-black/35" />
+
+          <div className="relative z-10 mx-auto w-full max-w-7xl px-5 sm:px-6">
+            <motion.div
+              initial={{
+                opacity: 0,
+                y: 16
+              }}
+              animate={{
+                opacity: 1,
+                y: 0
+              }}
+              transition={{
+                duration: 0.6
+              }}
+              className="mx-auto max-w-3xl text-center text-white"
+            >
+              <p className="mb-4 text-sm font-bold uppercase tracking-[0.25em] text-primary-100">
+                Broskii 2026/27
+              </p>
+
+              <h1 className="font-serif text-4xl font-bold leading-tight sm:text-5xl md:text-6xl">
+                Upcoming Trips
+              </h1>
+
+              <p className="mx-auto mt-5 max-w-2xl text-base leading-relaxed text-white/90 sm:text-lg">
+                Family adventures, premium group trips and
+                unforgettable weeks in the French Alps.
+              </p>
+            </motion.div>
           </div>
-          </motion.section>
+        </section>
 
-    
+        {/* =================================================
+            SEASON POSTER
+            ================================================= */}
 
-      {/* What’s included (lightweight list — not a bulky card) */}
-      <motion.section {...premiumReveal} className="mb-10">
+        <section className="border-b border-gray-200 bg-white py-12 sm:py-16">
+          <div className="mx-auto max-w-7xl px-5 sm:px-6">
+            <motion.div
+              {...premiumReveal}
+              className="mx-auto max-w-lg text-center"
+            >
+              <p className="text-sm font-bold uppercase tracking-[0.2em] text-primary-600">
+                The season line-up
+              </p>
 
-        <h3 className="text-xl font-serif font-bold text-gray-900 mb-4">
-          What’s included?
-        </h3>
+              <h2 className="mt-3 font-serif text-3xl font-bold text-gray-900 sm:text-4xl">
+                Three trips. One unforgettable season.
+              </h2>
 
-        <div className="space-y-3">
-          {[
-            "BA Return flights from London Heathrow",
-            "Ski-in / ski-out accommodation",
-            "4★ Accommodation with Spa facilities",
-            "Full area Ski Pass included",
-            "Private Coach Transfers",
-          ].map((item) => (
-            <div key={item} className="flex items-start gap-3">
-              <CheckCircle className="h-5 w-5 text-primary-600 flex-shrink-0 mt-0.5" />
-              <span className="text-gray-800 font-medium">{item}</span>
+              <p className="mt-4 leading-relaxed text-gray-600">
+                Tap the poster to view the complete
+                2026/27 trip line-up.
+              </p>
+            </motion.div>
+
+            <motion.div
+              {...premiumReveal}
+              className="mx-auto mt-8 w-[92%] max-w-md"
+            >
+              <button
+                type="button"
+                onClick={() =>
+                  openFullScreenImage(
+                    IMAGES.seasonPoster
+                  )
+                }
+                className="block w-full overflow-hidden rounded-3xl border border-gray-200 bg-white shadow-xl shadow-gray-900/10"
+                aria-label="Open the Broskii 2026/27 season poster"
+              >
+                <img
+                  src={IMAGES.seasonPoster}
+                  alt="Broskii 2026 and 2027 upcoming ski trips poster showing Les Arcs and Val Thorens trips"
+                  className="w-full object-contain"
+                />
+              </button>
+
+              <p className="mt-4 text-center text-sm font-medium text-gray-500">
+                Tap to view full size
+              </p>
+            </motion.div>
+          </div>
+        </section>
+
+        {/* =================================================
+            ACTIVE TRIPS
+            ================================================= */}
+
+        <section className="py-14 sm:py-20">
+          <div className="mx-auto max-w-7xl px-5 sm:px-6">
+            <div className="mb-10 text-center">
+              <p className="text-sm font-bold uppercase tracking-[0.2em] text-primary-600">
+                Choose your trip
+              </p>
+
+              <h2 className="mt-3 font-serif text-3xl font-bold text-gray-900 sm:text-4xl">
+                2026/27 ski trips
+              </h2>
             </div>
-          ))}
-        </div>
-        </motion.section>
 
+            <div className="grid grid-cols-1 items-start gap-8 lg:grid-cols-3">
+              {/* =============================================
+                  DECEMBER FAMILY TRIP
+                  ============================================= */}
 
-      {/* April CTA */}
-<div className="text-center">
-  {isSoldOut ? (
-    <>
-      <div className="inline-flex items-center justify-center px-10 py-4 rounded-full bg-gray-300 text-gray-700 font-bold text-lg cursor-not-allowed">
-        Sold out
-      </div>
+              <motion.article
+                {...premiumReveal}
+                className="overflow-hidden rounded-3xl border border-amber-200/70 bg-white shadow-lg shadow-gray-900/5"
+              >
+                <TripImage
+                  src={IMAGES.decemberFamily}
+                  alt="Family enjoying a ski holiday in the French Alps"
+                  onClick={() =>
+                    openFullScreenImage(
+                      IMAGES.decemberFamily
+                    )
+                  }
+                />
 
-      
-      <button
-  onClick={() => setShowWaitlistModal(true)}
-  className="mt-3 inline-flex items-center gap-1 text-sm font-semibold text-primary-600 hover:text-primary-700 transition-colors cursor-pointer"
->
-  Join waitlist
-  <span aria-hidden>→</span>
-</button>
+                <div className="p-6 sm:p-7">
+                  <div className="flex flex-wrap items-center justify-between gap-3">
+                    <span className="rounded-full bg-amber-100 px-3 py-1.5 text-xs font-bold uppercase tracking-wide text-amber-800">
+                      Family trip
+                    </span>
 
+                    {FAMILY_TRIP_STATUS ===
+                      'limited' && (
+                      <span className="rounded-full bg-orange-100 px-3 py-1.5 text-xs font-bold uppercase tracking-wide text-orange-700">
+                        Limited availability
+                      </span>
+                    )}
 
+                    {FAMILY_TRIP_STATUS ===
+                      'sold_out' && (
+                      <span className="rounded-full bg-gray-900 px-3 py-1.5 text-xs font-bold uppercase tracking-wide text-white">
+                        Sold out
+                      </span>
+                    )}
+                  </div>
 
-    </>
-  ) : (
-    <>
-      <Link
-        to="/booking/648bbce7-7b1f-4b53-aee3-0bfbfb32a1c1"
-        className="inline-flex items-center justify-center px-10 py-4 rounded-full bg-primary-600 text-white font-bold text-lg shadow-lg transition-transform duration-300 hover:bg-primary-700 hover:scale-105"
-      >
-        Book Now
-      </Link>
+                  <h3 className="mt-5 font-serif text-3xl font-bold text-gray-900">
+                    Les Arcs
+                  </h3>
 
-{/*
-      <p className="text-sm text-gray-600 mt-3">
-        Reserve your place with a £300 deposit
-      </p>
-      */}
-      
-    </>
-  )}
-</div>
+                  <div className="mt-4 space-y-2 text-sm font-medium text-gray-600">
+                    <div className="flex items-center gap-2">
+                      <CalendarDays className="h-4 w-4 text-primary-600" />
+                      <span>
+                        12–19 December 2026
+                      </span>
+                    </div>
 
+                    <div className="flex items-center gap-2">
+                      <MapPin className="h-4 w-4 text-primary-600" />
+                      <span>
+                        Les Arcs, French Alps
+                      </span>
+                    </div>
+                  </div>
 
+                  <p className="mt-5 leading-relaxed text-gray-700">
+                    A flexible family ski package built
+                    around your chosen apartment, family
+                    size and individual ski-pass
+                    requirements.
+                  </p>
 
+                  <div className="mt-7">
+                    <h4 className="font-serif text-xl font-bold text-gray-900">
+                      Package includes
+                    </h4>
 
+                    <div className="mt-4 space-y-3">
+                      <IncludedItem>
+                        Apartment accommodation
+                      </IncludedItem>
 
+                      <IncludedItem>
+                        Ski passes tailored to each
+                        traveller’s requirements
+                      </IncludedItem>
 
-    </motion.div>
+                      <IncludedItem>
+                        Options for first-time, beginner,
+                        intermediate and advanced skiers
+                      </IncludedItem>
+                    </div>
+                  </div>
 
-   
-    {/* Divider */}
-<div className="mt-20 mb-10">
-  <div className="h-px bg-gradient-to-r from-transparent via-gray-200 to-transparent"></div>
-</div>
+                  <div className="mt-7 rounded-2xl bg-gray-50 p-5">
+                    <div className="flex items-start gap-3">
+                      <Car className="mt-0.5 h-5 w-5 flex-shrink-0 text-primary-600" />
 
-{/* SOLD OUT TRIPS ARCHIVE */}
-<div className="space-y-24">
+                      <div>
+                        <p className="font-bold text-gray-900">
+                          Join the London convoy
+                        </p>
 
-  {/* JANUARY 2026 — SOLD OUT */}
-  <div className="max-w-md mx-auto">
-    <div className="text-center mb-6">
-      <p className="text-[0.8rem] tracking-widest uppercase text-gray-400 font-semibold">
-        January 2026
-      </p>
-    </div>
+                        <p className="mt-1 text-sm leading-relaxed text-gray-600">
+                          We’ll be travelling from London
+                          to the Alps in private cars.
+                          Families are welcome to join the
+                          convoy and travel with the group.
+                        </p>
+                      </div>
+                    </div>
+                  </div>
 
-    <div className="relative">
-      <img
-        src="https://res.cloudinary.com/dtx0og5tm/image/upload/f_auto,q_auto,w_1200/broskii-val-thorens-ski-3-valleys-january-2026-sold-out_ijudjp.jpg"
-        alt="Broskii January 2026 ski trip poster in Val Thorens, French Alps – sold out"
-        onClick={() =>
-          openFullScreenImage(
-            "https://res.cloudinary.com/dtx0og5tm/image/upload/f_auto,q_auto,w_1200/broskii-val-thorens-ski-3-valleys-january-2026-sold-out_ijudjp.jpg"
-          )
-        }
-        className="w-full rounded-2xl shadow-lg cursor-pointer ring-1 ring-black/5 opacity-95 scale-[0.90]"
-      />
+                  <div className="mt-7 border-t border-gray-100 pt-6">
+                    <p className="font-serif text-2xl font-bold text-gray-900">
+                      Tailored quote
+                    </p>
 
-      <div className="absolute top-4 right-4 bg-gray-900/85 text-white text-sm font-semibold px-4 py-1.5 rounded-full shadow-md">
-        SOLD OUT
-      </div>
-    </div>
-  </div>
+                    <p className="mt-2 text-sm leading-relaxed text-gray-600">
+                      Flights and organised airport
+                      transfers are not included.
+                    </p>
 
-  {/* JANUARY 2025 — SOLD OUT */}
-  <div className="max-w-md mx-auto">
-    <div className="text-center mb-6">
-      <p className="text-[0.8rem] tracking-widest uppercase text-gray-400 font-semibold">
-        January 2025
-      </p>
-    </div>
+                    {FAMILY_TRIP_STATUS ===
+                    'sold_out' ? (
+                      <div className="mt-5 flex w-full items-center justify-center rounded-full bg-gray-200 px-6 py-4 font-bold text-gray-600">
+                        Sold out
+                      </div>
+                    ) : (
+                      <button
+                        type="button"
+                        onClick={() =>
+                          setShowFamilyQuoteModal(true)
+                        }
+                        className="mt-5 inline-flex w-full items-center justify-center rounded-full bg-amber-600 px-6 py-4 text-base font-bold text-white shadow-lg transition hover:bg-amber-700"
+                      >
+                        Request a Quote
+                      </button>
+                    )}
+                  </div>
+                </div>
+              </motion.article>
 
-    <div className="relative">
-      <img
-        src="https://res.cloudinary.com/dtx0og5tm/image/upload/f_auto,q_auto,w_1200/broskii-val-thorens-ski-3-valleys-january-2025-sold-out_pjrvzr.jpg"
-        alt="Broskii January 2025 ski trip poster in Val Thorens, French Alps – sold out"
-        onClick={() =>
-          openFullScreenImage(
-            "https://res.cloudinary.com/dtx0og5tm/image/upload/f_auto,q_auto,w_1200/broskii-val-thorens-ski-3-valleys-january-2025-sold-out_pjrvzr.jpg"
-          )
-        }
-        className="w-full rounded-2xl shadow-lg cursor-pointer ring-1 ring-black/5 opacity-95 scale-[0.90]"
-      />
+              {/* =============================================
+                  JANUARY BOOKABLE TRIP
+                  ============================================= */}
 
-      <div className="absolute top-4 right-4 bg-gray-900/85 text-white text-sm font-semibold px-4 py-1.5 rounded-full shadow-md">
-        SOLD OUT
-      </div>
-    </div>
-  </div>
+              <motion.article
+                {...premiumReveal}
+                className="overflow-hidden rounded-3xl border border-primary-200 bg-white shadow-xl shadow-primary-900/10 lg:-translate-y-3"
+              >
+                <TripImage
+                  src={IMAGES.januaryValThorens}
+                  alt="Val Thorens ski slopes during the January winter season"
+                  onClick={() =>
+                    openFullScreenImage(
+                      IMAGES.januaryValThorens
+                    )
+                  }
+                />
 
-  {/* DECEMBER 2024 — SOLD OUT */}
-  <div className="max-w-md mx-auto">
-    <div className="text-center mb-6">
-      <p className="text-[0.8rem] tracking-widest uppercase text-gray-400 font-semibold">
-        December 2024
-      </p>
-    </div>
+                <div className="p-6 sm:p-7">
+                  <div className="flex flex-wrap items-center justify-between gap-3">
+                    <span className="rounded-full bg-primary-600 px-3 py-1.5 text-xs font-bold uppercase tracking-wide text-white">
+                      Bookings open
+                    </span>
 
-    <div className="relative">
-      <img
-        src="https://res.cloudinary.com/dtx0og5tm/image/upload/f_auto,q_auto,w_1200/broskii-tignes-val-disere-december-2024-sold-out_jlsgmn.jpg"
-        alt="Broskii December 2024 ski trip poster in Tignes and Val d’Isère, French Alps – sold out"
-        onClick={() =>
-          openFullScreenImage(
-            "https://res.cloudinary.com/dtx0og5tm/image/upload/f_auto,q_auto,w_1200/broskii-tignes-val-disere-december-2024-sold-out_jlsgmn.jpg"
-          )
-        }
-        className="w-full rounded-2xl shadow-lg cursor-pointer ring-1 ring-black/5 opacity-95 scale-[0.90]"
-      />
+                    <span className="rounded-full bg-primary-50 px-3 py-1.5 text-xs font-bold uppercase tracking-wide text-primary-700">
+                      Group ski trip
+                    </span>
+                  </div>
 
-      <div className="absolute top-4 right-4 bg-gray-900/85 text-white text-sm font-semibold px-4 py-1.5 rounded-full shadow-md">
-        SOLD OUT
-      </div>
-    </div>
-    </div>
+                  <h3 className="mt-5 font-serif text-3xl font-bold text-gray-900">
+                    Val Thorens
+                  </h3>
 
-</div>
-</div>
-</section>
+                  <div className="mt-4 space-y-2 text-sm font-medium text-gray-600">
+                    <div className="flex items-center gap-2">
+                      <CalendarDays className="h-4 w-4 text-primary-600" />
+                      <span>
+                        16–23 January 2027
+                      </span>
+                    </div>
 
+                    <div className="flex items-center gap-2">
+                      <MapPin className="h-4 w-4 text-primary-600" />
+                      <span>
+                        Val Thorens, French Alps
+                      </span>
+                    </div>
+                  </div>
 
-      {/* Full Screen Image Modal */}
-      {fullScreenImage && (
-        <motion.div
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          exit={{ opacity: 0 }}
-          className="fixed inset-0 bg-black/90 backdrop-blur-sm z-50 flex items-center justify-center p-4"
-          onClick={closeFullScreenImage}
-        >
+                  <p className="mt-5 leading-relaxed text-gray-700">
+                    Stay in Europe’s highest ski resort
+                    with direct access to the legendary
+                    Three Valleys ski area.
+                  </p>
+
+                  <div className="mt-7 space-y-3">
+                    <IncludedItem>
+                      British Airways return flights from
+                      London Heathrow
+                    </IncludedItem>
+
+                    <IncludedItem>
+                      23 kg checked baggage plus cabin bag
+                    </IncludedItem>
+
+                    <IncludedItem>
+                      Private coach transfers from Lyon
+                    </IncludedItem>
+
+                    <IncludedItem>
+                      4-star ski-in / ski-out accommodation
+                    </IncludedItem>
+
+                    <IncludedItem>
+                      Spa facilities
+                    </IncludedItem>
+
+                    <IncludedItem>
+                      Full Three Valleys ski pass
+                    </IncludedItem>
+                  </div>
+
+                  <div className="mt-7 rounded-2xl bg-primary-50 p-5">
+                    <p className="text-sm font-semibold uppercase tracking-wide text-primary-700">
+                      Package price
+                    </p>
+
+                    <p className="mt-1 font-serif text-4xl font-bold text-gray-900">
+                      £1,300
+                    </p>
+
+                    <p className="mt-1 text-sm font-medium text-gray-600">
+                      Per person
+                    </p>
+
+                    <div className="mt-4 border-t border-primary-100 pt-4">
+                      <p className="font-bold text-gray-900">
+                        Secure your place with a £300
+                        deposit
+                      </p>
+
+                      <p className="mt-1 text-sm text-gray-600">
+                        Remaining balance due by 10
+                        October 2026.
+                      </p>
+                    </div>
+                  </div>
+
+                  <div className="mt-7">
+                    {availabilityLoading ? (
+                      <div className="flex w-full items-center justify-center rounded-full bg-gray-200 px-6 py-4 font-bold text-gray-600">
+                        Checking availability…
+                      </div>
+                    ) : availabilityError ? (
+                      <Link
+                        to="/contact"
+                        className="inline-flex w-full items-center justify-center rounded-full bg-gray-900 px-6 py-4 font-bold text-white transition hover:bg-black"
+                      >
+                        Contact us to book
+                      </Link>
+                    ) : januarySoldOut ? (
+                      <div className="text-center">
+                        <div className="flex w-full items-center justify-center rounded-full bg-gray-200 px-6 py-4 font-bold text-gray-700">
+                          Sold out
+                        </div>
+
+                        <button
+                          type="button"
+                          onClick={() =>
+                            openWaitlist({
+                              id: JANUARY_2027_TRIP_ID,
+                              title:
+                                'Val Thorens – January 2027'
+                            })
+                          }
+                          className="mt-4 inline-flex items-center gap-1 text-sm font-bold text-primary-600 transition hover:text-primary-700"
+                        >
+                          Join waitlist
+                          <span aria-hidden="true">
+                            →
+                          </span>
+                        </button>
+                      </div>
+                    ) : (
+                      <Link
+                        to={`/booking/${JANUARY_2027_TRIP_ID}`}
+                        className="inline-flex w-full items-center justify-center rounded-full bg-primary-600 px-6 py-4 text-base font-bold text-white shadow-lg transition hover:bg-primary-700"
+                      >
+                        Book with £300 Deposit
+                      </Link>
+                    )}
+                  </div>
+                </div>
+              </motion.article>
+
+              {/* =============================================
+                  APRIL COMING SOON
+                  ============================================= */}
+
+              <motion.article
+                {...premiumReveal}
+                className="overflow-hidden rounded-3xl border border-sky-200 bg-white shadow-lg shadow-gray-900/5"
+              >
+                <TripImage
+                  src={IMAGES.aprilValThorens}
+                  alt="Sunny late-season skiing in Val Thorens during April"
+                  onClick={() =>
+                    openFullScreenImage(
+                      IMAGES.aprilValThorens
+                    )
+                  }
+                />
+
+                <div className="p-6 sm:p-7">
+                  <div className="flex flex-wrap items-center justify-between gap-3">
+                    <span className="rounded-full bg-sky-100 px-3 py-1.5 text-xs font-bold uppercase tracking-wide text-sky-800">
+                      Confirmed trip
+                    </span>
+
+                    <span className="rounded-full bg-gray-100 px-3 py-1.5 text-xs font-bold uppercase tracking-wide text-gray-600">
+                      Coming soon
+                    </span>
+                  </div>
+
+                  <h3 className="mt-5 font-serif text-3xl font-bold text-gray-900">
+                    Val Thorens
+                  </h3>
+
+                  <div className="mt-4 space-y-2 text-sm font-medium text-gray-600">
+                    <div className="flex items-center gap-2">
+                      <CalendarDays className="h-4 w-4 text-primary-600" />
+                      <span>
+                        10–17 April 2027
+                      </span>
+                    </div>
+
+                    <div className="flex items-center gap-2">
+                      <MapPin className="h-4 w-4 text-primary-600" />
+                      <span>
+                        Val Thorens, French Alps
+                      </span>
+                    </div>
+                  </div>
+
+                  <p className="mt-5 leading-relaxed text-gray-700">
+                    Our April 2027 Val Thorens trip is
+                    confirmed, offering a full week of
+                    high-altitude late-season skiing in
+                    the Three Valleys.
+                  </p>
+
+                  <div className="mt-7 rounded-2xl bg-sky-50 p-5">
+                    <div className="flex items-start gap-3">
+                      <Sparkles className="mt-0.5 h-5 w-5 flex-shrink-0 text-sky-700" />
+
+                      <div>
+                        <p className="font-bold text-gray-900">
+                          Booking details coming soon
+                        </p>
+
+                        <p className="mt-1 text-sm leading-relaxed text-gray-600">
+                          Package details and pricing will
+                          be released once flights are
+                          confirmed.
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div className="mt-7">
+                    <div
+                      aria-disabled="true"
+                      className="flex w-full cursor-not-allowed items-center justify-center gap-2 rounded-full border-2 border-sky-200 bg-sky-50 px-6 py-4 font-bold text-sky-800"
+                    >
+                      <Clock3 className="h-5 w-5" />
+                      Bookings Open Oct / Nov
+                    </div>
+                  </div>
+                </div>
+              </motion.article>
+            </div>
+          </div>
+        </section>
+
+        {/* =================================================
+            PAST TRIPS
+            ================================================= */}
+
+        <section className="border-t border-gray-200 bg-white py-14 sm:py-20">
+          <div className="mx-auto max-w-7xl px-5 sm:px-6">
+            <div className="mx-auto max-w-2xl text-center">
+              <p className="text-sm font-bold uppercase tracking-[0.2em] text-gray-400">
+                The journey so far
+              </p>
+
+              <h2 className="mt-3 font-serif text-3xl font-bold text-gray-900 sm:text-4xl">
+                Past Broskii trips
+              </h2>
+
+              <p className="mt-4 leading-relaxed text-gray-600">
+                A look back at previous sold-out Broskii
+                ski trips.
+              </p>
+            </div>
+
+            <div className="mt-10 grid grid-cols-1 gap-12 sm:grid-cols-2 lg:grid-cols-4">
+              <PastTripPoster
+                label="April 2026"
+                src={IMAGES.april2026Poster}
+                alt="Broskii Tignes April 2026 ski trip poster marked sold out"
+                onOpen={() =>
+                  openFullScreenImage(
+                    IMAGES.april2026Poster
+                  )
+                }
+              />
+
+              <PastTripPoster
+                label="January 2026"
+                src={IMAGES.january2026Poster}
+                alt="Broskii Val Thorens January 2026 ski trip poster marked sold out"
+                onOpen={() =>
+                  openFullScreenImage(
+                    IMAGES.january2026Poster
+                  )
+                }
+              />
+
+              <PastTripPoster
+                label="January 2025"
+                src={IMAGES.january2025Poster}
+                alt="Broskii Val Thorens January 2025 ski trip poster marked sold out"
+                onOpen={() =>
+                  openFullScreenImage(
+                    IMAGES.january2025Poster
+                  )
+                }
+              />
+
+              <PastTripPoster
+                label="December 2024"
+                src={IMAGES.december2024Poster}
+                alt="Broskii December 2024 ski trip poster marked sold out"
+                onOpen={() =>
+                  openFullScreenImage(
+                    IMAGES.december2024Poster
+                  )
+                }
+              />
+            </div>
+          </div>
+        </section>
+
+        {/* =================================================
+            FULL-SCREEN IMAGE MODAL
+            ================================================= */}
+
+        {fullScreenImage && (
           <motion.div
-            initial={{ opacity: 0, scale: 0.8 }}
-            animate={{ opacity: 1, scale: 1 }}
-            exit={{ opacity: 0, scale: 0.8 }}
-            transition={{ duration: 0.3 }}
-            className="relative max-w-full max-h-full"
-            onClick={(e) => e.stopPropagation()}
+            initial={{
+              opacity: 0
+            }}
+            animate={{
+              opacity: 1
+            }}
+            className="fixed inset-0 z-[70] flex items-center justify-center bg-black/90 p-4 backdrop-blur-sm"
+            onClick={closeFullScreenImage}
           >
-            <img
-              src={fullScreenImage}
-              alt="Full screen view"
-              className="max-w-full max-h-full object-contain rounded-lg"
-            />
-            <button
-              onClick={closeFullScreenImage}
-              className="absolute top-4 right-4 bg-black/50 hover:bg-black/70 text-white p-2 rounded-full transition-colors"
+            <motion.div
+              initial={{
+                opacity: 0,
+                scale: 0.94
+              }}
+              animate={{
+                opacity: 1,
+                scale: 1
+              }}
+              transition={{
+                duration: 0.25
+              }}
+              className="relative max-h-full max-w-4xl"
+              onClick={(event) =>
+                event.stopPropagation()
+              }
             >
-              <X className="h-6 w-6" />
-            </button>
-          </motion.div>
-        </motion.div>
-      )}
-
-      {/* Waitlist Modal */}
-      {showWaitlistModal && (
-        <motion.div
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          exit={{ opacity: 0 }}
-          className="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-center justify-center p-4"
-          onClick={() => setShowWaitlistModal(false)} // Close modal on backdrop click
-        >
-          <motion.div
-            initial={{ opacity: 0, scale: 0.9 }}
-            animate={{ opacity: 1, scale: 1 }}
-            exit={{ opacity: 0, scale: 0.9 }}
-            transition={{ duration: 0.3 }}
-            className="relative bg-white rounded-2xl shadow-2xl max-w-md w-full p-8"
-            onClick={(e) => e.stopPropagation()} // Prevent modal close on content click
-          >
-            <button
-              onClick={() => setShowWaitlistModal(false)}
-              className="absolute top-4 right-4 p-2 rounded-full text-gray-400 hover:bg-gray-100 hover:text-gray-600 transition-colors"
-            >
-              <X className="h-6 w-6" />
-            </button>
-
-            <h2 className="text-3xl font-serif font-bold text-gray-900 mb-6 text-center">
-              Join the Waitlist
-            </h2>
-            <p className="text-gray-700 text-center mb-6">
-              This trip is currently full. Enter your details below, and we'll notify you if a spot opens up!
-            </p>
-
-            <form onSubmit={handleSubmit(onWaitlistSubmit)} className="space-y-4">
-              <div>
-                <label htmlFor="fullName" className="block text-sm font-medium text-gray-700 mb-2">
-                  <Users className="inline h-4 w-4 mr-2" />
-                  Full Name *
-                </label>
-                <input
-                  type="text"
-                  id="fullName"
-                  {...register('fullName', { required: 'Full name is required' })}
-                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all duration-300"
-                  placeholder="Your full name"
-                />
-                {errors.fullName && (
-                  <p className="mt-1 text-sm text-red-600">{errors.fullName.message}</p>
-                )}
-              </div>
-
-              <div>
-                <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-2">
-                  <Mail className="inline h-4 w-4 mr-2" />
-                  Email Address *
-                </label>
-                <input
-                  type="email"
-                  id="email"
-                  {...register('email', {
-                    required: 'Email is required',
-                    pattern: {
-                      value: /^\S+@\S+$/i,
-                      message: 'Invalid email address'
-                    }
-                  })}
-                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all duration-300"
-                  placeholder="Your email address"
-                />
-                {errors.email && (
-                  <p className="mt-1 text-sm text-red-600">{errors.email.message}</p>
-                )}
-              </div>
-
-              <div>
-                <label htmlFor="phone" className="block text-sm font-medium text-gray-700 mb-2">
-                  <Phone className="inline h-4 w-4 mr-2" />
-                  Phone Number
-                </label>
-                <input
-                  type="tel"
-                  id="phone"
-                  {...register('phone')}
-                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all duration-300"
-                  placeholder="Your phone number (optional)"
-                />
-              </div>
+              <img
+                src={fullScreenImage}
+                alt="Full-size Broskii trip image"
+                className="max-h-[92vh] max-w-full rounded-xl object-contain"
+              />
 
               <button
-                type="submit"
-                className="w-full inline-flex items-center justify-center space-x-2 bg-primary-600 hover:bg-primary-700 text-white px-6 py-3 rounded-lg text-lg font-bold shadow-lg transition-transform duration-300 transform hover:scale-105"
+                type="button"
+                onClick={closeFullScreenImage}
+                className="absolute right-3 top-3 rounded-full bg-black/65 p-2 text-white transition hover:bg-black"
+                aria-label="Close image"
               >
-                <Send className="h-5 w-5" />
-                <span>Submit</span>
+                <X className="h-6 w-6" />
               </button>
-            </form>
+            </motion.div>
           </motion.div>
-        </motion.div>
-      )}
-       </div>
-  </>
-);
-};
+        )}
 
+        {/* =================================================
+            FAMILY QUOTE MODAL
+            ================================================= */}
+
+        {showFamilyQuoteModal && (
+          <motion.div
+            initial={{
+              opacity: 0
+            }}
+            animate={{
+              opacity: 1
+            }}
+            className="fixed inset-0 z-[60] flex items-end justify-center overflow-y-auto bg-black/65 p-0 backdrop-blur-sm sm:items-center sm:p-5"
+            onClick={closeFamilyQuoteModal}
+          >
+            <motion.div
+              initial={{
+                opacity: 0,
+                y: 30,
+                scale: 0.98
+              }}
+              animate={{
+                opacity: 1,
+                y: 0,
+                scale: 1
+              }}
+              transition={{
+                duration: 0.25
+              }}
+              className="relative max-h-[94vh] w-full max-w-3xl overflow-y-auto rounded-t-3xl bg-white p-5 shadow-2xl sm:rounded-3xl sm:p-8"
+              onClick={(event) =>
+                event.stopPropagation()
+              }
+            >
+              <button
+                type="button"
+                onClick={closeFamilyQuoteModal}
+                className="absolute right-4 top-4 rounded-full p-2 text-gray-400 transition hover:bg-gray-100 hover:text-gray-700"
+                aria-label="Close family quote form"
+              >
+                <X className="h-6 w-6" />
+              </button>
+
+              <div className="pr-10">
+                <p className="text-sm font-bold uppercase tracking-[0.18em] text-amber-700">
+                  Les Arcs · 12–19 December 2026
+                </p>
+
+                <h2 className="mt-2 font-serif text-3xl font-bold text-gray-900">
+                  Request a Family Trip Quote
+                </h2>
+
+                <p className="mt-3 leading-relaxed text-gray-600">
+                  Tell us about your family, preferred
+                  apartment and each traveller’s skiing
+                  requirements. We’ll reply with a
+                  tailored quote.
+                </p>
+              </div>
+
+              <form
+                onSubmit={handleFamilySubmit(
+                  onFamilyQuoteSubmit
+                )}
+                className="mt-8 space-y-8"
+              >
+                {/* Lead traveller */}
+
+                <section>
+                  <h3 className="font-serif text-xl font-bold text-gray-900">
+                    Lead traveller
+                  </h3>
+
+                  <div className="mt-4 grid grid-cols-1 gap-5 sm:grid-cols-2">
+                    <div>
+                      <label className="mb-2 block text-sm font-semibold text-gray-700">
+                        Full name *
+                      </label>
+
+                      <input
+                        type="text"
+                        {...registerFamily('leadName', {
+                          required:
+                            'Full name is required'
+                        })}
+                        className="w-full rounded-xl border border-gray-300 px-4 py-3 focus:border-transparent focus:ring-2 focus:ring-primary-500"
+                        placeholder="Your full name"
+                      />
+
+                      {familyErrors.leadName && (
+                        <p className="mt-1 text-sm text-red-600">
+                          {
+                            familyErrors.leadName
+                              .message
+                          }
+                        </p>
+                      )}
+                    </div>
+
+                    <div>
+                      <label className="mb-2 block text-sm font-semibold text-gray-700">
+                        Email address *
+                      </label>
+
+                      <input
+                        type="email"
+                        {...registerFamily('email', {
+                          required:
+                            'Email address is required',
+                          pattern: {
+                            value: /^\S+@\S+$/i,
+                            message:
+                              'Enter a valid email address'
+                          }
+                        })}
+                        className="w-full rounded-xl border border-gray-300 px-4 py-3 focus:border-transparent focus:ring-2 focus:ring-primary-500"
+                        placeholder="you@example.com"
+                      />
+
+                      {familyErrors.email && (
+                        <p className="mt-1 text-sm text-red-600">
+                          {familyErrors.email.message}
+                        </p>
+                      )}
+                    </div>
+
+                    <div>
+                      <label className="mb-2 block text-sm font-semibold text-gray-700">
+                        Phone number
+                      </label>
+
+                      <input
+                        type="tel"
+                        {...registerFamily('phone')}
+                        className="w-full rounded-xl border border-gray-300 px-4 py-3 focus:border-transparent focus:ring-2 focus:ring-primary-500"
+                        placeholder="Your phone number"
+                      />
+                    </div>
+
+                    <div>
+                      <label className="mb-2 block text-sm font-semibold text-gray-700">
+                        London convoy
+                      </label>
+
+                      <select
+                        {...registerFamily(
+                          'convoyInterest'
+                        )}
+                        className="w-full rounded-xl border border-gray-300 bg-white px-4 py-3 focus:border-transparent focus:ring-2 focus:ring-primary-500"
+                      >
+                        <option value="">
+                          Select an option
+                        </option>
+                        <option value="yes">
+                          Yes, we would like to join
+                        </option>
+                        <option value="maybe">
+                          Maybe — please send details
+                        </option>
+                        <option value="no">
+                          No, we will arrange our own
+                          travel
+                        </option>
+                      </select>
+                    </div>
+                  </div>
+                </section>
+
+                {/* Apartment */}
+
+                <section>
+                  <h3 className="font-serif text-xl font-bold text-gray-900">
+                    Apartment preference
+                  </h3>
+
+                  <p className="mt-1 text-sm text-gray-600">
+                    Enter the apartment or option you are
+                    interested in. Leave it blank and we
+                    will recommend one based on your
+                    family size.
+                  </p>
+
+                  <input
+                    type="text"
+                    {...registerFamily(
+                      'apartmentPreference'
+                    )}
+                    className="mt-4 w-full rounded-xl border border-gray-300 px-4 py-3 focus:border-transparent focus:ring-2 focus:ring-primary-500"
+                    placeholder="Apartment name, option or ‘please recommend’"
+                  />
+                </section>
+
+                {/* Travellers */}
+
+                <section>
+                  <div className="flex items-center justify-between gap-4">
+                    <div>
+                      <h3 className="font-serif text-xl font-bold text-gray-900">
+                        Travellers
+                      </h3>
+
+                      <p className="mt-1 text-sm text-gray-600">
+                        Add every adult and child who
+                        would be travelling.
+                      </p>
+                    </div>
+
+                    <button
+                      type="button"
+                      onClick={() =>
+                        appendTraveller({
+                          name: '',
+                          travellerType: 'adult',
+                          age: '',
+                          skiExperience: '',
+                          skiPassRequired: ''
+                        })
+                      }
+                      className="inline-flex flex-shrink-0 items-center gap-2 rounded-full bg-primary-50 px-4 py-2 text-sm font-bold text-primary-700 transition hover:bg-primary-100"
+                    >
+                      <Plus className="h-4 w-4" />
+                      Add
+                    </button>
+                  </div>
+
+                  <div className="mt-5 space-y-5">
+                    {travellerFields.map(
+                      (field, index) => (
+                        <div
+                          key={field.id}
+                          className="rounded-2xl border border-gray-200 bg-gray-50 p-4 sm:p-5"
+                        >
+                          <div className="mb-4 flex items-center justify-between">
+                            <p className="font-bold text-gray-900">
+                              Traveller {index + 1}
+                            </p>
+
+                            {travellerFields.length >
+                              1 && (
+                              <button
+                                type="button"
+                                onClick={() =>
+                                  removeTraveller(index)
+                                }
+                                className="inline-flex items-center gap-1 text-sm font-semibold text-red-600 transition hover:text-red-700"
+                              >
+                                <Trash2 className="h-4 w-4" />
+                                Remove
+                              </button>
+                            )}
+                          </div>
+
+                          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+                            <div>
+                              <label className="mb-2 block text-sm font-semibold text-gray-700">
+                                Name *
+                              </label>
+
+                              <input
+                                type="text"
+                                {...registerFamily(
+                                  `travellers.${index}.name`,
+                                  {
+                                    required:
+                                      'Traveller name is required'
+                                  }
+                                )}
+                                className="w-full rounded-xl border border-gray-300 bg-white px-4 py-3 focus:border-transparent focus:ring-2 focus:ring-primary-500"
+                                placeholder="Traveller name"
+                              />
+
+                              {familyErrors
+                                .travellers?.[index]
+                                ?.name && (
+                                <p className="mt-1 text-sm text-red-600">
+                                  {
+                                    familyErrors
+                                      .travellers[index]
+                                      ?.name?.message
+                                  }
+                                </p>
+                              )}
+                            </div>
+
+                            <div>
+                              <label className="mb-2 block text-sm font-semibold text-gray-700">
+                                Adult or child *
+                              </label>
+
+                              <select
+                                {...registerFamily(
+                                  `travellers.${index}.travellerType`,
+                                  {
+                                    required:
+                                      'Select adult or child'
+                                  }
+                                )}
+                                className="w-full rounded-xl border border-gray-300 bg-white px-4 py-3 focus:border-transparent focus:ring-2 focus:ring-primary-500"
+                              >
+                                <option value="adult">
+                                  Adult
+                                </option>
+                                <option value="child">
+                                  Child
+                                </option>
+                              </select>
+                            </div>
+
+                            <div>
+                              <label className="mb-2 block text-sm font-semibold text-gray-700">
+                                Age
+                              </label>
+
+                              <input
+                                type="number"
+                                min="0"
+                                max="100"
+                                {...registerFamily(
+                                  `travellers.${index}.age`
+                                )}
+                                className="w-full rounded-xl border border-gray-300 bg-white px-4 py-3 focus:border-transparent focus:ring-2 focus:ring-primary-500"
+                                placeholder="Required for children"
+                              />
+                            </div>
+
+                            <div>
+                              <label className="mb-2 block text-sm font-semibold text-gray-700">
+                                Ski experience *
+                              </label>
+
+                              <select
+                                {...registerFamily(
+                                  `travellers.${index}.skiExperience`,
+                                  {
+                                    required:
+                                      'Select a ski experience level'
+                                  }
+                                )}
+                                className="w-full rounded-xl border border-gray-300 bg-white px-4 py-3 focus:border-transparent focus:ring-2 focus:ring-primary-500"
+                              >
+                                <option value="">
+                                  Select experience
+                                </option>
+                                <option value="never-skied">
+                                  Never skied
+                                </option>
+                                <option value="beginner">
+                                  Beginner
+                                </option>
+                                <option value="intermediate">
+                                  Intermediate
+                                </option>
+                                <option value="advanced">
+                                  Advanced
+                                </option>
+                              </select>
+
+                              {familyErrors
+                                .travellers?.[index]
+                                ?.skiExperience && (
+                                <p className="mt-1 text-sm text-red-600">
+                                  {
+                                    familyErrors
+                                      .travellers[index]
+                                      ?.skiExperience
+                                      ?.message
+                                  }
+                                </p>
+                              )}
+                            </div>
+
+                            <div className="sm:col-span-2">
+                              <label className="mb-2 block text-sm font-semibold text-gray-700">
+                                Ski pass required? *
+                              </label>
+
+                              <select
+                                {...registerFamily(
+                                  `travellers.${index}.skiPassRequired`,
+                                  {
+                                    required:
+                                      'Select a ski-pass option'
+                                  }
+                                )}
+                                className="w-full rounded-xl border border-gray-300 bg-white px-4 py-3 focus:border-transparent focus:ring-2 focus:ring-primary-500"
+                              >
+                                <option value="">
+                                  Select an option
+                                </option>
+                                <option value="yes">
+                                  Yes
+                                </option>
+                                <option value="no">
+                                  No
+                                </option>
+                                <option value="not-sure">
+                                  Not sure — please advise
+                                </option>
+                              </select>
+
+                              {familyErrors
+                                .travellers?.[index]
+                                ?.skiPassRequired && (
+                                <p className="mt-1 text-sm text-red-600">
+                                  {
+                                    familyErrors
+                                      .travellers[index]
+                                      ?.skiPassRequired
+                                      ?.message
+                                  }
+                                </p>
+                              )}
+                            </div>
+                          </div>
+                        </div>
+                      )
+                    )}
+                  </div>
+                </section>
+
+                {/* Additional information */}
+
+                <section>
+                  <label className="block font-serif text-xl font-bold text-gray-900">
+                    Anything else we should know?
+                  </label>
+
+                  <textarea
+                    {...registerFamily(
+                      'additionalInformation'
+                    )}
+                    rows={5}
+                    className="mt-4 w-full rounded-xl border border-gray-300 px-4 py-3 focus:border-transparent focus:ring-2 focus:ring-primary-500"
+                    placeholder="Questions, accessibility needs, lessons, equipment hire or other requirements..."
+                  />
+                </section>
+
+                <button
+                  type="submit"
+                  disabled={familySubmitting}
+                  className="inline-flex w-full items-center justify-center gap-2 rounded-full bg-amber-600 px-6 py-4 text-base font-bold text-white shadow-lg transition hover:bg-amber-700 disabled:cursor-not-allowed disabled:opacity-60"
+                >
+                  <Send className="h-5 w-5" />
+
+                  <span>
+                    {familySubmitting
+                      ? 'Sending Request…'
+                      : 'Send Quote Request'}
+                  </span>
+                </button>
+              </form>
+            </motion.div>
+          </motion.div>
+        )}
+
+        {/* =================================================
+            WAITLIST MODAL
+            ================================================= */}
+
+        {showWaitlistModal &&
+          selectedWaitlistTrip && (
+            <motion.div
+              initial={{
+                opacity: 0
+              }}
+              animate={{
+                opacity: 1
+              }}
+              className="fixed inset-0 z-[60] flex items-center justify-center bg-black/65 p-4 backdrop-blur-sm"
+              onClick={closeWaitlist}
+            >
+              <motion.div
+                initial={{
+                  opacity: 0,
+                  scale: 0.94
+                }}
+                animate={{
+                  opacity: 1,
+                  scale: 1
+                }}
+                transition={{
+                  duration: 0.25
+                }}
+                className="relative w-full max-w-md rounded-3xl bg-white p-6 shadow-2xl sm:p-8"
+                onClick={(event) =>
+                  event.stopPropagation()
+                }
+              >
+                <button
+                  type="button"
+                  onClick={closeWaitlist}
+                  className="absolute right-4 top-4 rounded-full p-2 text-gray-400 transition hover:bg-gray-100 hover:text-gray-700"
+                  aria-label="Close waitlist form"
+                >
+                  <X className="h-6 w-6" />
+                </button>
+
+                <div className="pr-8 text-center">
+                  <Users className="mx-auto h-10 w-10 text-primary-600" />
+
+                  <h2 className="mt-4 font-serif text-3xl font-bold text-gray-900">
+                    Join the Waitlist
+                  </h2>
+
+                  <p className="mt-3 leading-relaxed text-gray-600">
+                    {selectedWaitlistTrip.title} is
+                    currently sold out. We’ll contact you
+                    if a place becomes available.
+                  </p>
+                </div>
+
+                <form
+                  onSubmit={handleWaitlistSubmit(
+                    onWaitlistSubmit
+                  )}
+                  className="mt-7 space-y-5"
+                >
+                  <div>
+                    <label className="mb-2 block text-sm font-semibold text-gray-700">
+                      <Users className="mr-2 inline h-4 w-4" />
+                      Full name *
+                    </label>
+
+                    <input
+                      type="text"
+                      {...registerWaitlist(
+                        'fullName',
+                        {
+                          required:
+                            'Full name is required'
+                        }
+                      )}
+                      className="w-full rounded-xl border border-gray-300 px-4 py-3 focus:border-transparent focus:ring-2 focus:ring-primary-500"
+                      placeholder="Your full name"
+                    />
+
+                    {waitlistErrors.fullName && (
+                      <p className="mt-1 text-sm text-red-600">
+                        {
+                          waitlistErrors.fullName
+                            .message
+                        }
+                      </p>
+                    )}
+                  </div>
+
+                  <div>
+                    <label className="mb-2 block text-sm font-semibold text-gray-700">
+                      <Mail className="mr-2 inline h-4 w-4" />
+                      Email address *
+                    </label>
+
+                    <input
+                      type="email"
+                      {...registerWaitlist('email', {
+                        required:
+                          'Email address is required',
+                        pattern: {
+                          value: /^\S+@\S+$/i,
+                          message:
+                            'Enter a valid email address'
+                        }
+                      })}
+                      className="w-full rounded-xl border border-gray-300 px-4 py-3 focus:border-transparent focus:ring-2 focus:ring-primary-500"
+                      placeholder="you@example.com"
+                    />
+
+                    {waitlistErrors.email && (
+                      <p className="mt-1 text-sm text-red-600">
+                        {waitlistErrors.email.message}
+                      </p>
+                    )}
+                  </div>
+
+                  <div>
+                    <label className="mb-2 block text-sm font-semibold text-gray-700">
+                      <Phone className="mr-2 inline h-4 w-4" />
+                      Phone number
+                    </label>
+
+                    <input
+                      type="tel"
+                      {...registerWaitlist('phone')}
+                      className="w-full rounded-xl border border-gray-300 px-4 py-3 focus:border-transparent focus:ring-2 focus:ring-primary-500"
+                      placeholder="Optional"
+                    />
+                  </div>
+
+                  <button
+                    type="submit"
+                    disabled={waitlistSubmitting}
+                    className="inline-flex w-full items-center justify-center gap-2 rounded-full bg-primary-600 px-6 py-4 font-bold text-white shadow-lg transition hover:bg-primary-700 disabled:cursor-not-allowed disabled:opacity-60"
+                  >
+                    <Send className="h-5 w-5" />
+
+                    <span>
+                      {waitlistSubmitting
+                        ? 'Joining…'
+                        : 'Join Waitlist'}
+                    </span>
+                  </button>
+                </form>
+              </motion.div>
+            </motion.div>
+          )}
+      </div>
+    </>
+  );
+};
 
 export default UpcomingTripDetailsPage;
