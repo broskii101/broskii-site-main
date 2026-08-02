@@ -378,7 +378,7 @@ For full contact info, check out our <a href='/contact' class='text-primary-600 
   return (
     <div>
       {/* Hero Section */}
-      <section className="relative flex min-h-[36vh] items-center overflow-hidden sm:min-h-[42vh]">
+      <section className="relative py-20 overflow-hidden">
         {/* Background Image */}
         <img 
   src="https://res.cloudinary.com/dtx0og5tm/image/upload/f_auto,q_auto,w_1600/v1766883701/broskii-ski-boot-pov-alpine-slope.webp_nojdlh.webp"
@@ -389,21 +389,21 @@ For full contact info, check out our <a href='/contact' class='text-primary-600 
         {/* Dark overlay for text readability */}
         <div className="absolute inset-0 bg-black/35"></div>
         
-        <div className="mx-auto max-w-7xl px-5 sm:px-6">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6 }}
-            className="mx-auto max-w-3xl text-center text-white"
+            className="text-center text-white relative z-10"
           >
-            <div className="mb-5 flex items-center justify-center">
+            <div className="flex items-center justify-center space-x-3 mb-6">
              
-            <h1 className="text-4xl font-bold leading-tight sm:text-5xl md:text-6xl">
+            <h1 className="text-4xl md:text-6xl font-serif font-bold leading-[1.1]">
   FAQs — We've Got You Covered
 </h1>
 
             </div>
-            <p className="mx-auto mt-5 max-w-2xl text-base leading-relaxed text-white/90 sm:text-lg">
+            <p className="text-lg md:text-xl text-primary-100 max-w-4xl mx-auto leading-relaxed font-normal">
   From booking your spot to hitting the slopes, here's everything you need to know about our Broskii trips.
 </p>
 
