@@ -925,8 +925,8 @@ const clickableCard =
   If you would prefer a single occupancy room, you can select this option below.{' '}
   <strong className="font-semibold text-gray-900">
     Single rooms are subject to availability and incur an additional cost.
-    We'll confirm availability and pricing after receiving your booking.
-  </strong>
+  </strong>{' '}
+  We'll confirm availability and pricing after receiving your booking.
 </p>
 
                       <div className="space-y-3">
