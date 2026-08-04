@@ -913,10 +913,7 @@ ${data.additionalInformation || 'None provided'}
                 Three trips. One unforgettable season.
               </h2>
 
-              <p className="mt-4 leading-relaxed text-gray-600">
-                Tap the poster to view the complete
-                2026/27 trip line-up.
-              </p>
+              
             </motion.div>
 
             <motion.div
@@ -940,9 +937,7 @@ ${data.additionalInformation || 'None provided'}
                 />
               </button>
 
-              <p className="mt-4 text-center text-sm font-medium text-gray-500">
-                Tap to view full size
-              </p>
+              
             </motion.div>
           </div>
         </section>
@@ -1172,7 +1167,7 @@ ${data.additionalInformation || 'None provided'}
                     </IncludedItem>
 
                     <IncludedItem>
-                      Private coach transfers from Lyon
+                      Private coach transfers
                     </IncludedItem>
 
                     <IncludedItem>
@@ -1382,8 +1377,7 @@ ${data.additionalInformation || 'None provided'}
                     </p>
 
                     <p className="mt-2 text-sm leading-relaxed text-gray-600">
-                      Be the first to hear when our April
-                      2027 trip goes live.
+                    Join the priority list and we'll let you know as soon as bookings open.
                     </p>
 
                     <form
@@ -1459,8 +1453,7 @@ ${data.additionalInformation || 'None provided'}
               </h2>
 
               <p className="mt-4 leading-relaxed text-gray-600">
-                A look back at previous sold-out Broskii
-                ski trips.
+                A look back at some of our previous ski trips.
               </p>
             </div>
 

@@ -917,9 +917,18 @@ const clickableCard =
                         <Bed className="h-6 w-6 text-primary-600" />
                         <span>Room Preference</span>
                       </h3>
+                      
                       <p className="text-gray-600 mb-4">
-                        All accommodation is based on shared rooms (twin occupancy). If you would prefer a single occupancy room, you can request it below — but please note this is not guaranteed and subject to availability. Additional charges apply, and the exact pricing will be confirmed after the booking.
-                      </p>
+  <strong className="font-semibold text-gray-900">
+    All accommodation is based on shared twin rooms.
+  </strong>{' '}
+  If you would prefer a single occupancy room, you can select this option below.{' '}
+  <strong className="font-semibold text-gray-900">
+    Single rooms are subject to availability and incur an additional cost.
+    We'll confirm availability and pricing after receiving your booking.
+  </strong>
+</p>
+
                       <div className="space-y-3">
                         {/* Shared room first */}
                         <label className="flex items-start space-x-3 p-4 border border-gray-200 rounded-lg hover:bg-white transition-colors cursor-pointer">
