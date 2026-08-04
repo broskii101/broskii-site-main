@@ -31,6 +31,15 @@ import { supabase } from '../lib/supabaseClient';
 const JANUARY_2027_TRIP_ID =
   '6db8abe3-efa0-4847-a90d-2fb944fd36a8';
 
+const JANUARY_EARLY_BIRD_PRICE = 1299;
+const JANUARY_STANDARD_PRICE = 1399;
+const JANUARY_EARLY_BIRD_END = new Date(
+  '2026-09-04T23:59:59+01:00'
+).getTime();
+
+const APRIL_PRIORITY_TRIP_KEY =
+  'april-val-thorens-2027';
+
 const FAMILY_TRIP_STATUS:
   | 'enquiries_open'
   | 'limited'
@@ -85,6 +94,10 @@ interface WaitlistFormInputs {
   fullName: string;
   email: string;
   phone: string;
+}
+
+interface PriorityListFormInputs {
+  email: string;
 }
 
 type SkiExperience =
@@ -278,6 +291,9 @@ const UpcomingTripDetailsPage = () => {
     setAvailabilityError
   ] = React.useState(false);
 
+  const [currentTime, setCurrentTime] =
+    React.useState(Date.now());
+
   const [
     showFamilyQuoteModal,
     setShowFamilyQuoteModal
@@ -447,6 +463,20 @@ const UpcomingTripDetailsPage = () => {
   } = useForm<WaitlistFormInputs>();
 
   /* ---------------------------------------------------------
+     APRIL PRIORITY LIST FORM
+     --------------------------------------------------------- */
+
+  const {
+    register: registerPriority,
+    handleSubmit: handlePrioritySubmit,
+    reset: resetPriorityForm,
+    formState: {
+      errors: priorityErrors,
+      isSubmitting: prioritySubmitting
+    }
+  } = useForm<PriorityListFormInputs>();
+
+  /* ---------------------------------------------------------
      LOAD JANUARY AVAILABILITY
      --------------------------------------------------------- */
 
@@ -487,9 +517,64 @@ const UpcomingTripDetailsPage = () => {
     };
   }, []);
 
+  React.useEffect(() => {
+    const timer = window.setInterval(() => {
+      setCurrentTime(Date.now());
+    }, 60000);
+
+    return () => {
+      window.clearInterval(timer);
+    };
+  }, []);
+
   const januarySoldOut = isTripSoldOut(
     januaryAvailability
   );
+
+  const earlyBirdActive =
+    currentTime < JANUARY_EARLY_BIRD_END;
+
+  const earlyBirdTimeRemaining = Math.max(
+    JANUARY_EARLY_BIRD_END - currentTime,
+    0
+  );
+
+  const earlyBirdDays = Math.floor(
+    earlyBirdTimeRemaining /
+      (1000 * 60 * 60 * 24)
+  );
+
+  const earlyBirdHours = Math.floor(
+    (earlyBirdTimeRemaining /
+      (1000 * 60 * 60)) %
+      24
+  );
+
+  const getEarlyBirdCountdownText = () => {
+    if (earlyBirdDays > 0) {
+      return `${earlyBirdDays} ${
+        earlyBirdDays === 1 ? 'day' : 'days'
+      } remaining`;
+    }
+
+    if (earlyBirdHours > 1) {
+      return `${earlyBirdHours} hours remaining`;
+    }
+
+    return 'Final hours';
+  };
+
+  const getEarlyBirdCountdownClasses = () => {
+    if (earlyBirdTimeRemaining <= 24 * 60 * 60 * 1000) {
+      return 'border-red-200 bg-red-50 text-red-700';
+    }
+
+    if (earlyBirdDays <= 7) {
+      return 'border-orange-200 bg-orange-50 text-orange-700';
+    }
+
+    return 'border-primary-100 bg-white/80 text-primary-700';
+  };
 
   /* ---------------------------------------------------------
      IMAGE MODAL
@@ -688,6 +773,42 @@ ${data.additionalInformation || 'None provided'}
     } catch (error) {
       console.error(error);
       toast.error('An unexpected error occurred.');
+    }
+  };
+
+  const onPrioritySubmit = async (
+    data: PriorityListFormInputs
+  ) => {
+    try {
+      const { error } = await supabase
+        .from('trip_priority_list')
+        .insert({
+          trip_key: APRIL_PRIORITY_TRIP_KEY,
+          email: data.email.trim().toLowerCase()
+        });
+
+      if (error?.code === '23505') {
+        toast('You’re already on the list for this trip.');
+        return;
+      }
+
+      if (error) {
+        console.error(error);
+        toast.error(
+          'Sorry, we could not add you to the list. Please try again.'
+        );
+        return;
+      }
+
+      toast.success(
+        'You’re on the list. We’ll let you know when bookings open.'
+      );
+      resetPriorityForm();
+    } catch (error) {
+      console.error(error);
+      toast.error(
+        'Sorry, we could not add you to the list. Please try again.'
+      );
     }
   };
 
@@ -1031,10 +1152,11 @@ ${data.additionalInformation || 'None provided'}
                   </div>
 
                   <p className="mt-5 leading-relaxed text-gray-700">
-                    Stay at L'Oxalys, a 4★ ski-in /
-                    ski-out hotel in Europe’s highest ski
-                    resort, with direct access to the
-                    legendary Three Valleys ski area.
+                    Stay at the highly rated 4★ L'Oxalys
+                    ski-in / ski-out hotel, ideally located
+                    in the heart of Val Thorens with direct
+                    access to the world-famous Three Valleys
+                    ski area.
                   </p>
 
                   <div className="mt-7 space-y-3">
@@ -1069,29 +1191,66 @@ ${data.additionalInformation || 'None provided'}
                     </IncludedItem>
                   </div>
 
-                  <div className="mt-7 rounded-2xl bg-primary-50 p-5">
-                    <p className="text-sm font-semibold uppercase tracking-wide text-primary-700">
-                      Package price
-                    </p>
+                  <div className="mt-7 overflow-hidden rounded-2xl border border-primary-100 bg-primary-50">
+                    {earlyBirdActive && (
+                      <div className="flex items-center justify-between gap-3 bg-primary-600 px-5 py-3 text-white">
+                        <p className="text-xs font-bold uppercase tracking-[0.18em]">
+                          Early Bird
+                        </p>
 
-                    <p className="mt-1 font-serif text-4xl font-bold text-gray-900">
-                      £1,300
-                    </p>
+                        <Sparkles className="h-5 w-5 flex-shrink-0" />
+                      </div>
+                    )}
 
-                    <p className="mt-1 text-sm font-medium text-gray-600">
-                      Per person
-                    </p>
-
-                    <div className="mt-4 border-t border-primary-100 pt-4">
-                      <p className="font-bold text-gray-900">
-                        Secure your place with a £300
-                        deposit
+                    <div className="p-5">
+                      <p className="text-sm font-semibold uppercase tracking-wide text-primary-700">
+                        {earlyBirdActive
+                          ? 'Early Bird Price'
+                          : 'Package Price'}
                       </p>
 
-                      <p className="mt-1 text-sm text-gray-600">
-                        Remaining balance due by 10
-                        October 2026.
-                      </p>
+                      {earlyBirdActive ? (
+                        <>
+                          <div className="mt-2 flex flex-wrap items-end gap-x-3 gap-y-1">
+                            <p className="font-serif text-4xl font-bold text-gray-900">
+                              £
+                              {JANUARY_EARLY_BIRD_PRICE.toLocaleString(
+                                'en-GB'
+                              )}
+                            </p>
+
+                            <p className="pb-1 text-xl font-semibold text-gray-400 line-through decoration-2">
+                              £
+                              {JANUARY_STANDARD_PRICE.toLocaleString(
+                                'en-GB'
+                              )}
+                            </p>
+                          </div>
+
+                          <div
+                            className={`mt-4 flex items-center gap-2 rounded-xl border px-3 py-2.5 text-sm font-bold ${getEarlyBirdCountdownClasses()}`}
+                          >
+                            <Clock3 className="h-4 w-4 flex-shrink-0" />
+                            <span>
+                              {getEarlyBirdCountdownText()}
+                            </span>
+                          </div>
+                        </>
+                      ) : (
+                        <p className="mt-2 font-serif text-4xl font-bold text-gray-900">
+                          £
+                          {JANUARY_STANDARD_PRICE.toLocaleString(
+                            'en-GB'
+                          )}
+                        </p>
+                      )}
+
+                      <div className="mt-4 border-t border-primary-100 pt-4">
+                        <p className="font-bold text-gray-900">
+                          Secure your place with a £300
+                          deposit.
+                        </p>
+                      </div>
                     </div>
                   </div>
 
@@ -1135,7 +1294,7 @@ ${data.additionalInformation || 'None provided'}
                         to={`/booking/${JANUARY_2027_TRIP_ID}`}
                         className="inline-flex w-full items-center justify-center rounded-full bg-primary-600 px-6 py-4 text-base font-bold text-white shadow-lg transition hover:bg-primary-700"
                       >
-                        Book with £300 Deposit
+                        Book Your Place
                       </Link>
                     )}
                   </div>
@@ -1216,14 +1375,66 @@ ${data.additionalInformation || 'None provided'}
                     </div>
                   </div>
 
-                  <div className="mt-7">
-                    <div
-                      aria-disabled="true"
-                      className="flex w-full cursor-not-allowed items-center justify-center gap-2 rounded-full border-2 border-sky-200 bg-sky-50 px-6 py-4 font-bold text-sky-800"
+                  <div className="mt-7 rounded-2xl border border-sky-200 bg-sky-50 p-5">
+                    <p className="text-sm font-bold uppercase tracking-[0.16em] text-sky-800">
+                      Be the First to Know
+                    </p>
+
+                    <p className="mt-2 text-sm leading-relaxed text-gray-600">
+                      Be the first to hear when our April
+                      2027 trip goes live.
+                    </p>
+
+                    <form
+                      onSubmit={handlePrioritySubmit(
+                        onPrioritySubmit
+                      )}
+                      className="mt-4 space-y-3"
                     >
-                      <Clock3 className="h-5 w-5" />
-                      Bookings Open Oct / Nov
-                    </div>
+                      <div>
+                        <label
+                          htmlFor="april-priority-email"
+                          className="sr-only"
+                        >
+                          Email address
+                        </label>
+
+                        <input
+                          id="april-priority-email"
+                          type="email"
+                          {...registerPriority('email', {
+                            required:
+                              'Email address is required',
+                            pattern: {
+                              value: /^\S+@\S+$/i,
+                              message:
+                                'Enter a valid email address'
+                            }
+                          })}
+                          className="w-full rounded-xl border border-sky-200 bg-white px-4 py-3 text-sm focus:border-transparent focus:ring-2 focus:ring-sky-500"
+                          placeholder="Email address"
+                        />
+
+                        {priorityErrors.email && (
+                          <p className="mt-1 text-sm text-red-600">
+                            {priorityErrors.email.message}
+                          </p>
+                        )}
+                      </div>
+
+                      <button
+                        type="submit"
+                        disabled={prioritySubmitting}
+                        className="inline-flex w-full items-center justify-center gap-2 rounded-full bg-sky-700 px-6 py-3.5 font-bold text-white shadow-md transition hover:bg-sky-800 disabled:cursor-not-allowed disabled:opacity-60"
+                      >
+                        <Mail className="h-5 w-5" />
+                        <span>
+                          {prioritySubmitting
+                            ? 'Joining…'
+                            : 'Notify Me'}
+                        </span>
+                      </button>
+                    </form>
                   </div>
                 </div>
               </motion.article>
