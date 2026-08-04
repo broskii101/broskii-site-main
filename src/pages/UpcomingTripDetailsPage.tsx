@@ -1186,7 +1186,7 @@ ${data.additionalInformation || 'None provided'}
                     </IncludedItem>
 
                     <IncludedItem>
-                      Ski and snowboard lessons arranged
+                      Optional Ski and snowboard lessons arranged
                       with trusted local ski schools
                     </IncludedItem>
                   </div>

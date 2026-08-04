@@ -534,126 +534,113 @@ alt: "Broskii skier descending an Alpine slope while holding padel tennis racket
 
 
       
-{/* ===================== NEXT TRIP SECTION ===================== */}
+{/* ===================== SEASON LINE-UP SECTION ===================== */}
 <section className="
-  relative 
-  pt-14 pb-16 
+  relative
+  pt-14 pb-16
   sm:pt-20 sm:pb-20
-  bg-gradient-to-b 
-  from-[#cfe4f0] 
-  via-white 
+  bg-gradient-to-b
+  from-[#cfe4f0]
+  via-white
   to-[#cfe4f0]
 ">
-
-
   <div className="max-w-6xl mx-auto px-4 sm:px-6">
 
-    {/* LABEL */}
+    {/* EYEBROW */}
     <p className="
-  text-center
-  text-3xl
-  sm:text-4xl md:text-5xl
-  uppercase
-  tracking-[0.12em]
-  font-bold
-  text-[#0092D1]
-  mb-5
-">
-  NEXT STOP:
-</p>
+      text-center
+      text-sm sm:text-base
+      uppercase
+      tracking-[0.22em]
+      font-bold
+      text-[#0092D1]
+      mb-4
+    ">
+      2026 / 2027
+    </p>
 
-
-    {/* HEADER + DATE */}
+    {/* HEADER */}
     <div className="text-center mb-8">
-    <h2 className="text-[26px] sm:text-3xl md:text-4xl font-serif font-semibold leading-tight text-gray-900 mb-2">
-
-        Tignes, French Alps
+      <h2 className="
+        text-[30px]
+        sm:text-4xl md:text-5xl
+        font-serif font-semibold
+        leading-tight
+        text-gray-900
+      ">
+        Season Line-Up
       </h2>
 
-      <p className="
-  text-lg sm:text-2xl md:text-3xl
-  font-semibold
-  text-[#0092D1]
-  tracking-wide
-  font-sans
-  mt-1
-">
-
-
-  APRIL 11–18, 2026
-</p>
-
-
-<div className="w-16 sm:w-20 h-[2px] bg-[#0092D1] mt-4 mx-auto" />
-
+      <div className="w-16 sm:w-20 h-[2px] bg-[#0092D1] mt-4 mx-auto" />
     </div>
 
     {/* SUBTEXT */}
     <p className="
-  text-[17px] sm:text-[19px] md:text-[21px]
-  text-gray-700
-  leading-[1.7]
-  text-center
-  max-w-[36rem]
-  mx-auto
-  mb-8 sm:mb-10
-">
-  Part of a 300km alpine playground built for real mountain days — wide pistes, 
-  breathtaking views and an atmosphere made for switching off and reconnecting.
-</p>
+      text-[17px] sm:text-[19px] md:text-[21px]
+      text-gray-700
+      leading-[1.7]
+      text-center
+      max-w-[40rem]
+      mx-auto
+      mb-8 sm:mb-10
+    ">
+      Discover our upcoming ski trips, from flagship January adventures
+      to family holidays and spring escapes in the Alps.
+    </p>
 
-
-    {/* POSTER (smaller, rounded, shadow) */}
+    {/* SEASON POSTER */}
     <div
       className="
-        mx-auto cursor-pointer 
-        max-w-[280px] sm:max-w-[410px]
-        rounded-3xl overflow-hidden 
+        mx-auto cursor-pointer
+        w-[92%] max-w-[430px]
+        rounded-3xl overflow-hidden
         shadow-xl border border-white/60
+        transition-transform duration-300
+        hover:scale-[1.01]
       "
       onClick={() =>
         setFullScreenImage(
-          'https://res.cloudinary.com/dtx0og5tm/image/upload/f_auto,q_auto,w_1200/v1769048687/broskii-tignes-april-ski-trip-poster_zpf1oe.jpg'
+          'https://res.cloudinary.com/dtx0og5tm/image/upload/f_auto,q_auto,w_1200/v1785682931/broskii-2026-2027-ski-season-poster.webp_lynqvu.jpg'
         )
       }
     >
       <img
-        src='https://res.cloudinary.com/dtx0og5tm/image/upload/f_auto,q_auto,w_1200/v1769048687/broskii-tignes-april-ski-trip-poster_zpf1oe.jpg'
-        alt="Broskii poster promoting an April ski trip to Tignes, part of the Tignes–Val d’Isère ski area in the French Alps.
-        "
+        src="https://res.cloudinary.com/dtx0og5tm/image/upload/f_auto,q_auto,w_1200/v1785682931/broskii-2026-2027-ski-season-poster.webp_lynqvu.jpg"
+        alt="Broskii 2026 and 2027 ski season line-up poster featuring upcoming trips to Les Arcs and Val Thorens"
         className="w-full h-auto"
+        loading="lazy"
+        decoding="async"
       />
     </div>
 
+    <p className="mt-4 text-center text-sm font-medium text-gray-500">
+      Tap to enlarge
+    </p>
+
     {/* CTA */}
     <div className="flex justify-center mt-8 sm:mt-10">
-
       <Link
         to="/upcoming-trip"
         className="
-  rounded-full
-  px-8 py-4
-  sm:px-10 sm:py-5
-  bg-[#0092D1] text-white
-  text-base sm:text-xl
-  font-semibold
-  flex items-center gap-3
-  transition-transform duration-200
-  hover:scale-[1.04] active:scale-[0.96]
-  shadow-md
-"
-
-
+          rounded-full
+          px-8 py-4
+          sm:px-10 sm:py-5
+          bg-[#0092D1] text-white
+          text-base sm:text-xl
+          font-semibold
+          flex items-center gap-3
+          transition-transform duration-200
+          hover:scale-[1.04] active:scale-[0.96]
+          shadow-md
+        "
       >
-        <span>View Trip Details</span>
+        <span>Explore Our Trips</span>
         <ArrowRight className="h-6 w-6" />
       </Link>
     </div>
 
   </div>
 </section>
-
-
 
 
 
