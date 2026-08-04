@@ -1043,7 +1043,7 @@ ${data.additionalInformation || 'None provided'}
                       </IncludedItem>
 
                       <IncludedItem>
-                        Spa facilities
+                        Indoor swimming pool and family-friendly spa facilities
                       </IncludedItem>
 
                       <IncludedItem>
@@ -1052,13 +1052,15 @@ ${data.additionalInformation || 'None provided'}
                       </IncludedItem>
 
                       <IncludedItem>
-                        Ski and snowboard lessons arranged
-                        with trusted local ski schools
+                        Optional ski and snowboard lessons available at an additional cost
                       </IncludedItem>
 
                       <IncludedItem>
-                        Options for first-time, beginner,
-                        intermediate and advanced skiers
+                        Great resort for complete beginners through to advanced skiers and snowboarders
+                      </IncludedItem>
+
+                      <IncludedItem>
+                        Optional evening sledging sessions for the whole family
                       </IncludedItem>
                     </div>
                   </div>
@@ -1069,11 +1071,7 @@ ${data.additionalInformation || 'None provided'}
                     </p>
 
                     <p className="mt-2 leading-relaxed text-gray-700">
-                      Most Broskii families choose to
-                      drive directly to the resort, giving
-                      you the flexibility to travel on
-                      your own schedule and bring
-                      everything you need for the week.
+                      Most families choose to drive directly to the resort, but flying is also a great option if you're travelling from elsewhere.
                     </p>
 
                     <p className="mt-2 text-sm leading-relaxed text-gray-600">
@@ -1170,6 +1168,10 @@ ${data.additionalInformation || 'None provided'}
                     </IncludedItem>
 
                     <IncludedItem>
+                      Joining from outside London or overseas? Flexible travel options are available.
+                    </IncludedItem>
+
+                    <IncludedItem>
                       Private coach transfers from Lyon
                     </IncludedItem>
 
@@ -1186,8 +1188,7 @@ ${data.additionalInformation || 'None provided'}
                     </IncludedItem>
 
                     <IncludedItem>
-                      Optional Ski and snowboard lessons arranged
-                      with trusted local ski schools
+                      Optional ski and snowboard lessons available at an additional cost
                     </IncludedItem>
                   </div>
 
