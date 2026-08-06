@@ -47,9 +47,9 @@ export const handler = async (event) => {
     /* ================= CUSTOMER EMAIL ================= */
 
     await resend.emails.send({
-      from: 'Broskii Alerts <info@broskii.com>',
+      from: 'Broskii <info@broskii.com>',
       to: [email],
-      subject: 'Broskii Trip Booking Confirmation',
+      subject: 'Booking Confirmation & Next Steps',
       html: `
 <!DOCTYPE html>
 <html lang="en">
@@ -63,6 +63,106 @@ export const handler = async (event) => {
     content="telephone=no,address=no,email=no,date=no,url=no"
   />
   <title>Broskii Booking Received</title>
+
+  <style>
+    html,
+    body,
+    table,
+    td,
+    p,
+    a,
+    h1,
+    h2,
+    h3 {
+      -webkit-text-size-adjust: 100% !important;
+      -ms-text-size-adjust: 100% !important;
+    }
+
+    table,
+    td {
+      mso-table-lspace: 0pt !important;
+      mso-table-rspace: 0pt !important;
+    }
+
+    img {
+      -ms-interpolation-mode: bicubic;
+    }
+
+    .payment-button {
+      white-space: nowrap !important;
+    }
+
+    @media only screen and (max-width: 600px) {
+      .email-outer {
+        padding: 12px 6px !important;
+      }
+
+      .email-header {
+        padding: 20px 18px !important;
+      }
+
+      .hero-section {
+        padding: 38px 20px 36px !important;
+      }
+
+      .hero-title {
+        font-size: 37px !important;
+        line-height: 1.1 !important;
+      }
+
+      .section-title {
+        font-size: 31px !important;
+        line-height: 1.15 !important;
+      }
+
+      .card-title {
+        font-size: 30px !important;
+        line-height: 1.15 !important;
+      }
+
+      .closing-title {
+        font-size: 30px !important;
+        line-height: 1.17 !important;
+      }
+
+      .content-side-padding {
+        padding-left: 16px !important;
+        padding-right: 16px !important;
+      }
+
+      .card-padding {
+        padding: 26px 20px !important;
+      }
+
+      .payment-button {
+        font-size: 16px !important;
+        padding-left: 10px !important;
+        padding-right: 10px !important;
+        white-space: nowrap !important;
+      }
+    }
+
+    @media only screen and (max-width: 390px) {
+      .hero-title {
+        font-size: 34px !important;
+      }
+
+      .section-title {
+        font-size: 29px !important;
+      }
+
+      .card-title,
+      .closing-title {
+        font-size: 28px !important;
+      }
+
+      .payment-button {
+        font-size: 15px !important;
+        letter-spacing: -0.2px !important;
+      }
+    }
+  </style>
+
 </head>
 
 <body
@@ -72,7 +172,7 @@ export const handler = async (event) => {
   <div
     style="display:none; max-height:0; overflow:hidden; opacity:0; color:transparent; line-height:1px; font-size:1px;"
   >
-    We have received your booking details. Complete payment to secure your place on the Broskii trip.
+    Booking confirmation. See what's next.
   </div>
 
   <table
@@ -84,7 +184,7 @@ export const handler = async (event) => {
     style="width:100%; margin:0; padding:0; background-color:#f3f4f6; border-collapse:collapse;"
   >
     <tr>
-      <td align="center" style="padding:24px 12px;">
+      <td align="center" class="email-outer" style="padding:24px 12px;">
 
         <table
           width="100%"
@@ -97,7 +197,7 @@ export const handler = async (event) => {
 
           <!-- Header -->
           <tr>
-            <td style="padding:24px 28px; background-color:#EAF7FB;">
+            <td class="email-header" style="padding:24px 28px; background-color:#EAF7FB;">
 
               <table
                 width="100%"
@@ -134,19 +234,20 @@ export const handler = async (event) => {
           <tr>
             <td
               align="center"
+              class="hero-section"
               style="padding:52px 28px 48px; background-color:#ffffff;"
             >
 
               <p
                 style="margin:0 0 18px; padding:0; font-family:Arial,Helvetica,sans-serif; font-size:15px; line-height:1.4; font-weight:800; letter-spacing:1.5px; color:#0087BD;"
               >
-                YOUR BOOKING DETAILS ARE WITH US
+                THE COUNTDOWN BEGINS
               </p>
 
               <h1
-                style="margin:0; padding:0; font-family:Georgia,'Times New Roman',serif; font-size:48px; line-height:1.08; font-weight:700; color:#111827;"
+                class="hero-title" style="margin:0; padding:0; font-family:Georgia,'Times New Roman',serif; font-size:48px; line-height:1.08; font-weight:700; color:#111827;"
               >
-                One final step to secure your Broskii trip
+                One step closer to the slopes
               </h1>
 
               <p
@@ -154,54 +255,20 @@ export const handler = async (event) => {
               >
                 As-salamu alaykum
                 <strong style="color:#111827;">${fullName}</strong>,
-                we have successfully received your booking details.
+                we’ve received your booking details and can’t wait to welcome you on the slopes.
               </p>
 
               <p
                 style="margin:14px auto 0; padding:0; max-width:570px; font-family:Arial,Helvetica,sans-serif; font-size:19px; line-height:1.65; color:#3F5663;"
               >
-                Your place is only secured once your payment has been completed.
+                <strong style="color:#111827;">Already paid on our website? You’re all set — no further action is needed.</strong>
               </p>
 
-            </td>
-          </tr>
-
-          <!-- Already paid notice -->
-          <tr>
-            <td style="padding:0 28px 48px;">
-
-              <table
-                width="100%"
-                border="0"
-                cellpadding="0"
-                cellspacing="0"
-                role="presentation"
-                style="width:100%; background-color:#EAF7FB; border-radius:18px; border-collapse:separate;"
+              <p
+                style="margin:12px auto 0; padding:0; max-width:570px; font-family:Arial,Helvetica,sans-serif; font-size:19px; line-height:1.65; color:#3F5663;"
               >
-                <tr>
-                  <td style="padding:28px;">
-
-                    <p
-                      style="margin:0; padding:0; font-family:Arial,Helvetica,sans-serif; font-size:16px; line-height:1.4; font-weight:800; letter-spacing:1px; color:#0087BD;"
-                    >
-                      ALREADY COMPLETED PAYMENT?
-                    </p>
-
-                    <p
-                      style="margin:12px 0 0; padding:0; font-family:Arial,Helvetica,sans-serif; font-size:18px; line-height:1.6; color:#243c47;"
-                    >
-                      If you completed payment using the payment page on our website, your place is already secured and you can safely ignore the payment section below.
-                    </p>
-
-                    <p
-                      style="margin:12px 0 0; padding:0; font-family:Arial,Helvetica,sans-serif; font-size:18px; line-height:1.6; color:#243c47;"
-                    >
-                      If you have not paid yet, choose either a deposit or full payment option below.
-                    </p>
-
-                  </td>
-                </tr>
-              </table>
+                If you haven’t paid yet, choose one of the payment options below.
+              </p>
 
             </td>
           </tr>
@@ -216,19 +283,19 @@ export const handler = async (event) => {
               <p
                 style="margin:0; padding:0; font-family:Arial,Helvetica,sans-serif; font-size:15px; line-height:1.4; font-weight:800; letter-spacing:1.5px; color:#0087BD;"
               >
-                COMPLETE YOUR PAYMENT
+                PAYMENT OPTIONS
               </p>
 
               <h2
-                style="margin:14px 0 0; padding:0; font-family:Georgia,'Times New Roman',serif; font-size:38px; line-height:1.14; font-weight:700; color:#111827;"
+                class="section-title" style="margin:14px 0 0; padding:0; font-family:Georgia,'Times New Roman',serif; font-size:38px; line-height:1.14; font-weight:700; color:#111827;"
               >
-                Choose how you would like to secure your place
+                Choose your payment option
               </h2>
 
               <p
                 style="margin:18px auto 0; padding:0; max-width:570px; font-family:Arial,Helvetica,sans-serif; font-size:18px; line-height:1.65; color:#526875;"
               >
-                Bank transfer has no fee. Card payments include a 2% processing fee.
+                Bank transfer is free. Card payments include a 2% processing fee.
               </p>
 
             </td>
@@ -236,7 +303,7 @@ export const handler = async (event) => {
 
           <!-- Deposit card -->
           <tr>
-            <td style="padding:0 28px 24px; background-color:#F8FCFD;">
+            <td class="content-side-padding" style="padding:0 28px 24px; background-color:#F8FCFD;">
 
               <table
                 width="100%"
@@ -247,7 +314,7 @@ export const handler = async (event) => {
                 style="width:100%; background-color:#ffffff; border:1px solid #D9EDF5; border-radius:20px; border-collapse:separate;"
               >
                 <tr>
-                  <td style="padding:32px 28px;">
+                  <td class="card-padding" style="padding:32px 28px;">
 
                     <p
                       style="margin:0; padding:0; font-family:Arial,Helvetica,sans-serif; font-size:15px; line-height:1.4; font-weight:800; letter-spacing:1.5px; color:#0087BD;"
@@ -256,7 +323,7 @@ export const handler = async (event) => {
                     </p>
 
                     <h2
-                      style="margin:12px 0 0; padding:0; font-family:Georgia,'Times New Roman',serif; font-size:36px; line-height:1.12; font-weight:700; color:#111827;"
+                      class="card-title" style="margin:12px 0 0; padding:0; font-family:Georgia,'Times New Roman',serif; font-size:36px; line-height:1.12; font-weight:700; color:#111827;"
                     >
                       Pay Deposit
                     </h2>
@@ -264,14 +331,14 @@ export const handler = async (event) => {
                     <p
                       style="margin:16px 0 0; padding:0; font-family:Arial,Helvetica,sans-serif; font-size:18px; line-height:1.6; color:#3F5663;"
                     >
-                      Secure your place today with a
+                      Reserve your place today with a
                       <strong style="color:#111827;">£300 deposit</strong>.
                     </p>
 
                     <p
                       style="margin:8px 0 0; padding:0; font-family:Arial,Helvetica,sans-serif; font-size:16px; line-height:1.6; color:#526875;"
                     >
-                      The remaining balance is due 10 weeks before departure. We’ll contact you closer to the balance due date.
+                      Your remaining balance is due 10 weeks before departure. We’ll remind you closer to the due date.
                     </p>
 
                     <table
@@ -288,6 +355,7 @@ export const handler = async (event) => {
                           style="background-color:#0087BD; border-radius:13px;"
                         >
                           <a
+                            class="payment-button"
                             href="https://monzo.com/pay/r/broskii-ltd_Ix3i7XNVQFXQ2I"
                             target="_blank"
                             rel="noopener noreferrer"
@@ -319,6 +387,7 @@ export const handler = async (event) => {
                           style="background-color:#111827; border-radius:13px;"
                         >
                           <a
+                            class="payment-button"
                             href="https://monzo.com/pay/r/broskii-ltd_sLaDokHTqy4CNd"
                             target="_blank"
                             rel="noopener noreferrer"
@@ -345,7 +414,7 @@ export const handler = async (event) => {
 
           <!-- Full payment card -->
           <tr>
-            <td style="padding:0 28px 24px; background-color:#F8FCFD;">
+            <td class="content-side-padding" style="padding:0 28px 24px; background-color:#F8FCFD;">
 
               <table
                 width="100%"
@@ -356,7 +425,7 @@ export const handler = async (event) => {
                 style="width:100%; background-color:#ffffff; border:1px solid #D9EDF5; border-radius:20px; border-collapse:separate;"
               >
                 <tr>
-                  <td style="padding:32px 28px;">
+                  <td class="card-padding" style="padding:32px 28px;">
 
                     <p
                       style="margin:0; padding:0; font-family:Arial,Helvetica,sans-serif; font-size:15px; line-height:1.4; font-weight:800; letter-spacing:1.5px; color:#0087BD;"
@@ -365,7 +434,7 @@ export const handler = async (event) => {
                     </p>
 
                     <h2
-                      style="margin:12px 0 0; padding:0; font-family:Georgia,'Times New Roman',serif; font-size:36px; line-height:1.12; font-weight:700; color:#111827;"
+                      class="card-title" style="margin:12px 0 0; padding:0; font-family:Georgia,'Times New Roman',serif; font-size:36px; line-height:1.12; font-weight:700; color:#111827;"
                     >
                       Pay In Full
                     </h2>
@@ -373,7 +442,7 @@ export const handler = async (event) => {
                     <p
                       style="margin:16px 0 0; padding:0; font-family:Arial,Helvetica,sans-serif; font-size:18px; line-height:1.6; color:#3F5663;"
                     >
-                      Complete the full trip payment today and your place will be fully secured.
+                      Pay the full balance today and you’re all set.
                     </p>
 
                     
@@ -392,6 +461,7 @@ export const handler = async (event) => {
                           style="background-color:#0087BD; border-radius:13px;"
                         >
                           <a
+                            class="payment-button"
                             href="https://monzo.com/pay/r/broskii-ltd_296grhUHETMPph"
                             target="_blank"
                             rel="noopener noreferrer"
@@ -423,6 +493,7 @@ export const handler = async (event) => {
                           style="background-color:#111827; border-radius:13px;"
                         >
                           <a
+                            class="payment-button"
                             href="https://monzo.com/pay/r/broskii-ltd_my9y1533M5kpBS"
                             target="_blank"
                             rel="noopener noreferrer"
@@ -449,7 +520,7 @@ export const handler = async (event) => {
 
           <!-- International travellers -->
           <tr>
-            <td style="padding:0 28px 24px; background-color:#F8FCFD;">
+            <td class="content-side-padding" style="padding:0 28px 24px; background-color:#F8FCFD;">
 
               <table
                 width="100%"
@@ -471,7 +542,7 @@ export const handler = async (event) => {
                     <p
                       style="margin:10px 0 0; padding:0; font-family:Arial,Helvetica,sans-serif; font-size:18px; line-height:1.6; color:#243c47;"
                     >
-                      If you’re unable to use the payment links above, please reply to this email or get in touch and we’ll arrange an alternative payment method for you.
+                      Can’t use the payment links? Just reply to this email and we’ll arrange an alternative payment method.
                     </p>
 
                   </td>
@@ -483,7 +554,7 @@ export const handler = async (event) => {
 
           <!-- Important reminder -->
           <tr>
-            <td style="padding:0 28px 48px; background-color:#F8FCFD;">
+            <td class="content-side-padding" style="padding:0 28px 48px; background-color:#F8FCFD;">
 
               <table
                 width="100%"
@@ -505,7 +576,7 @@ export const handler = async (event) => {
                     <p
                       style="margin:10px 0 0; padding:0; font-family:Arial,Helvetica,sans-serif; font-size:18px; line-height:1.6; font-weight:700; color:#243c47;"
                     >
-                      If you pay a deposit, your remaining trip balance must be paid no later than 10 weeks before departure.
+                      The remaining balance is due 10 weeks before departure.
                     </p>
 
                   </td>
@@ -515,7 +586,7 @@ export const handler = async (event) => {
             </td>
           </tr>
 
-          <!-- What happens next -->
+          <!-- What’s next? -->
           <tr>
             <td
               align="center"
@@ -529,15 +600,15 @@ export const handler = async (event) => {
               </p>
 
               <h2
-                style="margin:14px 0 0; padding:0; font-family:Georgia,'Times New Roman',serif; font-size:38px; line-height:1.14; font-weight:700; color:#111827;"
+                class="section-title" style="margin:14px 0 0; padding:0; font-family:Georgia,'Times New Roman',serif; font-size:38px; line-height:1.14; font-weight:700; color:#111827;"
               >
-                What happens next
+                What’s next?
               </h2>
 
               <p
                 style="margin:18px auto 0; padding:0; max-width:570px; font-family:Arial,Helvetica,sans-serif; font-size:18px; line-height:1.65; color:#526875;"
               >
-                Once payment is complete, there is nothing else you need to do right now.
+                If you’ve already completed payment, you’re all set for now.<br />We’ll be in touch as your trip gets closer.
               </p>
 
             </td>
@@ -545,7 +616,7 @@ export const handler = async (event) => {
 
           <!-- WhatsApp card -->
           <tr>
-            <td style="padding:0 28px 16px;">
+            <td class="content-side-padding" style="padding:0 28px 16px;">
 
               <table
                 width="100%"
@@ -556,7 +627,7 @@ export const handler = async (event) => {
                 style="width:100%; background-color:#F5FAFC; border-radius:18px; border-collapse:separate;"
               >
                 <tr>
-                  <td style="padding:26px 24px;">
+                  <td class="card-padding" style="padding:26px 24px;">
 
                     <p
                       style="margin:0; padding:0; font-family:Arial,Helvetica,sans-serif; font-size:15px; line-height:1.4; font-weight:800; letter-spacing:1.5px; color:#0087BD;"
@@ -573,7 +644,7 @@ export const handler = async (event) => {
                     <p
                       style="margin:10px 0 0; padding:0; font-family:Arial,Helvetica,sans-serif; font-size:16px; line-height:1.6; color:#526875;"
                     >
-                      You’ll be added to your dedicated Trip WhatsApp Group approximately 2–4 weeks before departure, where we’ll share important updates, reminders and announcements before the trip.
+                      Around 2–4 weeks before departure, you’ll be added to your Trip WhatsApp Group, where we’ll share updates, reminders and important trip information.
                     </p>
 
                   </td>
@@ -585,7 +656,7 @@ export const handler = async (event) => {
 
           <!-- Information pack card -->
           <tr>
-            <td style="padding:0 28px 16px;">
+            <td class="content-side-padding" style="padding:0 28px 16px;">
 
               <table
                 width="100%"
@@ -596,7 +667,7 @@ export const handler = async (event) => {
                 style="width:100%; background-color:#F5FAFC; border-radius:18px; border-collapse:separate;"
               >
                 <tr>
-                  <td style="padding:26px 24px;">
+                  <td class="card-padding" style="padding:26px 24px;">
 
                     <p
                       style="margin:0; padding:0; font-family:Arial,Helvetica,sans-serif; font-size:15px; line-height:1.4; font-weight:800; letter-spacing:1.5px; color:#0087BD;"
@@ -613,47 +684,7 @@ export const handler = async (event) => {
                     <p
                       style="margin:10px 0 0; padding:0; font-family:Arial,Helvetica,sans-serif; font-size:16px; line-height:1.6; color:#526875;"
                     >
-                    Around 2–4 weeks before departure, you'll receive your detailed Trip Information Pack, bringing everything together in one place—from flights and transfers to lift passes, optional lessons, packing list and everything you need before you travel.
-                    </p>
-
-                  </td>
-                </tr>
-              </table>
-
-            </td>
-          </tr>
-
-          <!-- Get ready card -->
-          <tr>
-            <td style="padding:0 28px 44px;">
-
-              <table
-                width="100%"
-                border="0"
-                cellpadding="0"
-                cellspacing="0"
-                role="presentation"
-                style="width:100%; background-color:#F5FAFC; border-radius:18px; border-collapse:separate;"
-              >
-                <tr>
-                  <td style="padding:26px 24px;">
-
-                    <p
-                      style="margin:0; padding:0; font-family:Arial,Helvetica,sans-serif; font-size:15px; line-height:1.4; font-weight:800; letter-spacing:1.5px; color:#0087BD;"
-                    >
-                      THE COUNTDOWN BEGINS
-                    </p>
-
-                    <h3
-                      style="margin:10px 0 0; padding:0; font-family:Georgia,'Times New Roman',serif; font-size:25px; line-height:1.2; font-weight:700; color:#111827;"
-                    >
-                      Get Ready
-                    </h3>
-
-                    <p
-                      style="margin:10px 0 0; padding:0; font-family:Arial,Helvetica,sans-serif; font-size:16px; line-height:1.6; color:#526875;"
-                    >
-                      From there, all that’s left is to get excited. We’ll guide you through the final preparations and keep you updated until departure.
+                    Around 2–4 weeks before departure, you’ll receive your Trip Information Pack with everything you need before you travel, including flights, transfers, lift passes, optional lessons and packing guidance.
                     </p>
 
                   </td>
@@ -671,7 +702,7 @@ export const handler = async (event) => {
             >
 
               <h2
-                style="margin:0; padding:0; font-family:Georgia,'Times New Roman',serif; font-size:36px; line-height:1.15; font-weight:700; color:#111827;"
+                class="closing-title" style="margin:0; padding:0; font-family:Georgia,'Times New Roman',serif; font-size:36px; line-height:1.15; font-weight:700; color:#111827;"
               >
                 We can’t wait to welcome you on the slopes
               </h2>
@@ -679,7 +710,7 @@ export const handler = async (event) => {
               <p
                 style="margin:20px auto 0; padding:0; max-width:550px; font-family:Arial,Helvetica,sans-serif; font-size:18px; line-height:1.65; color:#526875;"
               >
-                Questions about your booking or payment? Reply to this email or message the Broskii team directly.
+                Questions? Just reply to this email or message us on WhatsApp.
               </p>
 
               <table
@@ -821,7 +852,7 @@ export const handler = async (event) => {
     /* ================= ADMIN EMAIL (UNCHANGED) ================= */
 
     await resend.emails.send({
-      from: 'Broskii Alerts <info@broskii.com>',
+      from: 'Broskii <info@broskii.com>',
       to: ['salaam@broskii.com'],
       subject: `📥 New Booking from ${fullName}`,
       html: `
@@ -893,3 +924,4 @@ Full data also stored in Supabase.
     };
   }
 };
+                
