@@ -111,7 +111,7 @@ export const handler = async (event) => {
                   <td
                     align="left"
                     valign="middle"
-                    style="font-family:Arial,Helvetica,sans-serif; font-size:13px; line-height:1.4; font-weight:800; letter-spacing:2.5px; color:#0087BD;"
+                    style="font-family:Arial,Helvetica,sans-serif; font-size:15px; line-height:1.4; font-weight:800; letter-spacing:1.5px; color:#0087BD;"
                   >
                     BOOKING RECEIVED
                   </td>
@@ -138,7 +138,7 @@ export const handler = async (event) => {
             >
 
               <p
-                style="margin:0 0 18px; padding:0; font-family:Arial,Helvetica,sans-serif; font-size:13px; line-height:1.4; font-weight:800; letter-spacing:2.5px; color:#0087BD;"
+                style="margin:0 0 18px; padding:0; font-family:Arial,Helvetica,sans-serif; font-size:15px; line-height:1.4; font-weight:800; letter-spacing:1.5px; color:#0087BD;"
               >
                 YOUR BOOKING DETAILS ARE WITH US
               </p>
@@ -182,7 +182,7 @@ export const handler = async (event) => {
                   <td style="padding:28px;">
 
                     <p
-                      style="margin:0; padding:0; font-family:Arial,Helvetica,sans-serif; font-size:14px; line-height:1.4; font-weight:800; letter-spacing:2px; color:#0087BD;"
+                      style="margin:0; padding:0; font-family:Arial,Helvetica,sans-serif; font-size:16px; line-height:1.4; font-weight:800; letter-spacing:1px; color:#0087BD;"
                     >
                       ALREADY COMPLETED PAYMENT?
                     </p>
@@ -214,7 +214,7 @@ export const handler = async (event) => {
             >
 
               <p
-                style="margin:0; padding:0; font-family:Arial,Helvetica,sans-serif; font-size:13px; line-height:1.4; font-weight:800; letter-spacing:2.5px; color:#0087BD;"
+                style="margin:0; padding:0; font-family:Arial,Helvetica,sans-serif; font-size:15px; line-height:1.4; font-weight:800; letter-spacing:1.5px; color:#0087BD;"
               >
                 COMPLETE YOUR PAYMENT
               </p>
@@ -250,7 +250,7 @@ export const handler = async (event) => {
                   <td style="padding:32px 28px;">
 
                     <p
-                      style="margin:0; padding:0; font-family:Arial,Helvetica,sans-serif; font-size:13px; line-height:1.4; font-weight:800; letter-spacing:2.2px; color:#0087BD;"
+                      style="margin:0; padding:0; font-family:Arial,Helvetica,sans-serif; font-size:15px; line-height:1.4; font-weight:800; letter-spacing:1.5px; color:#0087BD;"
                     >
                       OPTION ONE
                     </p>
@@ -359,7 +359,7 @@ export const handler = async (event) => {
                   <td style="padding:32px 28px;">
 
                     <p
-                      style="margin:0; padding:0; font-family:Arial,Helvetica,sans-serif; font-size:13px; line-height:1.4; font-weight:800; letter-spacing:2.2px; color:#0087BD;"
+                      style="margin:0; padding:0; font-family:Arial,Helvetica,sans-serif; font-size:15px; line-height:1.4; font-weight:800; letter-spacing:1.5px; color:#0087BD;"
                     >
                       OPTION TWO
                     </p>
@@ -376,11 +376,7 @@ export const handler = async (event) => {
                       Complete the full trip payment today and your place will be fully secured.
                     </p>
 
-                    <p
-                      style="margin:8px 0 0; padding:0; font-family:Arial,Helvetica,sans-serif; font-size:16px; line-height:1.6; color:#526875;"
-                    >
-                      No further trip payments will be required.
-                    </p>
+                    
 
                     <table
                       width="100%"
@@ -467,13 +463,13 @@ export const handler = async (event) => {
                   <td style="padding:24px;">
 
                     <p
-                      style="margin:0; padding:0; font-family:Arial,Helvetica,sans-serif; font-size:13px; line-height:1.4; font-weight:800; letter-spacing:2px; color:#0087BD;"
+                      style="margin:0; padding:0; font-family:Arial,Helvetica,sans-serif; font-size:16px; line-height:1.4; font-weight:800; letter-spacing:1px; color:#0087BD;"
                     >
                       TRAVELLING FROM OUTSIDE THE UK?
                     </p>
 
                     <p
-                      style="margin:10px 0 0; padding:0; font-family:Arial,Helvetica,sans-serif; font-size:17px; line-height:1.6; color:#243c47;"
+                      style="margin:10px 0 0; padding:0; font-family:Arial,Helvetica,sans-serif; font-size:18px; line-height:1.6; color:#243c47;"
                     >
                       If you’re unable to use the payment links above, please reply to this email or get in touch and we’ll arrange an alternative payment method for you.
                     </p>
@@ -501,13 +497,13 @@ export const handler = async (event) => {
                   <td style="padding:24px 24px 24px 22px;">
 
                     <p
-                      style="margin:0; padding:0; font-family:Arial,Helvetica,sans-serif; font-size:13px; line-height:1.4; font-weight:800; letter-spacing:2px; color:#0087BD;"
+                      style="margin:0; padding:0; font-family:Arial,Helvetica,sans-serif; font-size:16px; line-height:1.4; font-weight:800; letter-spacing:1px; color:#0087BD;"
                     >
                       IMPORTANT REMINDER
                     </p>
 
                     <p
-                      style="margin:10px 0 0; padding:0; font-family:Arial,Helvetica,sans-serif; font-size:17px; line-height:1.6; font-weight:700; color:#243c47;"
+                      style="margin:10px 0 0; padding:0; font-family:Arial,Helvetica,sans-serif; font-size:18px; line-height:1.6; font-weight:700; color:#243c47;"
                     >
                       If you pay a deposit, your remaining trip balance must be paid no later than 10 weeks before departure.
                     </p>
@@ -527,7 +523,7 @@ export const handler = async (event) => {
             >
 
               <p
-                style="margin:0; padding:0; font-family:Arial,Helvetica,sans-serif; font-size:13px; line-height:1.4; font-weight:800; letter-spacing:2.5px; color:#0087BD;"
+                style="margin:0; padding:0; font-family:Arial,Helvetica,sans-serif; font-size:15px; line-height:1.4; font-weight:800; letter-spacing:1.5px; color:#0087BD;"
               >
                 AFTER PAYMENT
               </p>
@@ -563,7 +559,7 @@ export const handler = async (event) => {
                   <td style="padding:26px 24px;">
 
                     <p
-                      style="margin:0; padding:0; font-family:Arial,Helvetica,sans-serif; font-size:12px; line-height:1.4; font-weight:800; letter-spacing:2px; color:#0087BD;"
+                      style="margin:0; padding:0; font-family:Arial,Helvetica,sans-serif; font-size:15px; line-height:1.4; font-weight:800; letter-spacing:1.5px; color:#0087BD;"
                     >
                       STAY CONNECTED
                     </p>
@@ -603,7 +599,7 @@ export const handler = async (event) => {
                   <td style="padding:26px 24px;">
 
                     <p
-                      style="margin:0; padding:0; font-family:Arial,Helvetica,sans-serif; font-size:12px; line-height:1.4; font-weight:800; letter-spacing:2px; color:#0087BD;"
+                      style="margin:0; padding:0; font-family:Arial,Helvetica,sans-serif; font-size:15px; line-height:1.4; font-weight:800; letter-spacing:1.5px; color:#0087BD;"
                     >
                       EVERYTHING YOU NEED
                     </p>
@@ -617,7 +613,7 @@ export const handler = async (event) => {
                     <p
                       style="margin:10px 0 0; padding:0; font-family:Arial,Helvetica,sans-serif; font-size:16px; line-height:1.6; color:#526875;"
                     >
-                      Around 2–4 weeks before departure, we’ll send you a comprehensive Trip Information Pack covering your flights and arrival details, airport meeting information, packing checklist, resort guide, lift passes and everything you need to prepare for your trip.
+                    Around 2–4 weeks before departure, you'll receive your detailed Trip Information Pack, bringing everything together in one place—from flights and transfers to lift passes, optional lessons, packing list and everything you need before you travel.
                     </p>
 
                   </td>
@@ -643,7 +639,7 @@ export const handler = async (event) => {
                   <td style="padding:26px 24px;">
 
                     <p
-                      style="margin:0; padding:0; font-family:Arial,Helvetica,sans-serif; font-size:12px; line-height:1.4; font-weight:800; letter-spacing:2px; color:#0087BD;"
+                      style="margin:0; padding:0; font-family:Arial,Helvetica,sans-serif; font-size:15px; line-height:1.4; font-weight:800; letter-spacing:1.5px; color:#0087BD;"
                     >
                       THE COUNTDOWN BEGINS
                     </p>

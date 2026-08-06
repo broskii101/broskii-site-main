@@ -542,9 +542,7 @@ const clickableCard =
                   <span className="text-sm font-medium text-gray-600">
                     Step {currentStep + 1} of {steps.length}
                   </span>
-                  <span className="text-sm text-gray-500">
-                    {Math.round(((currentStep + 1) / steps.length) * 100)}% Complete
-                  </span>
+                  
                 </div>
                 <div className="w-full bg-gray-200 rounded-full h-2">
                   <motion.div
