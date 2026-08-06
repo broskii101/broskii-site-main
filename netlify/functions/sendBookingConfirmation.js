@@ -55,122 +55,767 @@ export const handler = async (event) => {
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <title>Broskii Booking Confirmation</title>
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="x-apple-disable-message-reformatting" />
+  <meta
+    name="format-detection"
+    content="telephone=no,address=no,email=no,date=no,url=no"
+  />
+  <title>Broskii Booking Received</title>
 </head>
 
-<body style="margin:0; padding:0; background-color:#FFFEFA; font-family: Arial, sans-serif; color:#263c43;">
+<body
+  style="margin:0; padding:0; width:100%; background-color:#f3f4f6; color:#111827; font-family:Arial,Helvetica,sans-serif; -webkit-text-size-adjust:100%; -ms-text-size-adjust:100%;"
+>
 
-<table width="100%" cellpadding="0" cellspacing="0" style="padding:20px 0;">
-  <tr>
-    <td align="center">
+  <div
+    style="display:none; max-height:0; overflow:hidden; opacity:0; color:transparent; line-height:1px; font-size:1px;"
+  >
+    We have received your booking details. Complete payment to secure your place on the Broskii trip.
+  </div>
 
-      <table width="600" cellpadding="0" cellspacing="0" style="background:#ffffff; border-radius:12px; overflow:hidden; box-shadow:0 2px 8px rgba(0,0,0,0.08);">
+  <table
+    width="100%"
+    border="0"
+    cellpadding="0"
+    cellspacing="0"
+    role="presentation"
+    style="width:100%; margin:0; padding:0; background-color:#f3f4f6; border-collapse:collapse;"
+  >
+    <tr>
+      <td align="center" style="padding:24px 12px;">
 
-        <!-- Header -->
-        <tr>
-          <td style="background:#f5f5f5; text-align:center; padding:12px 0 8px;">
-            <img
-              src="https://unique-sorbet-235561.netlify.app/broskii_logo.png"
-              alt="Broskii Logo"
-              width="150"
-              style="display:block; margin:0 auto 6px;"
-            />
-            <p style="margin:4px 0 2px; font-size:21px; font-weight:bold; color:#000;">
-              Broskii Trip Confirmed
-            </p>
-            <p style="margin:0; font-size:14px; font-style:italic; color:#000;">
-              Let the countdown begin!
-            </p>
-          </td>
-        </tr>
+        <table
+          width="100%"
+          border="0"
+          cellpadding="0"
+          cellspacing="0"
+          role="presentation"
+          style="width:100%; max-width:700px; margin:0 auto; background-color:#ffffff; border-collapse:separate; border-spacing:0; overflow:hidden;"
+        >
 
-        <!-- Body -->
-        <tr>
-          <td style="padding:26px;">
+          <!-- Header -->
+          <tr>
+            <td style="padding:24px 28px; background-color:#EAF7FB;">
 
-            <p style="margin:0 0 14px; font-size:16px; line-height:1.55;">
-              As-salamu alaykum <strong>${fullName}</strong>,
-            </p>
+              <table
+                width="100%"
+                border="0"
+                cellpadding="0"
+                cellspacing="0"
+                role="presentation"
+                style="width:100%; border-collapse:collapse;"
+              >
+                <tr>
+                  <td
+                    align="left"
+                    valign="middle"
+                    style="font-family:Arial,Helvetica,sans-serif; font-size:13px; line-height:1.4; font-weight:800; letter-spacing:2.5px; color:#0087BD;"
+                  >
+                    BOOKING RECEIVED
+                  </td>
 
-            <p style="margin:0 0 18px; font-size:16px; line-height:1.55;">
-              Your place on the upcoming <strong>Broskii</strong> trip is confirmed.
-            </p>
+                  <td align="right" valign="middle">
+                    <img
+                      src="https://res.cloudinary.com/dtx0og5tm/image/upload/v1767127511/broskii-logo-email-header_fknl2k.png"
+                      alt="Broskii"
+                      width="72"
+                      style="display:block; width:72px; max-width:72px; height:auto; margin:0 0 0 auto; border:0; outline:none; text-decoration:none;"
+                    />
+                  </td>
+                </tr>
+              </table>
 
-            <!-- What happens next -->
-            <h3 style="margin:26px 0 8px; font-size:17px; color:#007CB0;">
-              What happens next
-            </h3>
+            </td>
+          </tr>
 
-            <ul style="padding-left:20px; margin:0 0 18px; font-size:16px; line-height:1.55;">
-              <li style="margin-bottom:10px;">
-                You’ll be added to the <strong>Broskii WhatsApp group</strong>, where we’ll share updates, packing tips, travel reminders, and key announcements.
-              </li>
-              <li>
-                A few weeks before departure, you’ll receive a <strong>comprehensive information pack</strong> covering everything from airport arrival details to your first day on the slopes.
-              </li>
-            </ul>
+          <!-- Hero -->
+          <tr>
+            <td
+              align="center"
+              style="padding:52px 28px 48px; background-color:#ffffff;"
+            >
 
-            <!-- Payment -->
-            <h3 style="margin:26px 0 8px; font-size:17px; color:#007CB0;">
-              Payment summary
-            </h3>
+              <p
+                style="margin:0 0 18px; padding:0; font-family:Arial,Helvetica,sans-serif; font-size:13px; line-height:1.4; font-weight:800; letter-spacing:2.5px; color:#0087BD;"
+              >
+                YOUR BOOKING DETAILS ARE WITH US
+              </p>
 
-            <ul style="padding-left:20px; margin:0 0 18px; font-size:16px; line-height:1.55;">
-              <li style="margin-bottom:10px;">
-                If you’ve <strong>paid a deposit</strong>, you will receive a payment link for the remaining balance <strong>12 weeks before the trip</strong>. Please ensure all payments are completed <strong>10 weeks before departure</strong>.
-              </li>
-              <li>
-                If you’ve <strong>paid in full</strong>, no further action is needed unless you selected extras when booking — in that case, we’ll send you the pricing details for you to confirm the add ons.
-              </li>
-            </ul>
+              <h1
+                style="margin:0; padding:0; font-family:Georgia,'Times New Roman',serif; font-size:48px; line-height:1.08; font-weight:700; color:#111827;"
+              >
+                One final step to secure your Broskii trip
+              </h1>
 
-            <p style="margin:0 0 20px; font-size:16px; line-height:1.55;">
-              If you have any questions at any point, just reply to this email or message us directly.
-            </p>
+              <p
+                style="margin:24px auto 0; padding:0; max-width:570px; font-family:Arial,Helvetica,sans-serif; font-size:19px; line-height:1.65; color:#3F5663;"
+              >
+                As-salamu alaykum
+                <strong style="color:#111827;">${fullName}</strong>,
+                we have successfully received your booking details.
+              </p>
 
-            <p style="margin:0; font-size:16px; line-height:1.55;">
-              We look forward to having you with us,<br />
-              <strong>Broskii</strong>
-            </p>
+              <p
+                style="margin:14px auto 0; padding:0; max-width:570px; font-family:Arial,Helvetica,sans-serif; font-size:19px; line-height:1.65; color:#3F5663;"
+              >
+                Your place is only secured once your payment has been completed.
+              </p>
 
-          </td>
-        </tr>
+            </td>
+          </tr>
 
-        <!-- Footer -->
-        <tr>
-          <td style="background:#97cfe6; padding:20px; text-align:center; font-size:13px; color:#263c43;">
+          <!-- Already paid notice -->
+          <tr>
+            <td style="padding:0 28px 48px;">
 
-            <p style="margin:0 0 10px; line-height:1.5;">
-              <a href="https://www.broskii.com" style="color:#263c43; text-decoration:none; display:block;">
-                www.broskii.com
-              </a>
-              <a href="mailto:salaam@broskii.com" style="color:#263c43; text-decoration:none; display:block; margin-top:4px;">
-                salaam@broskii.com
-              </a>
-              <a href="https://wa.me/447749939192" style="color:#263c43; text-decoration:none; display:block; margin-top:4px;">
-                WhatsApp or call us
-              </a>
-            </p>
+              <table
+                width="100%"
+                border="0"
+                cellpadding="0"
+                cellspacing="0"
+                role="presentation"
+                style="width:100%; background-color:#EAF7FB; border-radius:18px; border-collapse:separate;"
+              >
+                <tr>
+                  <td style="padding:28px;">
 
-            <p style="margin:8px 0 6px; font-size:12px;">
-              <a href="https://www.instagram.com/broskiiuk" style="margin:0 8px; color:#263c43; text-decoration:none;">Instagram</a>
-              <a href="https://www.tiktok.com/@broskiiuk" style="margin:0 8px; color:#263c43; text-decoration:none;">TikTok</a>
-              <a href="https://www.youtube.com/@broskiiuk" style="margin:0 8px; color:#263c43; text-decoration:none;">YouTube</a>
-            </p>
+                    <p
+                      style="margin:0; padding:0; font-family:Arial,Helvetica,sans-serif; font-size:14px; line-height:1.4; font-weight:800; letter-spacing:2px; color:#0087BD;"
+                    >
+                      ALREADY COMPLETED PAYMENT?
+                    </p>
 
-            <p style="margin-top:10px; font-size:12px; color:#1f2937;">
-              © 2025 Broskii. All rights reserved.
-            </p>
+                    <p
+                      style="margin:12px 0 0; padding:0; font-family:Arial,Helvetica,sans-serif; font-size:18px; line-height:1.6; color:#243c47;"
+                    >
+                      If you completed payment using the payment page on our website, your place is already secured and you can safely ignore the payment section below.
+                    </p>
 
-          </td>
-        </tr>
+                    <p
+                      style="margin:12px 0 0; padding:0; font-family:Arial,Helvetica,sans-serif; font-size:18px; line-height:1.6; color:#243c47;"
+                    >
+                      If you have not paid yet, choose either a deposit or full payment option below.
+                    </p>
 
-      </table>
+                  </td>
+                </tr>
+              </table>
 
-    </td>
-  </tr>
-</table>
+            </td>
+          </tr>
+
+          <!-- Payment heading -->
+          <tr>
+            <td
+              align="center"
+              style="padding:48px 28px 32px; background-color:#F8FCFD;"
+            >
+
+              <p
+                style="margin:0; padding:0; font-family:Arial,Helvetica,sans-serif; font-size:13px; line-height:1.4; font-weight:800; letter-spacing:2.5px; color:#0087BD;"
+              >
+                COMPLETE YOUR PAYMENT
+              </p>
+
+              <h2
+                style="margin:14px 0 0; padding:0; font-family:Georgia,'Times New Roman',serif; font-size:38px; line-height:1.14; font-weight:700; color:#111827;"
+              >
+                Choose how you would like to secure your place
+              </h2>
+
+              <p
+                style="margin:18px auto 0; padding:0; max-width:570px; font-family:Arial,Helvetica,sans-serif; font-size:18px; line-height:1.65; color:#526875;"
+              >
+                Bank transfer has no fee. Card payments include a 2% processing fee.
+              </p>
+
+            </td>
+          </tr>
+
+          <!-- Deposit card -->
+          <tr>
+            <td style="padding:0 28px 24px; background-color:#F8FCFD;">
+
+              <table
+                width="100%"
+                border="0"
+                cellpadding="0"
+                cellspacing="0"
+                role="presentation"
+                style="width:100%; background-color:#ffffff; border:1px solid #D9EDF5; border-radius:20px; border-collapse:separate;"
+              >
+                <tr>
+                  <td style="padding:32px 28px;">
+
+                    <p
+                      style="margin:0; padding:0; font-family:Arial,Helvetica,sans-serif; font-size:13px; line-height:1.4; font-weight:800; letter-spacing:2.2px; color:#0087BD;"
+                    >
+                      OPTION ONE
+                    </p>
+
+                    <h2
+                      style="margin:12px 0 0; padding:0; font-family:Georgia,'Times New Roman',serif; font-size:36px; line-height:1.12; font-weight:700; color:#111827;"
+                    >
+                      Pay Deposit
+                    </h2>
+
+                    <p
+                      style="margin:16px 0 0; padding:0; font-family:Arial,Helvetica,sans-serif; font-size:18px; line-height:1.6; color:#3F5663;"
+                    >
+                      Secure your place today with a
+                      <strong style="color:#111827;">£300 deposit</strong>.
+                    </p>
+
+                    <p
+                      style="margin:8px 0 0; padding:0; font-family:Arial,Helvetica,sans-serif; font-size:16px; line-height:1.6; color:#526875;"
+                    >
+                      The remaining balance is due 10 weeks before departure. We’ll contact you closer to the balance due date.
+                    </p>
+
+                    <table
+                      width="100%"
+                      border="0"
+                      cellpadding="0"
+                      cellspacing="0"
+                      role="presentation"
+                      style="width:100%; margin-top:26px; border-collapse:separate;"
+                    >
+                      <tr>
+                        <td
+                          align="center"
+                          style="background-color:#0087BD; border-radius:13px;"
+                        >
+                          <a
+                            href="https://monzo.com/pay/r/broskii-ltd_Ix3i7XNVQFXQ2I"
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            style="display:block; padding:19px 18px; font-family:Arial,Helvetica,sans-serif; font-size:18px; line-height:1.2; font-weight:800; color:#ffffff; text-decoration:none; border-radius:13px;"
+                          >
+                            BANK TRANSFER — £300
+                          </a>
+                        </td>
+                      </tr>
+                    </table>
+
+                    <p
+                      style="margin:9px 0 0; padding:0; text-align:center; font-family:Arial,Helvetica,sans-serif; font-size:14px; line-height:1.5; font-weight:700; color:#0087BD;"
+                    >
+                      No payment fee
+                    </p>
+
+                    <table
+                      width="100%"
+                      border="0"
+                      cellpadding="0"
+                      cellspacing="0"
+                      role="presentation"
+                      style="width:100%; margin-top:18px; border-collapse:separate;"
+                    >
+                      <tr>
+                        <td
+                          align="center"
+                          style="background-color:#111827; border-radius:13px;"
+                        >
+                          <a
+                            href="https://monzo.com/pay/r/broskii-ltd_sLaDokHTqy4CNd"
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            style="display:block; padding:19px 18px; font-family:Arial,Helvetica,sans-serif; font-size:18px; line-height:1.2; font-weight:800; color:#ffffff; text-decoration:none; border-radius:13px;"
+                          >
+                            CARD PAYMENT — £306
+                          </a>
+                        </td>
+                      </tr>
+                    </table>
+
+                    <p
+                      style="margin:9px 0 0; padding:0; text-align:center; font-family:Arial,Helvetica,sans-serif; font-size:14px; line-height:1.5; color:#526875;"
+                    >
+                      Includes 2% processing fee
+                    </p>
+
+                  </td>
+                </tr>
+              </table>
+
+            </td>
+          </tr>
+
+          <!-- Full payment card -->
+          <tr>
+            <td style="padding:0 28px 24px; background-color:#F8FCFD;">
+
+              <table
+                width="100%"
+                border="0"
+                cellpadding="0"
+                cellspacing="0"
+                role="presentation"
+                style="width:100%; background-color:#ffffff; border:1px solid #D9EDF5; border-radius:20px; border-collapse:separate;"
+              >
+                <tr>
+                  <td style="padding:32px 28px;">
+
+                    <p
+                      style="margin:0; padding:0; font-family:Arial,Helvetica,sans-serif; font-size:13px; line-height:1.4; font-weight:800; letter-spacing:2.2px; color:#0087BD;"
+                    >
+                      OPTION TWO
+                    </p>
+
+                    <h2
+                      style="margin:12px 0 0; padding:0; font-family:Georgia,'Times New Roman',serif; font-size:36px; line-height:1.12; font-weight:700; color:#111827;"
+                    >
+                      Pay In Full
+                    </h2>
+
+                    <p
+                      style="margin:16px 0 0; padding:0; font-family:Arial,Helvetica,sans-serif; font-size:18px; line-height:1.6; color:#3F5663;"
+                    >
+                      Complete the full trip payment today and your place will be fully secured.
+                    </p>
+
+                    <p
+                      style="margin:8px 0 0; padding:0; font-family:Arial,Helvetica,sans-serif; font-size:16px; line-height:1.6; color:#526875;"
+                    >
+                      No further trip payments will be required.
+                    </p>
+
+                    <table
+                      width="100%"
+                      border="0"
+                      cellpadding="0"
+                      cellspacing="0"
+                      role="presentation"
+                      style="width:100%; margin-top:26px; border-collapse:separate;"
+                    >
+                      <tr>
+                        <td
+                          align="center"
+                          style="background-color:#0087BD; border-radius:13px;"
+                        >
+                          <a
+                            href="https://monzo.com/pay/r/broskii-ltd_296grhUHETMPph"
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            style="display:block; padding:19px 18px; font-family:Arial,Helvetica,sans-serif; font-size:18px; line-height:1.2; font-weight:800; color:#ffffff; text-decoration:none; border-radius:13px;"
+                          >
+                            BANK TRANSFER — £1,299
+                          </a>
+                        </td>
+                      </tr>
+                    </table>
+
+                    <p
+                      style="margin:9px 0 0; padding:0; text-align:center; font-family:Arial,Helvetica,sans-serif; font-size:14px; line-height:1.5; font-weight:700; color:#0087BD;"
+                    >
+                      No payment fee
+                    </p>
+
+                    <table
+                      width="100%"
+                      border="0"
+                      cellpadding="0"
+                      cellspacing="0"
+                      role="presentation"
+                      style="width:100%; margin-top:18px; border-collapse:separate;"
+                    >
+                      <tr>
+                        <td
+                          align="center"
+                          style="background-color:#111827; border-radius:13px;"
+                        >
+                          <a
+                            href="https://monzo.com/pay/r/broskii-ltd_my9y1533M5kpBS"
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            style="display:block; padding:19px 18px; font-family:Arial,Helvetica,sans-serif; font-size:18px; line-height:1.2; font-weight:800; color:#ffffff; text-decoration:none; border-radius:13px;"
+                          >
+                            CARD PAYMENT — £1,325
+                          </a>
+                        </td>
+                      </tr>
+                    </table>
+
+                    <p
+                      style="margin:9px 0 0; padding:0; text-align:center; font-family:Arial,Helvetica,sans-serif; font-size:14px; line-height:1.5; color:#526875;"
+                    >
+                      Includes 2% processing fee
+                    </p>
+
+                  </td>
+                </tr>
+              </table>
+
+            </td>
+          </tr>
+
+          <!-- International travellers -->
+          <tr>
+            <td style="padding:0 28px 24px; background-color:#F8FCFD;">
+
+              <table
+                width="100%"
+                border="0"
+                cellpadding="0"
+                cellspacing="0"
+                role="presentation"
+                style="width:100%; background-color:#EAF7FB; border-radius:16px; border-collapse:separate;"
+              >
+                <tr>
+                  <td style="padding:24px;">
+
+                    <p
+                      style="margin:0; padding:0; font-family:Arial,Helvetica,sans-serif; font-size:13px; line-height:1.4; font-weight:800; letter-spacing:2px; color:#0087BD;"
+                    >
+                      TRAVELLING FROM OUTSIDE THE UK?
+                    </p>
+
+                    <p
+                      style="margin:10px 0 0; padding:0; font-family:Arial,Helvetica,sans-serif; font-size:17px; line-height:1.6; color:#243c47;"
+                    >
+                      If you’re unable to use the payment links above, please reply to this email or get in touch and we’ll arrange an alternative payment method for you.
+                    </p>
+
+                  </td>
+                </tr>
+              </table>
+
+            </td>
+          </tr>
+
+          <!-- Important reminder -->
+          <tr>
+            <td style="padding:0 28px 48px; background-color:#F8FCFD;">
+
+              <table
+                width="100%"
+                border="0"
+                cellpadding="0"
+                cellspacing="0"
+                role="presentation"
+                style="width:100%; background-color:#ffffff; border-left:5px solid #0087BD; border-radius:16px; border-collapse:separate;"
+              >
+                <tr>
+                  <td style="padding:24px 24px 24px 22px;">
+
+                    <p
+                      style="margin:0; padding:0; font-family:Arial,Helvetica,sans-serif; font-size:13px; line-height:1.4; font-weight:800; letter-spacing:2px; color:#0087BD;"
+                    >
+                      IMPORTANT REMINDER
+                    </p>
+
+                    <p
+                      style="margin:10px 0 0; padding:0; font-family:Arial,Helvetica,sans-serif; font-size:17px; line-height:1.6; font-weight:700; color:#243c47;"
+                    >
+                      If you pay a deposit, your remaining trip balance must be paid no later than 10 weeks before departure.
+                    </p>
+
+                  </td>
+                </tr>
+              </table>
+
+            </td>
+          </tr>
+
+          <!-- What happens next -->
+          <tr>
+            <td
+              align="center"
+              style="padding:54px 28px 30px; background-color:#ffffff;"
+            >
+
+              <p
+                style="margin:0; padding:0; font-family:Arial,Helvetica,sans-serif; font-size:13px; line-height:1.4; font-weight:800; letter-spacing:2.5px; color:#0087BD;"
+              >
+                AFTER PAYMENT
+              </p>
+
+              <h2
+                style="margin:14px 0 0; padding:0; font-family:Georgia,'Times New Roman',serif; font-size:38px; line-height:1.14; font-weight:700; color:#111827;"
+              >
+                What happens next
+              </h2>
+
+              <p
+                style="margin:18px auto 0; padding:0; max-width:570px; font-family:Arial,Helvetica,sans-serif; font-size:18px; line-height:1.65; color:#526875;"
+              >
+                Once payment is complete, there is nothing else you need to do right now.
+              </p>
+
+            </td>
+          </tr>
+
+          <!-- WhatsApp card -->
+          <tr>
+            <td style="padding:0 28px 16px;">
+
+              <table
+                width="100%"
+                border="0"
+                cellpadding="0"
+                cellspacing="0"
+                role="presentation"
+                style="width:100%; background-color:#F5FAFC; border-radius:18px; border-collapse:separate;"
+              >
+                <tr>
+                  <td style="padding:26px 24px;">
+
+                    <p
+                      style="margin:0; padding:0; font-family:Arial,Helvetica,sans-serif; font-size:12px; line-height:1.4; font-weight:800; letter-spacing:2px; color:#0087BD;"
+                    >
+                      STAY CONNECTED
+                    </p>
+
+                    <h3
+                      style="margin:10px 0 0; padding:0; font-family:Georgia,'Times New Roman',serif; font-size:25px; line-height:1.2; font-weight:700; color:#111827;"
+                    >
+                      WhatsApp Group
+                    </h3>
+
+                    <p
+                      style="margin:10px 0 0; padding:0; font-family:Arial,Helvetica,sans-serif; font-size:16px; line-height:1.6; color:#526875;"
+                    >
+                      You’ll be added to your dedicated Trip WhatsApp Group approximately 2–4 weeks before departure, where we’ll share important updates, reminders and announcements before the trip.
+                    </p>
+
+                  </td>
+                </tr>
+              </table>
+
+            </td>
+          </tr>
+
+          <!-- Information pack card -->
+          <tr>
+            <td style="padding:0 28px 16px;">
+
+              <table
+                width="100%"
+                border="0"
+                cellpadding="0"
+                cellspacing="0"
+                role="presentation"
+                style="width:100%; background-color:#F5FAFC; border-radius:18px; border-collapse:separate;"
+              >
+                <tr>
+                  <td style="padding:26px 24px;">
+
+                    <p
+                      style="margin:0; padding:0; font-family:Arial,Helvetica,sans-serif; font-size:12px; line-height:1.4; font-weight:800; letter-spacing:2px; color:#0087BD;"
+                    >
+                      EVERYTHING YOU NEED
+                    </p>
+
+                    <h3
+                      style="margin:10px 0 0; padding:0; font-family:Georgia,'Times New Roman',serif; font-size:25px; line-height:1.2; font-weight:700; color:#111827;"
+                    >
+                      Information Pack
+                    </h3>
+
+                    <p
+                      style="margin:10px 0 0; padding:0; font-family:Arial,Helvetica,sans-serif; font-size:16px; line-height:1.6; color:#526875;"
+                    >
+                      Around 2–4 weeks before departure, we’ll send you a comprehensive Trip Information Pack covering your flights and arrival details, airport meeting information, packing checklist, resort guide, lift passes and everything you need to prepare for your trip.
+                    </p>
+
+                  </td>
+                </tr>
+              </table>
+
+            </td>
+          </tr>
+
+          <!-- Get ready card -->
+          <tr>
+            <td style="padding:0 28px 44px;">
+
+              <table
+                width="100%"
+                border="0"
+                cellpadding="0"
+                cellspacing="0"
+                role="presentation"
+                style="width:100%; background-color:#F5FAFC; border-radius:18px; border-collapse:separate;"
+              >
+                <tr>
+                  <td style="padding:26px 24px;">
+
+                    <p
+                      style="margin:0; padding:0; font-family:Arial,Helvetica,sans-serif; font-size:12px; line-height:1.4; font-weight:800; letter-spacing:2px; color:#0087BD;"
+                    >
+                      THE COUNTDOWN BEGINS
+                    </p>
+
+                    <h3
+                      style="margin:10px 0 0; padding:0; font-family:Georgia,'Times New Roman',serif; font-size:25px; line-height:1.2; font-weight:700; color:#111827;"
+                    >
+                      Get Ready
+                    </h3>
+
+                    <p
+                      style="margin:10px 0 0; padding:0; font-family:Arial,Helvetica,sans-serif; font-size:16px; line-height:1.6; color:#526875;"
+                    >
+                      From there, all that’s left is to get excited. We’ll guide you through the final preparations and keep you updated until departure.
+                    </p>
+
+                  </td>
+                </tr>
+              </table>
+
+            </td>
+          </tr>
+
+          <!-- Closing -->
+          <tr>
+            <td
+              align="center"
+              style="padding:52px 28px 54px; background-color:#ffffff;"
+            >
+
+              <h2
+                style="margin:0; padding:0; font-family:Georgia,'Times New Roman',serif; font-size:36px; line-height:1.15; font-weight:700; color:#111827;"
+              >
+                We can’t wait to welcome you on the slopes
+              </h2>
+
+              <p
+                style="margin:20px auto 0; padding:0; max-width:550px; font-family:Arial,Helvetica,sans-serif; font-size:18px; line-height:1.65; color:#526875;"
+              >
+                Questions about your booking or payment? Reply to this email or message the Broskii team directly.
+              </p>
+
+              <table
+                border="0"
+                cellpadding="0"
+                cellspacing="0"
+                role="presentation"
+                align="center"
+                style="margin:28px auto 0; border-collapse:separate;"
+              >
+                <tr>
+                  <td
+                    align="center"
+                    style="background-color:#0087BD; border-radius:13px;"
+                  >
+                    <a
+                      href="https://wa.me/447749939192"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      style="display:inline-block; padding:18px 30px; font-family:Arial,Helvetica,sans-serif; font-size:17px; line-height:1.2; font-weight:800; color:#ffffff; text-decoration:none; border-radius:13px;"
+                    >
+                      MESSAGE US ON WHATSAPP
+                    </a>
+                  </td>
+                </tr>
+              </table>
+
+              <p
+                style="margin:28px 0 0; padding:0; font-family:Arial,Helvetica,sans-serif; font-size:17px; line-height:1.6; color:#3F5663;"
+              >
+                We look forward to having you with us,<br />
+                <strong style="color:#111827;">Broskii</strong>
+              </p>
+
+            </td>
+          </tr>
+
+          <!-- Footer -->
+          <tr>
+            <td
+              align="center"
+              style="padding:28px 22px; background-color:#B9E3F2;"
+            >
+
+              <img
+                src="https://res.cloudinary.com/dtx0og5tm/image/upload/v1767127511/broskii-logo-email-header_fknl2k.png"
+                alt="Broskii"
+                width="70"
+                style="display:block; width:70px; max-width:70px; height:auto; margin:0 auto 18px; border:0; outline:none; text-decoration:none;"
+              />
+
+              <p
+                style="margin:0; padding:0; font-family:Arial,Helvetica,sans-serif; font-size:14px; line-height:1.8; font-weight:700; color:#243c47;"
+              >
+                <a
+                  href="https://www.broskii.com"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  style="color:#243c47; text-decoration:underline;"
+                >
+                  www.broskii.com
+                </a>
+                <br />
+
+                <a
+                  href="mailto:salaam@broskii.com"
+                  style="color:#243c47; text-decoration:underline;"
+                >
+                  salaam@broskii.com
+                </a>
+
+                &nbsp;·&nbsp;
+
+                <a
+                  href="https://wa.me/447749939192"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  style="color:#243c47; text-decoration:underline;"
+                >
+                  WhatsApp
+                </a>
+              </p>
+
+              <p
+                style="margin:12px 0 0; padding:0; font-family:Arial,Helvetica,sans-serif; font-size:13px; line-height:1.8; color:#243c47;"
+              >
+                <a
+                  href="https://www.instagram.com/broskiiuk"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  style="color:#243c47; text-decoration:underline;"
+                >
+                  Instagram
+                </a>
+
+                &nbsp;·&nbsp;
+
+                <a
+                  href="https://www.tiktok.com/@broskiiuk"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  style="color:#243c47; text-decoration:underline;"
+                >
+                  TikTok
+                </a>
+
+                &nbsp;·&nbsp;
+
+                <a
+                  href="https://www.youtube.com/@broskiiuk"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  style="color:#243c47; text-decoration:underline;"
+                >
+                  YouTube
+                </a>
+              </p>
+
+              <p
+                style="margin:14px 0 0; padding:0; font-family:Arial,Helvetica,sans-serif; font-size:11px; line-height:1.5; color:#334e59;"
+              >
+                © 2026 Broskii. All rights reserved.
+              </p>
+
+            </td>
+          </tr>
+
+        </table>
+
+      </td>
+    </tr>
+  </table>
 
 </body>
 </html>
@@ -245,7 +890,10 @@ Full data also stored in Supabase.
     return {
       statusCode: 500,
       headers,
-      body: JSON.stringify({ error: 'Failed to send email', details: error.message }),
+      body: JSON.stringify({
+        error: 'Failed to send email',
+        details: error.message,
+      }),
     };
   }
 };
