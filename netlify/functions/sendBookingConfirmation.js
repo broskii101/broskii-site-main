@@ -44,9 +44,9 @@ export const handler = async (event) => {
       electronicSignature,
     } = formData;
 
-    const firstName = fullName
-      ?.trim()
-      .split(' ')[0]
+    const firstName = (fullName || '')
+      .trim()
+      .split(/\s+/)[0]
       .toLowerCase()
       .replace(/^./, (character) => character.toUpperCase());
 
@@ -279,7 +279,7 @@ export const handler = async (event) => {
               <p
                 style="margin:12px auto 0; padding:0; max-width:570px; font-family:Arial,Helvetica,sans-serif; font-size:18px; line-height:1.65; color:#3F5663;"
               >
-                <strong style="color:#111827;">Please note:</strong> Your place is only secured once we’ve received either your deposit or full payment.
+                <strong style="color:#111827;">Please note:</strong> Your place is only confirmed once we've received your deposit or full payment.
               </p>
 
             </td>
@@ -610,7 +610,7 @@ export const handler = async (event) => {
                     <p
                       style="margin:10px 0 0; padding:0; font-family:Arial,Helvetica,sans-serif; font-size:16px; line-height:1.6; color:#526875;"
                     >
-                      2–4 weeks before departure, you’ll be added to your Trip WhatsApp Group, where we’ll share updates, reminders and important trip information.
+                      You’ll be added to your Trip WhatsApp Group 2-4 weeks before departure, where we’ll share updates, reminders and important trip information.
                     </p>
 
                   </td>
@@ -650,7 +650,7 @@ export const handler = async (event) => {
                     <p
                       style="margin:10px 0 0; padding:0; font-family:Arial,Helvetica,sans-serif; font-size:16px; line-height:1.6; color:#526875;"
                     >
-                    2–4 weeks before departure, you’ll receive your Trip Information Pack with everything you need before you travel, including flights, transfers, lift passes, optional lessons and packing guidance.
+                    You’ll receive your Trip Information Pack 2-4 weeks before departure with everything you need before you travel, including flights, transfers, lift passes, optional lessons and packing guidance.
                     </p>
 
                   </td>
