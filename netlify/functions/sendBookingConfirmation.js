@@ -172,7 +172,7 @@ export const handler = async (event) => {
   <div
     style="display:none; max-height:0; overflow:hidden; opacity:0; color:transparent; line-height:1px; font-size:1px;"
   >
-    Booking confirmation. See what's next.
+    Your Broskii trip starts here. We've received your booking details. Complete payment if required, and we'll guide you through the next steps.&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;
   </div>
 
   <table
@@ -213,7 +213,7 @@ export const handler = async (event) => {
                     valign="middle"
                     style="font-family:Arial,Helvetica,sans-serif; font-size:15px; line-height:1.4; font-weight:800; letter-spacing:1.5px; color:#0087BD;"
                   >
-                    BOOKING RECEIVED
+                    YOUR TRIP
                   </td>
 
                   <td align="right" valign="middle">
@@ -283,13 +283,13 @@ export const handler = async (event) => {
               <p
                 style="margin:0; padding:0; font-family:Arial,Helvetica,sans-serif; font-size:15px; line-height:1.4; font-weight:800; letter-spacing:1.5px; color:#0087BD;"
               >
-                PAYMENT OPTIONS
+                PAYMENT
               </p>
 
               <h2
                 class="section-title" style="margin:14px 0 0; padding:0; font-family:Georgia,'Times New Roman',serif; font-size:38px; line-height:1.14; font-weight:700; color:#111827;"
               >
-                Choose your payment option
+                Choose how you'd like to pay
               </h2>
 
               <p
@@ -552,40 +552,6 @@ export const handler = async (event) => {
             </td>
           </tr>
 
-          <!-- Important reminder -->
-          <tr>
-            <td class="content-side-padding" style="padding:0 28px 48px; background-color:#F8FCFD;">
-
-              <table
-                width="100%"
-                border="0"
-                cellpadding="0"
-                cellspacing="0"
-                role="presentation"
-                style="width:100%; background-color:#ffffff; border-left:5px solid #0087BD; border-radius:16px; border-collapse:separate;"
-              >
-                <tr>
-                  <td style="padding:24px 24px 24px 22px;">
-
-                    <p
-                      style="margin:0; padding:0; font-family:Arial,Helvetica,sans-serif; font-size:16px; line-height:1.4; font-weight:800; letter-spacing:1px; color:#0087BD;"
-                    >
-                      IMPORTANT REMINDER
-                    </p>
-
-                    <p
-                      style="margin:10px 0 0; padding:0; font-family:Arial,Helvetica,sans-serif; font-size:18px; line-height:1.6; font-weight:700; color:#243c47;"
-                    >
-                      The remaining balance is due 10 weeks before departure.
-                    </p>
-
-                  </td>
-                </tr>
-              </table>
-
-            </td>
-          </tr>
-
           <!-- What’s next? -->
           <tr>
             <td
@@ -593,23 +559,11 @@ export const handler = async (event) => {
               style="padding:54px 28px 30px; background-color:#ffffff;"
             >
 
-              <p
-                style="margin:0; padding:0; font-family:Arial,Helvetica,sans-serif; font-size:15px; line-height:1.4; font-weight:800; letter-spacing:1.5px; color:#0087BD;"
-              >
-                AFTER PAYMENT
-              </p>
-
               <h2
-                class="section-title" style="margin:14px 0 0; padding:0; font-family:Georgia,'Times New Roman',serif; font-size:38px; line-height:1.14; font-weight:700; color:#111827;"
+                class="section-title" style="margin:0; padding:0; font-family:Georgia,'Times New Roman',serif; font-size:38px; line-height:1.14; font-weight:700; color:#111827;"
               >
                 What’s next?
               </h2>
-
-              <p
-                style="margin:18px auto 0; padding:0; max-width:570px; font-family:Arial,Helvetica,sans-serif; font-size:18px; line-height:1.65; color:#526875;"
-              >
-                If you’ve already completed payment, you’re all set for now.<br />We’ll be in touch as your trip gets closer.
-              </p>
 
             </td>
           </tr>
@@ -701,14 +655,8 @@ export const handler = async (event) => {
               style="padding:52px 28px 54px; background-color:#ffffff;"
             >
 
-              <h2
-                class="closing-title" style="margin:0; padding:0; font-family:Georgia,'Times New Roman',serif; font-size:36px; line-height:1.15; font-weight:700; color:#111827;"
-              >
-                We can’t wait to welcome you on the slopes
-              </h2>
-
               <p
-                style="margin:20px auto 0; padding:0; max-width:550px; font-family:Arial,Helvetica,sans-serif; font-size:18px; line-height:1.65; color:#526875;"
+                style="margin:0 auto; padding:0; max-width:550px; font-family:Arial,Helvetica,sans-serif; font-size:18px; line-height:1.65; color:#526875;"
               >
                 Questions? Just reply to this email or message us on WhatsApp.
               </p>
